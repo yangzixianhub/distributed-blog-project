@@ -1,0 +1,50 @@
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE/editor files
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+# Java/Maven build output
+target/
+*/target/
+!.mvn/wrapper/maven-wrapper.jar
+
+# Logs and runtime files
+*.log
+logs/
+*.pid
+*.tmp
+*.temp
+
+# Local environment and secrets
+.env
+.env.*
+*.local
+application-local.properties
+application-dev-local.properties
+application-prod-local.properties
+
+# Node/Vue dependencies and build output
+node_modules/
+vueblog/node_modules/
+dist/
+vueblog/dist/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.tmp
+
+# Test and coverage output
+coverage/
+.nyc_output/
+
+# Uploaded/generated runtime files
+blogimg/
+upload/
+uploads/
