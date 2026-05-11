@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\Codes\\SnowFlake\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Program.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Program.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Program.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Program.cs",
+              "ViewState": "AgIAADwAAAAAAAAAAADwvw8AAABQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T03:24:59.952Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
