@@ -12,6 +12,8 @@ import com.liang.bbs.article.persistence.entity.ArticlePoExample;
 import com.liang.bbs.article.persistence.mapper.ArticlePoExMapper;
 import com.liang.bbs.article.persistence.mapper.ArticlePoMapper;
 import com.liang.bbs.article.service.mapstruct.ArticleMS;
+import com.liang.bbs.article.service.search.ArticleSearchPageResult;
+import com.liang.bbs.article.service.search.ArticleSearchService;
 import com.liang.bbs.common.enums.ArticleStateEnum;
 import com.liang.bbs.user.facade.dto.FollowDTO;
 import com.liang.bbs.user.facade.dto.LikeDTO;
@@ -90,6 +92,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
+    @Autowired
+    private ArticleSearchService articleSearchService;
+
     private static final Integer contentMax = 200;
 
     /**
@@ -118,6 +123,14 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public PageInfo<ArticleDTO> getList(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
+        if (articleSearchService.supports(articleSearchDTO)) {
+            try {
+                return searchByElasticsearch(articleSearchDTO, currentUser, articleStateEnum);
+            } catch (Exception e) {
+                log.warn("Elasticsearch search failed, fallback to mysql like query, title={}", articleSearchDTO.getTitle(), e);
+            }
+        }
+
         List<Integer> articleIds = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(articleSearchDTO.getLabelIds())) {
             // 根据标签id集合获取文章标签信息
@@ -161,6 +174,40 @@ public class ArticleServiceImpl implements ArticleService {
         buildArticleInfo(pageInfo.getList(), currentUser);
 
         return pageInfo;
+    }
+
+    private PageInfo<ArticleDTO> searchByElasticsearch(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
+        ArticleSearchPageResult searchPageResult = articleSearchService.search(articleSearchDTO, articleStateEnum);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>();
+        pageInfo.setPageNum(searchPageResult.getCurrentPage());
+        pageInfo.setPageSize(searchPageResult.getPageSize());
+        pageInfo.setTotal(searchPageResult.getTotal());
+        pageInfo.setPages(calculatePages(searchPageResult.getTotal(), searchPageResult.getPageSize()));
+
+        if (CollectionUtils.isEmpty(searchPageResult.getArticleIds())) {
+            pageInfo.setList(new ArrayList<>());
+            pageInfo.setSize(0);
+            return pageInfo;
+        }
+
+        List<ArticleDTO> articleDTOS = getBaseByIds(searchPageResult.getArticleIds(), articleStateEnum);
+        if (CollectionUtils.isEmpty(articleDTOS)) {
+            pageInfo.setList(new ArrayList<>());
+            pageInfo.setSize(0);
+            return pageInfo;
+        }
+
+        buildArticleInfo(articleDTOS, currentUser);
+        pageInfo.setList(articleDTOS);
+        pageInfo.setSize(articleDTOS.size());
+        return pageInfo;
+    }
+
+    private int calculatePages(long total, int pageSize) {
+        if (pageSize <= 0) {
+            return 0;
+        }
+        return (int) ((total + pageSize - 1) / pageSize);
     }
 
     @Override
@@ -226,6 +273,7 @@ public class ArticleServiceImpl implements ArticleService {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "修改文章审批状态失败");
         }
 
+        syncArticleSearchIndex(articleDTO.getId());
         return true;
     }
 
@@ -343,6 +391,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 插入文章内容（mongo）
         insertArticleContent(articlePo.getId(), articleDTO.getMarkdown(), articleDTO.getHtml(), currentUser.getUserId(), now);
 
+        syncArticleSearchIndex(articlePo.getId());
         return true;
     }
 
@@ -380,6 +429,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 更新文章内容（mongo）
         updateArticleContent(articlePo.getId(), articleDTO.getMarkdown(), articleDTO.getHtml(), currentUser.getUserId(), now);
 
+        syncArticleSearchIndex(articlePo.getId());
         return true;
     }
 
@@ -596,6 +646,7 @@ public class ArticleServiceImpl implements ArticleService {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "文章删除失败");
         }
 
+        articleSearchService.delete(id);
         return true;
     }
 
@@ -620,6 +671,11 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return articleCheckCountDTO;
+    }
+
+    @Override
+    public Integer rebuildSearchIndex() {
+        return articleSearchService.rebuild(getSearchableArticles());
     }
 
     /**
@@ -735,6 +791,35 @@ public class ArticleServiceImpl implements ArticleService {
     private List<ArticleMarkdownInfo> getMarkdownByArticleIds(List<Integer> articleIds) {
         Query query = new Query(Criteria.where("articleId").in(articleIds));
         return mongoTemplate.find(query, ArticleMarkdownInfo.class);
+    }
+
+    private void syncArticleSearchIndex(Integer articleId) {
+        if (articleId == null || !articleSearchService.isEnabled()) {
+            return;
+        }
+
+        ArticlePo articlePo = articlePoMapper.selectByPrimaryKey(articleId);
+        if (!isSearchable(articlePo)) {
+            articleSearchService.delete(articleId);
+            return;
+        }
+
+        articleSearchService.save(ArticleMS.INSTANCE.toDTO(articlePo));
+    }
+
+    private boolean isSearchable(ArticlePo articlePo) {
+        return articlePo != null
+                && !Boolean.TRUE.equals(articlePo.getIsDeleted())
+                && ArticleStateEnum.enable.getCode().equals(articlePo.getState());
+    }
+
+    private List<ArticleDTO> getSearchableArticles() {
+        ArticlePoExample example = new ArticlePoExample();
+        example.createCriteria()
+                .andIsDeletedEqualTo(false)
+                .andStateEqualTo(ArticleStateEnum.enable.getCode());
+        example.setOrderByClause("id asc");
+        return ArticleMS.INSTANCE.toDTO(articlePoMapper.selectByExample(example));
     }
 
 }

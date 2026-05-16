@@ -220,4 +220,6 @@ public interface ArticleService {
      * @return
      */
     ArticleCheckCountDTO getArticleCheckCount(String title);
+
+    Integer rebuildSearchIndex();
 }

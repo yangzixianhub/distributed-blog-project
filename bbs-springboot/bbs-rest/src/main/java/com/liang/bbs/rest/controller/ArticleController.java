@@ -223,4 +223,11 @@ public class ArticleController {
         return ResponseResult.success(articleService.getArticleCheckCount(title));
     }
 
+    @PostMapping("rebuildSearchIndex")
+    @Operation(summary = "重建文章搜索索引")
+    @ApiVersion(group = ApiVersionConstant.V_300)
+    public ResponseResult<Integer> rebuildSearchIndex() {
+        return ResponseResult.success(articleService.rebuildSearchIndex());
+    }
+
 }
