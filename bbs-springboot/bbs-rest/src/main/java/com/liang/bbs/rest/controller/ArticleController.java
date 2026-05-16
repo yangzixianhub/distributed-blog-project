@@ -226,8 +226,23 @@ public class ArticleController {
     @PostMapping("rebuildSearchIndex")
     @Operation(summary = "重建文章搜索索引")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Integer> rebuildSearchIndex() {
+    public ResponseResult<ArticleSearchRebuildDTO> rebuildSearchIndex() {
+        UserSsoDTO currentUser = UserContextUtils.currentUser();
+        ensureSuperAdmin(currentUser);
         return ResponseResult.success(articleService.rebuildSearchIndex());
     }
 
+    private void ensureSuperAdmin(UserSsoDTO currentUser) {
+        if (currentUser == null || CollectionUtils.isEmpty(currentUser.getRoles())) {
+            throw BusinessException.build(ResponseCode.OPERATE_FAIL, "仅超级管理员可重建搜索索引");
+        }
+
+        List<String> grades = currentUser.getRoles().stream()
+                .map(RoleSsoDTO::getGrade)
+                .distinct()
+                .collect(Collectors.toList());
+        if (!grades.contains(RoleGradeEnum.NS_SUPER_ADMIN_ROLE.name())) {
+            throw BusinessException.build(ResponseCode.OPERATE_FAIL, "仅超级管理员可重建搜索索引");
+        }
+    }
 }
