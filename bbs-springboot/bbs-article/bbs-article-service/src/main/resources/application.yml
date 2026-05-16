@@ -85,3 +85,13 @@ dubbo:
 
 mybatis:
   mapper-locations: classpath*:mybatis/mappers/*.xml
+
+search:
+  elasticsearch:
+    enabled: true
+    uris: http://127.0.0.1:9200
+    username:
+    password:
+    connect-timeout: 1000
+    socket-timeout: 30000
+    article-index: bbs_article
