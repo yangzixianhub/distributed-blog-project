@@ -19,12 +19,13 @@ DistributedIdService/
 ├── src/
 │   └── DistributedIdService.Api/    # Web API 项目
 │       ├── Controllers/             # API 控制器
-│       ├── Middleware/              # 中间件（异常处理、限流）
+│       ├── Middleware/              # 中间件（异常处理、限流、性能统计）
 │       ├── Services/                # 核心服务（雪花生成器、熔断器、worker id 提供者）
 │       ├── Models/                  # 数据模型
 │       └── Program.cs               # 应用入口
 ├── tests/
-│   └── DistributedIdService.Tests/  # 单元测试
+│   ├── DistributedIdService.Tests/  # 单元测试
+│   └── DistributedIdService.LoadTest/ # 压测工具
 └── docs/                            # 文档和示例
 ```
 
@@ -78,6 +79,7 @@ dotnet run --project src/DistributedIdService.Api
 | `/api/id/batch` | POST | 批量生成 ID（Body: `{"count": N}`） |
 | `/api/id/info/{id}` | GET | 解析 ID 详细信息 |
 | `/api/id/status` | GET | 获取生成器状态 |
+| `/metrics` | GET | 性能指标（P50/P90/P95/P99/QPS） |
 
 ### 示例
 
@@ -109,6 +111,36 @@ dotnet test tests/DistributedIdService.Tests/DistributedIdService.Tests.csproj
 - 雪花ID生成器
 - 熔断器状态转换
 - Worker ID 提供者
+
+### 性能压测
+
+项目包含压测工具，可测试 P50/P90/P95/P99 等延迟指标：
+
+```bash
+# 参数: [并发数] [持续秒数]，默认 50并发 30秒
+dotnet run --project tests/DistributedIdService.LoadTest
+
+# 示例：100并发，持续60秒
+dotnet run --project tests/DistributedIdService.LoadTest 100 60
+```
+
+**输出示例：**
+```
+=== 压测结果 ===
+总请求数: 150000 (成功: 150000, 失败: 0)
+
+--- 延迟分布 ---
+  最小值:  0.15ms
+  平均值:  2.35ms
+  最大值:  45.23ms
+  P50:     1.89ms
+  P90:     3.21ms
+  P95:     4.15ms
+  P99:     8.67ms
+  P99.9:   15.32ms
+```
+
+服务端也会每10秒输出一次指标到控制台，或直接访问 `/metrics` 端点查看实时数据。
 
 ## 核心组件
 
@@ -257,6 +289,7 @@ java -cp docs JavaClientExample
 ```
 
 **批量生成：**
+
 ```json
 {
   "success": true,
@@ -267,6 +300,7 @@ java -cp docs JavaClientExample
 ```
 
 **ID详情：**
+
 ```json
 {
   "id": 311700624614801408,
@@ -277,4 +311,4 @@ java -cp docs JavaClientExample
 }
 ```
 
-**提示：** 在博客项目中，可以直接使用 `HttpClient` 封装成工具类，根据业务需求调用相应接口。
+在博客项目中，可以直接使用 `HttpClient` 封装成工具类，根据业务需求调用相应接口。

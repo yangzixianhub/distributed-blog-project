@@ -115,6 +115,7 @@ F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\Distributed
 F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\DistributedIdService.Tests.AssemblyInfoInputs.cache
 F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\DistributedIdService.Tests.AssemblyInfo.cs
 F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\DistributedIdService.Tests.csproj.CoreCompileInputs.cache
+F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\DistributedIdService.Tests.sourcelink.json
 F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\Distribu.5CD36D71.Up2Date
 F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\DistributedIdService.Tests.dll
 F:\Codes\SnowFlake\tests\DistributedIdService.Tests\obj\Debug\net9.0\refint\DistributedIdService.Tests.dll

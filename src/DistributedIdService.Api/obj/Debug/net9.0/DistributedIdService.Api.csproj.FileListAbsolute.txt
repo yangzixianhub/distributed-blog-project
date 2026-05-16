@@ -5,6 +5,7 @@ F:\Codes\SnowFlake\src\DistributedIdService.Api\obj\Debug\net9.0\DistributedIdSe
 F:\Codes\SnowFlake\src\DistributedIdService.Api\obj\Debug\net9.0\DistributedIdService.Api.csproj.CoreCompileInputs.cache
 F:\Codes\SnowFlake\src\DistributedIdService.Api\obj\Debug\net9.0\DistributedIdService.Api.MvcApplicationPartsAssemblyInfo.cs
 F:\Codes\SnowFlake\src\DistributedIdService.Api\obj\Debug\net9.0\DistributedIdService.Api.MvcApplicationPartsAssemblyInfo.cache
+F:\Codes\SnowFlake\src\DistributedIdService.Api\obj\Debug\net9.0\DistributedIdService.Api.sourcelink.json
 F:\Codes\SnowFlake\src\DistributedIdService.Api\bin\Debug\net9.0\appsettings.Development.json
 F:\Codes\SnowFlake\src\DistributedIdService.Api\bin\Debug\net9.0\appsettings.json
 F:\Codes\SnowFlake\src\DistributedIdService.Api\bin\Debug\net9.0\DistributedIdService.Api.staticwebassets.endpoints.json

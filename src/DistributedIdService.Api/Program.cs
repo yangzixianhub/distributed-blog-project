@@ -85,6 +85,9 @@ app.UseMiddleware<ExceptionHandlingMiddleware>();
 // 2. 限流中间件
 app.UseMiddleware<RateLimitingMiddleware>();
 
+// 3. 性能统计中间件
+app.UsePerformanceMetrics();
+
 // 3. HTTPS 重定向（如果有 HTTPS 配置）
 if (!app.Environment.IsDevelopment())
 {
@@ -99,6 +102,9 @@ app.UseAuthorization();
 
 // 6. 映射控制器
 app.MapControllers();
+
+// 8. 性能指标端点
+PerformanceMetricsMiddleware.MapMetricsEndpoints(app);
 
 // 7. 健康检查端点
 app.MapGet("/", () => new

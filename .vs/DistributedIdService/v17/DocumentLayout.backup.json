@@ -5,6 +5,18 @@
     {
       "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|f:\\codes\\snowflake\\tests\\distributedidservice.tests\\circuitbreakertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|solutionrelative:tests\\distributedidservice.tests\\circuitbreakertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Codes\\SnowFlake\\tests\\DistributedIdService.LoadTest\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:tests\\DistributedIdService.LoadTest\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|f:\\codes\\snowflake\\tests\\distributedidservice.tests\\snowflakeidgeneratortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|solutionrelative:tests\\distributedidservice.tests\\snowflakeidgeneratortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -14,8 +26,44 @@
       "DocumentGroups": [
         {
           "DockedHeight": 200,
-          "SelectedChildIndex": 0,
+          "SelectedChildIndex": 3,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "SnowflakeIdGeneratorTests.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "RelativeToolTip": "tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-16T04:36:38.273Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CircuitBreakerTests.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "RelativeToolTip": "tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "ViewState": "AgIAAD0AAAAAAAAAAAAkwEsAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-16T04:35:10.556Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.LoadTest\\Program.cs",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.LoadTest\\Program.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.LoadTest\\Program.cs",
+              "RelativeToolTip": "tests\\DistributedIdService.LoadTest\\Program.cs",
+              "ViewState": "AgIAAH4AAAAAAAAAAAAAAAQAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-16T04:35:01.245Z"
+            },
             {
               "$type": "Document",
               "DocumentIndex": 0,
@@ -24,7 +72,7 @@
               "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Program.cs",
               "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Program.cs",
               "RelativeToolTip": "src\\DistributedIdService.Api\\Program.cs",
-              "ViewState": "AgIAADwAAAAAAAAAAADwvw8AAABQAAAAAAAAAA==",
+              "ViewState": "AgIAADMAAAAAAAAAAADwv2QAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-05-10T03:24:59.952Z",
               "EditorCaption": ""

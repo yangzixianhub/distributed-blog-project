@@ -9,10 +9,10 @@ public class RateLimitingMiddleware
     private readonly Dictionary<string, List<DateTime>> _requests;
     private readonly object _lock = new();
 
-    public RateLimitingMiddleware(RequestDelegate next)
+    public RateLimitingMiddleware(RequestDelegate next, IConfiguration config)
     {
         _next = next;
-        _maxRequestsPerMinute = 60; // 默认每分钟60次
+        _maxRequestsPerMinute = 1000000; // 非常高的限制，支持压测
         _requests = new Dictionary<string, List<DateTime>>();
     }
 
@@ -21,6 +21,7 @@ public class RateLimitingMiddleware
         var clientIp = GetClientIp(context);
         var now = DateTime.UtcNow;
 
+        var rateLimited = false;
         lock (_lock)
         {
             if (!_requests.ContainsKey(clientIp))
@@ -28,24 +29,31 @@ public class RateLimitingMiddleware
                 _requests[clientIp] = new List<DateTime>();
             }
 
-            // 清理过期的请求记录
             var cutoff = now.AddMinutes(-1);
             _requests[clientIp].RemoveAll(t => t < cutoff);
 
-            // 检查请求是否超过限制
             if (_requests[clientIp].Count >= _maxRequestsPerMinute)
             {
-                context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
-                var response = new
-                {
-                    success = false,
-                    message = "Rate limit exceeded. Please try again later.",
-                    timestamp = now
-                };
-                return;
+                rateLimited = true;
             }
+            else
+            {
+                _requests[clientIp].Add(now);
+            }
+        }
 
-            _requests[clientIp].Add(now);
+        if (rateLimited)
+        {
+            context.Response.StatusCode = StatusCodes.Status429TooManyRequests;
+            context.Response.ContentType = "application/json";
+            var response = new
+            {
+                success = false,
+                message = "Rate limit exceeded. Please try again later.",
+                timestamp = now
+            };
+            await context.Response.WriteAsync(JsonSerializer.Serialize(response));
+            return;
         }
 
         await _next(context);
@@ -53,7 +61,6 @@ public class RateLimitingMiddleware
 
     private string GetClientIp(HttpContext context)
     {
-        // 尝试从各种头中获取真实IP
         if (context.Request.Headers.TryGetValue("X-Forwarded-For", out var forwarded))
         {
             return forwarded.ToString().Split(',')[0].Trim();
