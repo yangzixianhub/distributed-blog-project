@@ -674,8 +674,13 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
-    public Integer rebuildSearchIndex() {
-        return articleSearchService.rebuild(getSearchableArticles());
+    public ArticleSearchRebuildDTO rebuildSearchIndex() {
+        long start = System.currentTimeMillis();
+        int indexedCount = articleSearchService.rebuild(getSearchableArticles());
+        ArticleSearchRebuildDTO result = new ArticleSearchRebuildDTO();
+        result.setIndexedCount(indexedCount);
+        result.setCostMillis(System.currentTimeMillis() - start);
+        return result;
     }
 
     /**
@@ -804,7 +809,9 @@ public class ArticleServiceImpl implements ArticleService {
             return;
         }
 
-        articleSearchService.save(ArticleMS.INSTANCE.toDTO(articlePo));
+        ArticleDTO articleDTO = ArticleMS.INSTANCE.toDTO(articlePo);
+        attachSearchContent(articleDTO);
+        articleSearchService.save(articleDTO);
     }
 
     private boolean isSearchable(ArticlePo articlePo) {
@@ -819,7 +826,59 @@ public class ArticleServiceImpl implements ArticleService {
                 .andIsDeletedEqualTo(false)
                 .andStateEqualTo(ArticleStateEnum.enable.getCode());
         example.setOrderByClause("id asc");
-        return ArticleMS.INSTANCE.toDTO(articlePoMapper.selectByExample(example));
+        List<ArticleDTO> articleDTOS = ArticleMS.INSTANCE.toDTO(articlePoMapper.selectByExample(example));
+        attachSearchContent(articleDTOS);
+        return articleDTOS;
     }
 
+    private void attachSearchContent(ArticleDTO articleDTO) {
+        if (articleDTO == null || articleDTO.getId() == null) {
+            return;
+        }
+
+        List<ArticleMarkdownInfo> articleMarkdownInfos = getMarkdownByArticleIds(Collections.singletonList(articleDTO.getId()));
+        if (CollectionUtils.isEmpty(articleMarkdownInfos)) {
+            return;
+        }
+        articleDTO.setContent(extractSearchContent(articleMarkdownInfos.get(0), articleDTO.getContent()));
+    }
+
+    private void attachSearchContent(List<ArticleDTO> articleDTOS) {
+        if (CollectionUtils.isEmpty(articleDTOS)) {
+            return;
+        }
+
+        List<Integer> articleIds = articleDTOS.stream()
+                .map(ArticleDTO::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(articleIds)) {
+            return;
+        }
+
+        Map<Integer, List<ArticleMarkdownInfo>> contentMap = getMarkdownByArticleIds(articleIds).stream()
+                .collect(Collectors.groupingBy(ArticleMarkdownInfo::getArticleId));
+        articleDTOS.forEach(articleDTO -> {
+            List<ArticleMarkdownInfo> articleMarkdownInfos = contentMap.get(articleDTO.getId());
+            if (CollectionUtils.isNotEmpty(articleMarkdownInfos)) {
+                articleDTO.setContent(extractSearchContent(articleMarkdownInfos.get(0), articleDTO.getContent()));
+            }
+        });
+    }
+
+    private String extractSearchContent(ArticleMarkdownInfo articleMarkdownInfo, String fallbackContent) {
+        if (articleMarkdownInfo == null) {
+            return fallbackContent;
+        }
+        if (StringUtils.isNotBlank(articleMarkdownInfo.getArticleHtml())) {
+            String content = CommonUtils.html2Text(articleMarkdownInfo.getArticleHtml());
+            if (StringUtils.isNotBlank(content)) {
+                return content;
+            }
+        }
+        if (StringUtils.isNotBlank(articleMarkdownInfo.getArticleMarkdown())) {
+            return articleMarkdownInfo.getArticleMarkdown();
+        }
+        return fallbackContent;
+    }
 }

@@ -221,5 +221,5 @@ public interface ArticleService {
      */
     ArticleCheckCountDTO getArticleCheckCount(String title);
 
-    Integer rebuildSearchIndex();
+    ArticleSearchRebuildDTO rebuildSearchIndex();
 }
