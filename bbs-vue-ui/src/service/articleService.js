@@ -9,6 +9,13 @@ export default {
                 .catch((err) => reject(err));
         });
     },
+    searchArticles(params) {
+        return new Promise((resolve, reject) => {
+            axios.get("/api/bbs/article/search", {params})
+                .then((res) => resolve(res))
+                .catch((err) => reject(err));
+        });
+    },
     // 获取个人发布的文章（所有）
     getPersonalArticles(params) {
         return new Promise((resolve, reject) => {

@@ -84,7 +84,7 @@
           </div>
         </div>
         <!-- 用户/标题 -->
-        <a-list-item-meta :description="item.title">
+        <a-list-item-meta>
           <a-avatar slot="avatar" :src="item.picture ? item.picture : require('@/assets/img/default_avatar.png')"
                     @click.stop="routerUserCenter(item.createUser)"/>
           <a slot="title" class="username" @click.stop="routerUserCenter(item.createUser)">
@@ -115,10 +115,11 @@
               <!--              <i class="iconfont icon-right-triangle" :style="{color: $store.state.themeColor}" v-if="item.top"></i>-->
             </a-tooltip>
           </a>
+          <template slot="description">
+            <span class="article-list-title" v-html="renderTitle(item)"></span>
+          </template>
         </a-list-item-meta>
-        <div class="article-content">
-          {{ item.content }}
-        </div>
+        <div class="article-content" v-html="renderContent(item)"></div>
       </a-list-item>
     </a-list>
     <div style="text-align: center; padding-bottom: 20px;" v-if="!hasNext && finish">
@@ -291,6 +292,43 @@ export default {
     routerArticleEdit(articleId) {
       this.$router.push("/edit/" + articleId);
     },
+
+    renderTitle(item) {
+      return this.renderHighlightHtml(item.highlightTitle, item.title);
+    },
+
+    renderContent(item) {
+      return this.renderHighlightHtml(item.highlightContent, item.content);
+    },
+
+    renderHighlightHtml(highlightValue, fallbackValue) {
+      if (highlightValue) {
+        return highlightValue;
+      }
+      return this.highlightKeyword(this.escapeHtml(fallbackValue || ""));
+    },
+
+    highlightKeyword(text) {
+      const keyword = (this.$route.query.query || "").trim();
+      if (!keyword) {
+        return text;
+      }
+      const pattern = new RegExp(this.escapeRegExp(keyword), "ig");
+      return text.replace(pattern, (matched) => `<em class="search-highlight">${matched}</em>`);
+    },
+
+    escapeHtml(text) {
+      return text
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/\"/g, "&quot;")
+          .replace(/'/g, "&#39;");
+    },
+
+    escapeRegExp(text) {
+      return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    },
   },
 
   mounted() {
@@ -352,6 +390,15 @@ export default {
   font-size: 16px;
   color: #1d2129;
   line-height: 22px;
+}
+
+#main-article-content .article-list-title .search-highlight,
+#main-article-content .article-content .search-highlight {
+  color: #d4380d;
+  background: #fff2e8;
+  font-style: normal;
+  padding: 0 2px;
+  border-radius: 2px;
 }
 
 #main-article-content .ant-list-item-meta-description, .article-content {
