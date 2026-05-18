@@ -16,4 +16,6 @@ public class ElasticsearchProperties {
     private Integer connectTimeout = 1000;
     private Integer socketTimeout = 30000;
     private String articleIndex = "bbs_article";
+    private Integer syncRetryCount = 3;
+    private Long syncRetryBackoffMillis = 1000L;
 }

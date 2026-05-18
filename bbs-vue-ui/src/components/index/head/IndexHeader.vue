@@ -2,8 +2,7 @@
   <a-layout-header>
     <div class="main-header">
       <div class="header-right-logo">
-        <!-- logo -->
-        <div @click="refresh" class="header-item-logo" v-if="!$store.state.collapsed">
+        <div v-if="!$store.state.collapsed" class="header-item-logo" @click="refresh">
           <span class="site-title">社区论坛</span>
         </div>
 
@@ -12,39 +11,45 @@
       </div>
 
       <div class="header-right-content">
-        <!-- 搜索框 -->
         <div class="header-search">
-          <a-space direction="vertical">
-            <a-input-search v-model="searchContentTemp" :placeholder="$t('common.searchPlaceholder')"
-                            style="min-width: 100px; width: 100%"
-                            @search="onSearch"
+          <div class="search-bar">
+            <a-select v-model="timeRangeTemp" class="search-time-filter" @change="onSearchFilterChange">
+              <a-select-option v-for="option in timeRangeOptions" :key="option.value" :value="option.value">
+                {{ option.label }}
+              </a-select-option>
+            </a-select>
+            <a-input-search
+                v-model="searchContentTemp"
+                :placeholder="$t('common.searchPlaceholder')"
+                class="search-input"
+                @search="onSearch"
             />
-          </a-space>
+          </div>
         </div>
 
-        <!-- 写文章 -->
         <div v-if="$store.state.isLogin && !$store.state.collapsed" class="header-item" @click="routerWrite">
           <div class="options">
             <span>{{ $t("common.writeArticle") }}</span>
           </div>
         </div>
 
-        <!-- 管理端 -->
         <div v-if="!$store.state.isLogin && !$store.state.collapsed" class="header-item" @click="routerManage">
           <div class="options">
             <span>{{ $t("common.management") }}</span>
           </div>
         </div>
 
-        <!-- 主题色 -->
         <div class="header-item">
-          <a-dropdown overlayClassName="header-theme-color-config" :placement="'bottomRight'"
-                      :trigger="['click']">
-            <div class="ant-dropdown-menu" slot="overlay">
+          <a-dropdown overlayClassName="header-theme-color-config" :placement="'bottomRight'" :trigger="['click']">
+            <div slot="overlay" class="ant-dropdown-menu">
               <p>{{ $t("common.themeColor") }}</p>
               <div class="color-options">
-                <div @click="changeColor(color)" v-for="color of colorOptions" :key="color"
-                     :style="'background: ' + color">
+                <div
+                    v-for="color of colorOptions"
+                    :key="color"
+                    :style="'background: ' + color"
+                    @click="changeColor(color)"
+                >
                   <a-icon v-if="themeColor === color" style="color: white" type="check"/>
                 </div>
               </div>
@@ -55,76 +60,76 @@
           </a-dropdown>
         </div>
 
-        <!-- 消息通知 -->
-        <div class="header-item badge-container" v-if="$store.state.isLogin">
-          <a-dropdown class="dropdown" v-model="visible" overlayClassName="header-message-box"
-                      :placement="'bottomRight'" :trigger="['click']">
-            <div class="ant-dropdown-menu" slot="overlay">
+        <div v-if="$store.state.isLogin" class="header-item badge-container">
+          <a-dropdown
+              v-model="visible"
+              class="dropdown"
+              overlayClassName="header-message-box"
+              :placement="'bottomRight'"
+              :trigger="['click']"
+          >
+            <div slot="overlay" class="ant-dropdown-menu">
               <MessageBox :visible.sync="visible"/>
             </div>
             <div class="options">
               <a-badge class="badge" :count="$store.state.isLogin ? messageNumbers : 0" :overflow-count="99">
-                <i
-                    class="iconfont icon-bell"></i></a-badge>
+                <i class="iconfont icon-bell"></i>
+              </a-badge>
             </div>
           </a-dropdown>
         </div>
 
-        <!-- 头像 -->
-        <div class="header-item avatar-container" v-if="$store.state.isLogin">
+        <div v-if="$store.state.isLogin" class="header-item avatar-container">
           <a-dropdown :placement="'bottomRight'" :trigger="['click']">
-            <a-menu @click="handleClick" slot="overlay">
+            <a-menu slot="overlay" @click="handleClick">
               <a-menu-item key="writeArticle">
-                <i class="iconfont icon-writeArticle"></i>{{ ' ' + $t("common.writeArticle") }}
+                <i class="iconfont icon-writeArticle"></i>{{ " " + $t("common.writeArticle") }}
               </a-menu-item>
               <a-menu-item key="PROFILE">
-                <i class="iconfont icon-user-picture"></i>{{ ' ' + $t("common.profile") }}
+                <i class="iconfont icon-user-picture"></i>{{ " " + $t("common.profile") }}
               </a-menu-item>
               <a-divider style="margin: 3px 0 3px 0"/>
               <a-menu-item key="setUp">
-                <i class="iconfont icon-setUp"></i>{{ ' ' + $t("common.setUp") }}
+                <i class="iconfont icon-setUp"></i>{{ " " + $t("common.setUp") }}
               </a-menu-item>
               <a-menu-item key="about">
-                <i class="iconfont icon-about"></i>{{ ' ' + $t("common.about") }}
+                <i class="iconfont icon-about"></i>{{ " " + $t("common.about") }}
               </a-menu-item>
               <a-divider style="margin: 3px 0 3px 0"/>
               <a-menu-item key="management">
-                <i class="iconfont icon-setUp"></i>{{ ' ' + $t("common.management") }}
+                <i class="iconfont icon-setUp"></i>{{ " " + $t("common.management") }}
               </a-menu-item>
               <a-divider style="margin: 3px 0 3px 0"/>
               <a-menu-item key="LOG_OUT">
-                <i class="iconfont icon-quit"></i>{{ ' ' + $t("common.logOut") }}
+                <i class="iconfont icon-quit"></i>{{ " " + $t("common.logOut") }}
               </a-menu-item>
             </a-menu>
             <div class="options">
-              <a-avatar class="avatar" v-if="$store.state.picture"
-                        :src="$store.state.picture"/>
+              <a-avatar v-if="$store.state.picture" class="avatar" :src="$store.state.picture"/>
               <img v-else src="@/assets/img/default_avatar.png" class="default-avatar" width="32"/>
             </div>
           </a-dropdown>
         </div>
 
-        <!-- 国际化 -->
-        <div v-if="!$store.state.collapsed" class="header-item languages"
-             style="display: flex; align-items: center" @click="changeLanguage">
+        <div
+            v-if="!$store.state.collapsed"
+            class="header-item languages"
+            style="display: flex; align-items: center"
+            @click="changeLanguage"
+        >
           <a-icon type="global"/>
           <span style="padding-left: 3px">{{ languageTitle }}</span>
         </div>
 
-        <!-- 登录 -->
-        <div class="header-item-login" v-if="!$store.state.isLogin">
+        <div v-if="!$store.state.isLogin" class="header-item-login">
           <div class="options" @click="showLoginModal">
             <a-button style="border: 1px solid rgba(30,128,255,.3); background: rgba(30,128,255,.05); color: #007fff;">
               {{ $t("common.login") }}
             </a-button>
           </div>
-          <!-- 登录Model -->
           <Login/>
-          <!-- 注册Model -->
           <Register/>
-          <!-- 手机重置密码Model -->
           <MobileResetPassword/>
-          <!-- 邮箱重置密码Model -->
           <EmailResetPassword/>
         </div>
       </div>
@@ -148,20 +153,20 @@ export default {
 
   props: {
     searchContent: {type: String, default: ""},
+    timeRange: {type: String, default: ""},
   },
 
   data() {
     return {
       visible: false,
       params: {currentPage: 1, pageSize: 10},
-      // 如果不用watch监听searchContent值的变化,只会在该组件被创建时赋值一次
       searchContentTemp: this.searchContent,
+      timeRangeTemp: this.timeRange || "",
     }
   },
 
   computed: {
     ...mapState(["userInfo", "locale", "themeColor", "colorOptions", "systemNotifyCount", "taskNotifyCount"]),
-    // 总消息数量
     messageNumbers() {
       return Number(this.systemNotifyCount) + Number(this.taskNotifyCount);
     },
@@ -171,12 +176,32 @@ export default {
         return "中";
       }
       return "En";
+    },
+
+    timeRangeOptions() {
+      if (this.$store.state.locale === "en_US") {
+        return [
+          {value: "", label: "Any time"},
+          {value: "day", label: "Past day"},
+          {value: "week", label: "Past week"},
+          {value: "month", label: "Past month"},
+          {value: "year", label: "Past year"},
+          {value: "older", label: "Older than 1 year"},
+        ];
+      }
+      return [
+        {value: "", label: "全部时间"},
+        {value: "day", label: "一天内"},
+        {value: "week", label: "一周内"},
+        {value: "month", label: "一月内"},
+        {value: "year", label: "一年内"},
+        {value: "older", label: "超过一年前"},
+      ];
     }
   },
 
   methods: {
     ...mapMutations(["changeColor"]),
-    // 设置语言
     changeLanguage() {
       if (this.$store.state.locale === "zh_CN") {
         this.$store.state.locale = "en_US";
@@ -187,27 +212,24 @@ export default {
       }
     },
 
-    // 刷新
     refresh() {
-      // 跳转到首页
-      this.$router.push('/');
+      this.$router.push("/");
     },
 
-    // 点击菜单根据点击的key做出相应
     handleClick({key}) {
-      if (key === 'writeArticle') {
+      if (key === "writeArticle") {
         this.routerWrite();
       }
-      if (key === 'PROFILE') {
+      if (key === "PROFILE") {
         this.routerUserCenter(this.$store.state.userId);
       }
-      if (key === 'setUp') {
+      if (key === "setUp") {
         this.routerSetUp();
       }
-      if (key === 'about') {
+      if (key === "about") {
         this.routerAbout();
       }
-      if (key === 'management') {
+      if (key === "management") {
         this.routerManage();
       }
       if (key === "LOG_OUT") {
@@ -215,16 +237,13 @@ export default {
       }
     },
 
-    // 显示登录框
     showLoginModal() {
       this.$store.state.loginVisible = true;
     },
 
-    // 退出登录
     logout() {
       loginService.logout()
-          .then(res => {
-            // 刷新当前页面
+          .then(() => {
             this.$router.go(0);
           })
           .catch(err => {
@@ -232,44 +251,58 @@ export default {
           });
     },
 
-    // 搜索
     onSearch(value) {
-      this.$router.push({path: "/search", query: {query: value}});
+      this.pushSearchRoute(value, this.timeRangeTemp);
     },
 
-    // 路由到用户中心页面
+    onSearchFilterChange(value) {
+      this.timeRangeTemp = value;
+      this.pushSearchRoute(this.searchContentTemp, value);
+    },
+
+    pushSearchRoute(searchValue, timeRangeValue) {
+      const query = {};
+      const normalizedKeyword = (searchValue || "").trim();
+      if (normalizedKeyword) {
+        query.query = normalizedKeyword;
+      }
+      if (timeRangeValue) {
+        query.timeRange = timeRangeValue;
+      }
+      this.$router.push({path: "/search", query});
+    },
+
     routerUserCenter(userId) {
       let routeData = this.$router.resolve("/user/" + userId);
-      window.open(routeData.href, '_self');
-      // this.$router.push("/user/" + userId);
+      window.open(routeData.href, "_self");
     },
 
-    // 路由到写文章页面
     routerWrite() {
       this.$router.push("/write");
     },
 
-    // 路由到设置页面
     routerSetUp() {
       this.$router.push("/settings/profile");
     },
 
-    // 点击跳转到 关于我们 页面
     routerAbout() {
-      window.open('/about', '_blank');
+      window.open("/about", "_blank");
     },
 
-    // 路由到管理端
     routerManage() {
-      window.open(this.$store.state.manageDomain, '_blank');
+      window.open(this.$store.state.manageDomain, "_blank");
     },
   },
 
   watch: {
-    // searchContent值改变时触发
     searchContent: {
-      handler(newVal, oldVal) {
+      handler(newVal) {
         this.searchContentTemp = newVal;
+      }
+    },
+    timeRange: {
+      handler(newVal) {
+        this.timeRangeTemp = newVal || "";
       }
     }
   }
@@ -311,18 +344,37 @@ export default {
   }
 
   .header-right-content {
-    //padding-right: 16px;
     display: flex;
     align-items: center;
     justify-content: flex-end;
 
-    // 搜索框置白
     .ant-input {
-      border: 1px solid #ffffff!important;
+      border: 1px solid #ffffff !important;
     }
 
     .header-search, .header-item, .header-item-login {
       padding: 0 12px;
+    }
+
+    .header-search {
+      min-width: 320px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      gap: 8px;
+    }
+
+    .search-time-filter {
+      width: 116px;
+      flex-shrink: 0;
+    }
+
+    .search-input {
+      min-width: 100px;
+      width: 100%;
     }
 
     .badge-container {
@@ -390,25 +442,28 @@ export default {
     }
   }
 
-  // 国际化
   .avatar-menu-icon {
     font-size: 16px !important;
   }
 
-  /* -------- horizontal-start -------- */
-  // 去掉a-menu组件的下划线
   .ant-menu-horizontal {
     border-bottom: 0;
   }
-  // 去掉选中active加粗下划线
-  .ant-menu-horizontal > .ant-menu-item-active, .ant-menu-horizontal > .ant-menu-item-open, .ant-menu-horizontal > .ant-menu-item-selected, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover, .ant-menu-horizontal > .ant-menu-submenu-active, .ant-menu-horizontal > .ant-menu-submenu-open, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected, .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu {
+
+  .ant-menu-horizontal > .ant-menu-item-active,
+  .ant-menu-horizontal > .ant-menu-item-open,
+  .ant-menu-horizontal > .ant-menu-item-selected,
+  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
+  .ant-menu-horizontal > .ant-menu-submenu-active,
+  .ant-menu-horizontal > .ant-menu-submenu-open,
+  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected,
+  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu {
     border-bottom: 2px solid transparent;
   }
-  /* 调整a-menu-item的padding */
+
   .ant-menu-item, .ant-menu-submenu-title {
     padding: 0 16px;
   }
-  /* -------- horizontal-end -------- */
 
   .ant-tabs-nav .ant-tabs-tab {
     margin: 0;
@@ -437,7 +492,6 @@ export default {
   }
 }
 
-// 移动端
 @media screen and (max-width: 900px) {
   .header-message-box {
     left: 0 !important;
@@ -450,7 +504,14 @@ export default {
     .header-search, .header-item, .header-item-login {
       padding: 0 8px;
     }
+
+    .search-bar {
+      gap: 6px;
+    }
+
+    .search-time-filter {
+      width: 100px;
+    }
   }
 }
-
 </style>

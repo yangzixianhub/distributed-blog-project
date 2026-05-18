@@ -14,6 +14,7 @@ import com.liang.bbs.article.persistence.mapper.ArticlePoMapper;
 import com.liang.bbs.article.service.mapstruct.ArticleMS;
 import com.liang.bbs.article.service.search.ArticleSearchPageResult;
 import com.liang.bbs.article.service.search.ArticleSearchService;
+import com.liang.bbs.article.service.search.ArticleSearchSyncService;
 import com.liang.bbs.common.enums.ArticleStateEnum;
 import com.liang.bbs.user.facade.dto.FollowDTO;
 import com.liang.bbs.user.facade.dto.LikeDTO;
@@ -95,6 +96,9 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleSearchService articleSearchService;
 
+    @Autowired
+    private ArticleSearchSyncService articleSearchSyncService;
+
     private static final Integer contentMax = 200;
 
     /**
@@ -161,6 +165,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleSearchDTO.getCreateUser() != null) {
             criteria.andCreateUserEqualTo(articleSearchDTO.getCreateUser());
         }
+        applyCreateTimeFilter(criteria, articleSearchDTO.getTimeRange());
         example.setOrderByClause("top desc, create_time desc, `id` desc");
 
         PageHelper.startPage(articleSearchDTO.getCurrentPage(), articleSearchDTO.getPageSize());
@@ -174,6 +179,11 @@ public class ArticleServiceImpl implements ArticleService {
         buildArticleInfo(pageInfo.getList(), currentUser);
 
         return pageInfo;
+    }
+
+    @Override
+    public PageInfo<ArticleDTO> searchArticles(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
+        return getList(articleSearchDTO, currentUser, articleStateEnum);
     }
 
     private PageInfo<ArticleDTO> searchByElasticsearch(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
@@ -197,6 +207,7 @@ public class ArticleServiceImpl implements ArticleService {
             return pageInfo;
         }
 
+        attachSearchHighlights(articleDTOS, searchPageResult);
         buildArticleInfo(articleDTOS, currentUser);
         pageInfo.setList(articleDTOS);
         pageInfo.setSize(articleDTOS.size());
@@ -208,6 +219,32 @@ public class ArticleServiceImpl implements ArticleService {
             return 0;
         }
         return (int) ((total + pageSize - 1) / pageSize);
+    }
+
+    private void applyCreateTimeFilter(ArticlePoExample.Criteria criteria, String timeRange) {
+        if (StringUtils.isBlank(timeRange)) {
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        switch (timeRange) {
+            case "day":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusDays(1));
+                break;
+            case "week":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusWeeks(1));
+                break;
+            case "month":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusMonths(1));
+                break;
+            case "year":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusYears(1));
+                break;
+            case "older":
+                criteria.andCreateTimeLessThan(now.minusYears(1));
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -273,7 +310,7 @@ public class ArticleServiceImpl implements ArticleService {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "修改文章审批状态失败");
         }
 
-        syncArticleSearchIndex(articleDTO.getId());
+        articleSearchSyncService.syncArticle(articleDTO.getId());
         return true;
     }
 
@@ -380,7 +417,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setCreateTime(now);
         articleDTO.setUpdateTime(now);
         // 通过审核的文章才会启用（即：默认待审核）
-        articleDTO.setState(ArticleStateEnum.pendingReview.getCode());
+        articleDTO.setState(ArticleStateEnum.enable.getCode());
         ArticlePo articlePo = ArticleMS.INSTANCE.toPo(articleDTO);
         if (articlePoMapper.insertSelective(articlePo) <= 0) {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "撰写文章失败");
@@ -391,7 +428,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 插入文章内容（mongo）
         insertArticleContent(articlePo.getId(), articleDTO.getMarkdown(), articleDTO.getHtml(), currentUser.getUserId(), now);
 
-        syncArticleSearchIndex(articlePo.getId());
+        articleSearchSyncService.syncArticle(articlePo.getId());
         return true;
     }
 
@@ -418,7 +455,7 @@ public class ArticleServiceImpl implements ArticleService {
         LocalDateTime now = LocalDateTime.now();
         articleDTO.setUpdateTime(now);
         articleDTO.setUpdateUser(currentUser.getUserId());
-        articleDTO.setState(ArticleStateEnum.pendingReview.getCode());
+        articleDTO.setState(ArticleStateEnum.enable.getCode());
         ArticlePo articlePo = ArticleMS.INSTANCE.toPo(articleDTO);
         if (articlePoMapper.updateByPrimaryKeySelective(articlePo) <= 0) {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "更新文章失败");
@@ -429,7 +466,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 更新文章内容（mongo）
         updateArticleContent(articlePo.getId(), articleDTO.getMarkdown(), articleDTO.getHtml(), currentUser.getUserId(), now);
 
-        syncArticleSearchIndex(articlePo.getId());
+        articleSearchSyncService.syncArticle(articlePo.getId());
         return true;
     }
 
@@ -646,7 +683,7 @@ public class ArticleServiceImpl implements ArticleService {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "文章删除失败");
         }
 
-        articleSearchService.delete(id);
+        articleSearchSyncService.deleteArticle(id);
         return true;
     }
 
@@ -681,6 +718,11 @@ public class ArticleServiceImpl implements ArticleService {
         result.setIndexedCount(indexedCount);
         result.setCostMillis(System.currentTimeMillis() - start);
         return result;
+    }
+
+    @Override
+    public ArticleSearchHealthDTO getSearchHealth() {
+        return articleSearchService.health();
     }
 
     /**
@@ -828,7 +870,39 @@ public class ArticleServiceImpl implements ArticleService {
         example.setOrderByClause("id asc");
         List<ArticleDTO> articleDTOS = ArticleMS.INSTANCE.toDTO(articlePoMapper.selectByExample(example));
         attachSearchContent(articleDTOS);
+        attachSearchMetadata(articleDTOS);
         return articleDTOS;
+    }
+
+    private void attachSearchMetadata(List<ArticleDTO> articleDTOS) {
+        if (CollectionUtils.isEmpty(articleDTOS)) {
+            return;
+        }
+
+        List<Integer> articleIds = articleDTOS.stream()
+                .map(ArticleDTO::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Long> userIds = articleDTOS.stream()
+                .map(ArticleDTO::getCreateUser)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<Integer, List<LabelDTO>> articleToLabelMap = getArticleIdToLabels(articleIds);
+        Map<Long, List<UserDTO>> idUsers = userIds.isEmpty()
+                ? Collections.emptyMap()
+                : userService.getByIds(userIds).stream().collect(Collectors.groupingBy(UserDTO::getId));
+
+        articleDTOS.forEach(articleDTO -> {
+            if (articleDTO == null) {
+                return;
+            }
+            articleDTO.setLabelDTOS(articleToLabelMap.getOrDefault(articleDTO.getId(), Collections.emptyList()));
+            List<UserDTO> userDTOS = idUsers.get(articleDTO.getCreateUser());
+            if (CollectionUtils.isNotEmpty(userDTOS)) {
+                articleDTO.setCreateUserName(userDTOS.get(0).getName());
+            }
+        });
     }
 
     private void attachSearchContent(ArticleDTO articleDTO) {
@@ -880,5 +954,21 @@ public class ArticleServiceImpl implements ArticleService {
             return articleMarkdownInfo.getArticleMarkdown();
         }
         return fallbackContent;
+    }
+
+    private void attachSearchHighlights(List<ArticleDTO> articleDTOS, ArticleSearchPageResult searchPageResult) {
+        if (CollectionUtils.isEmpty(articleDTOS) || searchPageResult == null) {
+            return;
+        }
+
+        Map<Integer, String> highlightTitleMap = searchPageResult.getHighlightTitleMap();
+        Map<Integer, String> highlightContentMap = searchPageResult.getHighlightContentMap();
+        articleDTOS.forEach(articleDTO -> {
+            if (articleDTO == null || articleDTO.getId() == null) {
+                return;
+            }
+            articleDTO.setHighlightTitle(highlightTitleMap.get(articleDTO.getId()));
+            articleDTO.setHighlightContent(highlightContentMap.get(articleDTO.getId()));
+        });
     }
 }

@@ -82,7 +82,7 @@ public class UserController {
     @GetMapping("updateFollowState")
     @Operation(summary = "更新关注状态")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> updateFollowState(@RequestParam Long toUser) {
+    public ResponseResult<Boolean> updateFollowState(@RequestParam("toUser") Long toUser) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(followService.updateFollowState(currentUser.getUserId(), toUser));
     }
@@ -90,7 +90,7 @@ public class UserController {
     @GetMapping("updateLikeState")
     @Operation(summary = "更新点赞状态")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> updateLikeState(@RequestParam Integer articleId) {
+    public ResponseResult<Boolean> updateLikeState(@RequestParam("articleId") Integer articleId) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(likeService.updateLikeState(articleId, currentUser));
     }
@@ -98,7 +98,7 @@ public class UserController {
     @GetMapping("updateLikeCommentState")
     @Operation(summary = "更新评论点赞状态")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> updateLikeCommentState(@RequestParam Integer commentId) {
+    public ResponseResult<Boolean> updateLikeCommentState(@RequestParam("commentId") Integer commentId) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(likeCommentService.updateLikeCommentState(commentId, currentUser));
     }
@@ -116,7 +116,7 @@ public class UserController {
     @GetMapping("getUserInfo")
     @Operation(summary = "获取用户信息")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<UserForumDTO> getUserInfo(@RequestParam Long userId) {
+    public ResponseResult<UserForumDTO> getUserInfo(@RequestParam("userId") Long userId) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(userLevelService.getUserInfo(userId, currentUser));
     }
@@ -125,7 +125,7 @@ public class UserController {
     @GetMapping("getFollowCount")
     @Operation(summary = "获取关注/粉丝数量")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<FollowCountDTO> getFollowCount(@RequestParam Long userId) {
+    public ResponseResult<FollowCountDTO> getFollowCount(@RequestParam("userId") Long userId) {
         return ResponseResult.success(followService.getFollowCount(userId));
     }
 
@@ -154,7 +154,7 @@ public class UserController {
     @GetMapping("sendEmailVerifyCode")
     @Operation(summary = "发送邮件验证码")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> sendEmailVerifyCode(@RequestParam String email) {
+    public ResponseResult<Boolean> sendEmailVerifyCode(@RequestParam("email") String email) {
         UserSsoDTO currentUser = new UserSsoDTO();
         if (UserContextUtils.currentUser() == null) {
             // 兼容手机重置密码
@@ -169,7 +169,7 @@ public class UserController {
     @GetMapping("sendSmsVerifyCode")
     @Operation(summary = "发送短信验证码")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> sendSmsVerifyCode(@RequestParam String phone) {
+    public ResponseResult<Boolean> sendSmsVerifyCode(@RequestParam("phone") String phone) {
         UserSsoDTO currentUser = new UserSsoDTO();
         if (UserContextUtils.currentUser() == null) {
             // 兼容邮箱重置密码
@@ -223,14 +223,14 @@ public class UserController {
     @GetMapping("isValidEmail")
     @Operation(summary = "邮箱判重")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> isValidEmail(@RequestParam String email) {
+    public ResponseResult<Boolean> isValidEmail(@RequestParam("email") String email) {
         return ResponseResult.success(userService.isValidEmail(email));
     }
 
     @GetMapping("isValidPhone")
     @Operation(summary = "手机判重")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> isValidPhone(@RequestParam String phone) {
+    public ResponseResult<Boolean> isValidPhone(@RequestParam("phone") String phone) {
         return ResponseResult.success(userService.isValidPhone(phone));
     }
 
@@ -238,7 +238,7 @@ public class UserController {
     @GetMapping("isValidUser")
     @Operation(summary = "用户判重")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> isValidUser(@RequestParam String username) {
+    public ResponseResult<Boolean> isValidUser(@RequestParam("username") String username) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(userService.isValidUser(username, currentUser));
     }
@@ -279,8 +279,8 @@ public class UserController {
     @GetMapping("getUserOperateCount")
     @Operation(summary = "获取用户操作数量（文章、关注、点赞等）")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<UserOperateCountDTO> getUserOperateCount(@RequestParam Long userId,
-                                                                   @RequestParam(required = false) ArticleStateEnum articleStateEnum) {
+    public ResponseResult<UserOperateCountDTO> getUserOperateCount(@RequestParam("userId") Long userId,
+                                                                   @RequestParam(value = "articleStateEnum", required = false) ArticleStateEnum articleStateEnum) {
         UserOperateCountDTO userOperateCountDTO = new UserOperateCountDTO();
 
         // 获取用户文章数量

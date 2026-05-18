@@ -1,6 +1,7 @@
 package com.liang.bbs.article.service.search;
 
 import com.liang.bbs.article.facade.dto.ArticleDTO;
+import com.liang.bbs.article.facade.dto.ArticleSearchHealthDTO;
 import com.liang.bbs.article.facade.dto.ArticleSearchDTO;
 import com.liang.bbs.common.enums.ArticleStateEnum;
 
@@ -22,4 +23,6 @@ public interface ArticleSearchService {
     boolean delete(Integer articleId);
 
     int rebuild(List<ArticleDTO> articleDTOS);
+
+    ArticleSearchHealthDTO health();
 }
