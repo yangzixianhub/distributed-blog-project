@@ -40,9 +40,7 @@ result*.csv
 *.hprof
 temp/
 
-# Keep the committed test plan and README screenshot, ignore generated reports.
-report/
-!测试结果截图.png
+
 
 # Temporary files
 *.tmp
