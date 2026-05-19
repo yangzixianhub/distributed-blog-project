@@ -1,3 +1,4 @@
+# OS files
 .DS_Store
 Thumbs.db
 Desktop.ini
@@ -32,6 +33,17 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# JMeter / performance test generated files
+jmeter.log
+result*.csv
+*.jtl
+*.hprof
+temp/
+
+# Keep the committed test plan and README screenshot, ignore generated reports.
+report/
+!测试结果截图.png
+
 # Temporary files
 *.tmp
 *.temp
@@ -49,7 +61,6 @@ pnpm-debug.log*
 *.sln
 *.sw?
 
-# Existing project-specific ignores
-**/.github
-**/.vscode
+# Project-local generated or reference files
+.github/
 第三讲 高并发设计(2).pptx.md
