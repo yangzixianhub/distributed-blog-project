@@ -10,9 +10,7 @@ import org.springframework.stereotype.Component;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
-/**
- * 已发布文章正文HTML的Redis缓存，减轻数据库读取。
- */
+//已发布文章正文HTML的Redis缓存，减轻数据库读取。
 @Slf4j
 @Component
 @RequiredArgsConstructor

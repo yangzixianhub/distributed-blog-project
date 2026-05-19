@@ -9,9 +9,7 @@ import java.util.Map;
 
 public interface ArticlePoExMapper {
 
-    /**
-     * 原子自增浏览量，避免并发读缓存场景下基于旧pv回写导致不正确。
-     */
+    //原子自增浏览量，避免并发读缓存场景下基于旧pv回写导致不正确。
     int incrementPv(@Param("id") Integer id);
     /**
      * 获取用户点赞数量

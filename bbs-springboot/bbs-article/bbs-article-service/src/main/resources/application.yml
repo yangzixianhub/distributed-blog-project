@@ -96,3 +96,5 @@ article:
     redis:
       html-cache-enabled: true
       ttl: 30m
+      count-cache-enabled: true
+      count-cache-ttl: 60s

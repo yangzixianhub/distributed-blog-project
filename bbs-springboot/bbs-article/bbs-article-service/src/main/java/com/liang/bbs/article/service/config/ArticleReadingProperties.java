@@ -48,5 +48,13 @@ public class ArticleReadingProperties {
          * 正文缓存TTL。
          */
         private Duration ttl = Duration.ofMinutes(30);
+        /**
+         * 是否缓存文章公共统计（点赞数、评论数、作者等级），减轻 Dubbo 扇出。
+         */
+        private boolean countCacheEnabled = true;
+        /**
+         * 公共统计缓存 TTL（点赞/评论后最多延迟该时间才一致，可改短）。
+         */
+        private Duration countCacheTtl = Duration.ofSeconds(60);
     }
 }

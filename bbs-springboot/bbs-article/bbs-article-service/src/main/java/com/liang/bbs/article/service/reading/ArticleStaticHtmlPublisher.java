@@ -73,7 +73,7 @@ public class ArticleStaticHtmlPublisher {
         Path path = resolveFilePath(articleId);
         try {
             Files.createDirectories(path.getParent());
-            Files.writeString(path, page, StandardCharsets.UTF_8);
+            Files.write(path, page.getBytes(StandardCharsets.UTF_8));
             log.debug("已写入静态文章页 {}", path);
         } catch (IOException e) {
             log.error("写入静态文章页失败articleId={} path={}", articleId, path, e);

@@ -13,6 +13,8 @@ import com.liang.bbs.article.persistence.mapper.ArticlePoExMapper;
 import com.liang.bbs.article.persistence.mapper.ArticlePoMapper;
 import com.liang.bbs.article.service.config.ArticleReadingProperties;
 import com.liang.bbs.article.service.mapstruct.ArticleMS;
+import com.liang.bbs.article.service.reading.ArticleCountPublicSnapshot;
+import com.liang.bbs.article.service.reading.ArticleCountRedisCache;
 import com.liang.bbs.article.service.reading.ArticleHtmlRedisCache;
 import com.liang.bbs.article.service.reading.ArticleStaticHtmlPublisher;
 import com.liang.bbs.common.enums.ArticleStateEnum;
@@ -101,6 +103,9 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Autowired
     private ArticleStaticHtmlPublisher articleStaticHtmlPublisher;
+
+    @Autowired
+    private ArticleCountRedisCache articleCountRedisCache;
 
     private static final Integer contentMax = 200;
 
@@ -548,25 +553,42 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public ArticleCountDTO getCountById(Integer id, UserSsoDTO currentUser) {
-        // 获取文章信息
         ArticlePo articlePo = articlePoMapper.selectByPrimaryKey(id);
         ArticleCountDTO articleCountDTO = new ArticleCountDTO();
-        // 获取文章点赞数量
-        articleCountDTO.setLikeCount(likeService.getLikeCountArticle(Collections.singletonList(id)));
-        // 是否已经点赞、通过fromUser和toUser获取关注信息
-        if (currentUser != null) {
-            articleCountDTO.setIsLike(likeService.isLike(id, currentUser.getUserId()));
-            FollowDTO followDTO = followService.getByFromToUser(currentUser.getUserId(), articlePo.getCreateUser(), false);
-            if (followDTO != null) {
-                articleCountDTO.setIsFollow(true);
+
+        ArticleCountPublicSnapshot cached = articleCountRedisCache.get(id);
+        if (cached != null) {
+            articleCountDTO.setLikeCount(cached.getLikeCount());
+            articleCountDTO.setCommentCount(cached.getCommentCount());
+            articleCountDTO.setLevel(cached.getLevel());
+        } else {
+            articleCountDTO.setLikeCount(likeService.getLikeCountArticle(Collections.singletonList(id)));
+            if (currentUser != null) {
+                articleCountDTO.setIsLike(likeService.isLike(id, currentUser.getUserId()));
+                FollowDTO followDTO = followService.getByFromToUser(currentUser.getUserId(), articlePo.getCreateUser(), false);
+                if (followDTO != null) {
+                    articleCountDTO.setIsFollow(true);
+                }
             }
+            articleCountDTO.setCommentCount(commentService.getCommentCountByArticle(id));
+            List<UserLevelDTO> userLevelDTOS = userLevelService.getByUserId(articlePo.getCreateUser());
+            if (CollectionUtils.isNotEmpty(userLevelDTOS)) {
+                articleCountDTO.setLevel(userLevelDTOS.get(0).getLevel());
+            }
+            articleCountRedisCache.put(id, new ArticleCountPublicSnapshot(
+                    articleCountDTO.getLikeCount(),
+                    articleCountDTO.getCommentCount(),
+                    articleCountDTO.getLevel()));
         }
-        // 获取文章评论数量
-        articleCountDTO.setCommentCount(commentService.getCommentCountByArticle(id));
-        // 获取用户等级
-        List<UserLevelDTO> userLevelDTOS = userLevelService.getByUserId(articlePo.getCreateUser());
-        if (CollectionUtils.isNotEmpty(userLevelDTOS)) {
-            articleCountDTO.setLevel(userLevelDTOS.get(0).getLevel());
+
+        if (currentUser != null) {
+            if (cached != null) {
+                articleCountDTO.setIsLike(likeService.isLike(id, currentUser.getUserId()));
+                FollowDTO followDTO = followService.getByFromToUser(currentUser.getUserId(), articlePo.getCreateUser(), false);
+                if (followDTO != null) {
+                    articleCountDTO.setIsFollow(true);
+                }
+            }
         }
 
         return articleCountDTO;
@@ -764,6 +786,7 @@ public class ArticleServiceImpl implements ArticleService {
             return;
         }
         articleHtmlRedisCache.evict(articleId);
+        articleCountRedisCache.evict(articleId);
         ArticlePo po = articlePoMapper.selectByPrimaryKey(articleId);
         if (po == null || Boolean.TRUE.equals(po.getIsDeleted())) {
             articleStaticHtmlPublisher.unpublish(articleId);
