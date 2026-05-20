@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liang.bbs.article.persistence.mapper.CommentPoMapper">
   <resultMap id="BaseResultMap" type="com.liang.bbs.article.persistence.entity.CommentPo">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="pre_id" jdbcType="INTEGER" property="preId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pre_id" jdbcType="BIGINT" property="preId" />
     <result column="content" jdbcType="VARCHAR" property="content" />
     <result column="article_id" jdbcType="INTEGER" property="articleId" />
     <result column="state" jdbcType="BIT" property="state" />
@@ -88,15 +88,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from fs_comment
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from fs_comment
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.liang.bbs.article.persistence.entity.CommentPoExample">
     delete from fs_comment
@@ -108,7 +108,7 @@
     insert into fs_comment (pre_id, content, article_id, 
       `state`, is_deleted, comment_user, 
       create_time, update_time)
-    values (#{preId,jdbcType=INTEGER}, #{content,jdbcType=VARCHAR}, #{articleId,jdbcType=INTEGER}, 
+    values (#{preId,jdbcType=BIGINT}, #{content,jdbcType=VARCHAR}, #{articleId,jdbcType=INTEGER}, 
       #{state,jdbcType=BIT}, #{isDeleted,jdbcType=BIT}, #{commentUser,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
@@ -142,7 +142,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="preId != null">
-        #{preId,jdbcType=INTEGER},
+        #{preId,jdbcType=BIGINT},
       </if>
       <if test="content != null">
         #{content,jdbcType=VARCHAR},
@@ -177,10 +177,10 @@
     update fs_comment
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.preId != null">
-        pre_id = #{record.preId,jdbcType=INTEGER},
+        pre_id = #{record.preId,jdbcType=BIGINT},
       </if>
       <if test="record.content != null">
         content = #{record.content,jdbcType=VARCHAR},
@@ -210,8 +210,8 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update fs_comment
-    set id = #{record.id,jdbcType=INTEGER},
-      pre_id = #{record.preId,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
+      pre_id = #{record.preId,jdbcType=BIGINT},
       content = #{record.content,jdbcType=VARCHAR},
       article_id = #{record.articleId,jdbcType=INTEGER},
       `state` = #{record.state,jdbcType=BIT},
@@ -227,7 +227,7 @@
     update fs_comment
     <set>
       <if test="preId != null">
-        pre_id = #{preId,jdbcType=INTEGER},
+        pre_id = #{preId,jdbcType=BIGINT},
       </if>
       <if test="content != null">
         content = #{content,jdbcType=VARCHAR},
@@ -251,11 +251,11 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liang.bbs.article.persistence.entity.CommentPo">
     update fs_comment
-    set pre_id = #{preId,jdbcType=INTEGER},
+    set pre_id = #{preId,jdbcType=BIGINT},
       content = #{content,jdbcType=VARCHAR},
       article_id = #{articleId,jdbcType=INTEGER},
       `state` = #{state,jdbcType=BIT},
@@ -263,6 +263,6 @@
       comment_user = #{commentUser,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

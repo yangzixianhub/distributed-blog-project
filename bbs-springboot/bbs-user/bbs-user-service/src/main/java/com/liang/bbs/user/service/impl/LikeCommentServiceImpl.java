@@ -42,22 +42,22 @@ public class LikeCommentServiceImpl implements LikeCommentService {
     }
 
     @Override
-    public Long getLikeCountCommentId(Integer commentId) {
+    public Long getLikeCountCommentId(Long commentId) {
         return likeCacheCoordinator.getCount(LikeTargetType.COMMENT, commentId, commentLikeStateRepository);
     }
 
     @Override
-    public Boolean isLike(Integer commentId, Long userId) {
+    public Boolean isLike(Long commentId, Long userId) {
         return likeCacheCoordinator.isLiked(LikeTargetType.COMMENT, commentId, userId, commentLikeStateRepository);
     }
 
     @Override
-    public Boolean updateLikeCommentState(Integer commentId, UserSsoDTO currentUser) {
+    public Boolean updateLikeCommentState(Long commentId, UserSsoDTO currentUser) {
         return likeCacheCoordinator.toggle(LikeTargetType.COMMENT, commentId, currentUser.getUserId(), commentLikeStateRepository);
     }
 
     @Override
-    public LikeCommentDTO getByCommentIdUserId(Integer commentId, Long userId) {
+    public LikeCommentDTO getByCommentIdUserId(Long commentId, Long userId) {
         LikeCommentPoExample example = new LikeCommentPoExample();
         example.createCriteria().andCommentIdEqualTo(commentId).andLikeUserEqualTo(userId);
         List<LikeCommentDTO> likeCommentDTOS = LikeCommentMS.INSTANCE.toDTO(likeCommentPoMapper.selectByExample(example));

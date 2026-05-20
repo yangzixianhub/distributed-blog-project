@@ -6,9 +6,6 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
 
-/**
- * @date 2022/5/5 18:43
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UserForumDTO extends UserListDTO implements Serializable {

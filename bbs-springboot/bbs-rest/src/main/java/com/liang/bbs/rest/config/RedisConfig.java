@@ -12,8 +12,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * 配置redis序列化 如果不配置，无法获取redis正常编码的值
- *
- * @date 2021-05-10 21:16
  */
 @Configuration
 public class RedisConfig {

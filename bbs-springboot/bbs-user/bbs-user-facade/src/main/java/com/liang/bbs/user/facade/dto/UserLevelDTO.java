@@ -5,9 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * @date 2022/5/20 15:22
- */
 @Data
 public class UserLevelDTO implements Serializable {
     /**

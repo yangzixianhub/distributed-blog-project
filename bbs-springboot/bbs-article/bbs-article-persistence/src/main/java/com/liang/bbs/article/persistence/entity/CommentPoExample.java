@@ -173,52 +173,52 @@ public class CommentPoExample {
             return (Criteria) this;
         }
 
-        public Criteria andIdEqualTo(Integer value) {
+        public Criteria andIdEqualTo(Long value) {
             addCriterion("id =", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotEqualTo(Integer value) {
+        public Criteria andIdNotEqualTo(Long value) {
             addCriterion("id <>", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThan(Integer value) {
+        public Criteria andIdGreaterThan(Long value) {
             addCriterion("id >", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andIdGreaterThanOrEqualTo(Long value) {
             addCriterion("id >=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThan(Integer value) {
+        public Criteria andIdLessThan(Long value) {
             addCriterion("id <", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdLessThanOrEqualTo(Integer value) {
+        public Criteria andIdLessThanOrEqualTo(Long value) {
             addCriterion("id <=", value, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdIn(List<Integer> values) {
+        public Criteria andIdIn(List<Long> values) {
             addCriterion("id in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotIn(List<Integer> values) {
+        public Criteria andIdNotIn(List<Long> values) {
             addCriterion("id not in", values, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdBetween(Integer value1, Integer value2) {
+        public Criteria andIdBetween(Long value1, Long value2) {
             addCriterion("id between", value1, value2, "id");
             return (Criteria) this;
         }
 
-        public Criteria andIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andIdNotBetween(Long value1, Long value2) {
             addCriterion("id not between", value1, value2, "id");
             return (Criteria) this;
         }
@@ -233,52 +233,52 @@ public class CommentPoExample {
             return (Criteria) this;
         }
 
-        public Criteria andPreIdEqualTo(Integer value) {
+        public Criteria andPreIdEqualTo(Long value) {
             addCriterion("pre_id =", value, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdNotEqualTo(Integer value) {
+        public Criteria andPreIdNotEqualTo(Long value) {
             addCriterion("pre_id <>", value, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdGreaterThan(Integer value) {
+        public Criteria andPreIdGreaterThan(Long value) {
             addCriterion("pre_id >", value, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdGreaterThanOrEqualTo(Integer value) {
+        public Criteria andPreIdGreaterThanOrEqualTo(Long value) {
             addCriterion("pre_id >=", value, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdLessThan(Integer value) {
+        public Criteria andPreIdLessThan(Long value) {
             addCriterion("pre_id <", value, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdLessThanOrEqualTo(Integer value) {
+        public Criteria andPreIdLessThanOrEqualTo(Long value) {
             addCriterion("pre_id <=", value, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdIn(List<Integer> values) {
+        public Criteria andPreIdIn(List<Long> values) {
             addCriterion("pre_id in", values, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdNotIn(List<Integer> values) {
+        public Criteria andPreIdNotIn(List<Long> values) {
             addCriterion("pre_id not in", values, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdBetween(Integer value1, Integer value2) {
+        public Criteria andPreIdBetween(Long value1, Long value2) {
             addCriterion("pre_id between", value1, value2, "preId");
             return (Criteria) this;
         }
 
-        public Criteria andPreIdNotBetween(Integer value1, Integer value2) {
+        public Criteria andPreIdNotBetween(Long value1, Long value2) {
             addCriterion("pre_id not between", value1, value2, "preId");
             return (Criteria) this;
         }

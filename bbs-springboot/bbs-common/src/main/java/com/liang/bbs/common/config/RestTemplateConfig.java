@@ -16,8 +16,6 @@ import org.springframework.web.client.RestTemplate;
 
 /**
  * spring用RestTemplate，代替之前的HttpClient
- *
- * @date 2021-04-21 20:32
  */
 @Configuration
 public class RestTemplateConfig {

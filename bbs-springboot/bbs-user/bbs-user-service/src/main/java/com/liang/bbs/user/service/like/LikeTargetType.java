@@ -12,11 +12,11 @@ public enum LikeTargetType {
         this.keyPrefix = keyPrefix;
     }
 
-    public String countKey(Integer targetId) {
+    public String countKey(Long targetId) {
         return keyPrefix + "count:" + targetId;
     }
 
-    public String stateKey(Integer targetId) {
+    public String stateKey(Long targetId) {
         return keyPrefix + "state:" + targetId;
     }
 

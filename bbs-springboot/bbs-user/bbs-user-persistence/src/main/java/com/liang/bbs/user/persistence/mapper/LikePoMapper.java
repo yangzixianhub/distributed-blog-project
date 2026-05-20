@@ -29,7 +29,7 @@ public interface LikePoMapper {
      * @param id
      * @return
      */
-    int deleteByPrimaryKey(Integer id);
+    int deleteByPrimaryKey(Long id);
 
     /**
      * insert
@@ -61,7 +61,7 @@ public interface LikePoMapper {
      * @param id
      * @return
      */
-    LikePo selectByPrimaryKey(Integer id);
+    LikePo selectByPrimaryKey(Long id);
 
     /**
      * updateByExampleSelective

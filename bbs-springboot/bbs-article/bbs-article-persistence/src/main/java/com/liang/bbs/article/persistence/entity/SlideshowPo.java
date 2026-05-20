@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 /**
  * 对应数据表为：fs_slideshow
- * 
- * @date 2023/02/01 15:32
  */
 @Data
 @AllArgsConstructor

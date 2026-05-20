@@ -79,7 +79,7 @@ public class LikeServiceImpl implements LikeService {
     }
 
     @Override
-    public LikeDTO getById(Integer id) {
+    public LikeDTO getById(Long id) {
         return LikeMS.INSTANCE.toDTO(likePoMapper.selectByPrimaryKey(id));
     }
 
@@ -95,19 +95,19 @@ public class LikeServiceImpl implements LikeService {
     public Long getLikeCountArticle(List<Integer> articleIds) {
         long count = 0L;
         for (Integer articleId : articleIds) {
-            count += likeCacheCoordinator.getCount(LikeTargetType.ARTICLE, articleId, articleLikeStateRepository);
+            count += likeCacheCoordinator.getCount(LikeTargetType.ARTICLE, articleId.longValue(), articleLikeStateRepository);
         }
         return count;
     }
 
     @Override
     public Boolean isLike(Integer articleId, Long userId) {
-        return likeCacheCoordinator.isLiked(LikeTargetType.ARTICLE, articleId, userId, articleLikeStateRepository);
+        return likeCacheCoordinator.isLiked(LikeTargetType.ARTICLE, articleId.longValue(), userId, articleLikeStateRepository);
     }
 
     @Override
     public Boolean updateLikeState(Integer articleId, UserSsoDTO currentUser) {
-        return likeCacheCoordinator.toggle(LikeTargetType.ARTICLE, articleId, currentUser.getUserId(), articleLikeStateRepository);
+        return likeCacheCoordinator.toggle(LikeTargetType.ARTICLE, articleId.longValue(), currentUser.getUserId(), articleLikeStateRepository);
     }
 
     @Override
