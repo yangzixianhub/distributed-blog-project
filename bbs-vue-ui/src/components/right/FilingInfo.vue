@@ -13,7 +13,7 @@
       <a-col class="about_us" :span="8" @click="routerAbout">{{ $t("common.about") }}</a-col>
     </a-row>
     <a-row>
-      <a href="/" target="_blank">社区论坛</a>
+      <a href="/" target="_blank">南生论坛</a>
     </a-row>
   </div>
 </template>
@@ -21,31 +21,30 @@
 <script>
 export default {
   name: "FilingInfo",
-
   methods: {
-    // 路由到Book说明页面
     routerBook() {
-      window.open('/book', '_blank');
+      window.open("/book", "_blank");
     },
-
-    // 点击跳转到 关于我们 页面
     routerAbout() {
-      window.open('/about', '_blank');
+      window.open("/about", "_blank");
     }
   }
-}
+};
 </script>
 
 <style scoped>
 .div-content, a {
   font-size: 12px;
   line-height: 2;
-  color: #909090;
+  color: #7d8ca6;
   cursor: pointer;
 }
 
-.user_agreement:hover, .user_guidance:hover, .links:hover, .about_us:hover, a:hover {
-  color: #13c2c2;
+.div-content {
+  padding: 8px 6px;
 }
 
+.user_agreement:hover, .user_guidance:hover, .links:hover, .about_us:hover, a:hover {
+  color: #1869ff;
+}
 </style>

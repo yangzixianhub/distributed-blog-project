@@ -1,4 +1,4 @@
-﻿package com.liang.bbs.user.service.impl;
+package com.liang.bbs.user.service.impl;
 
 import com.liang.bbs.user.facade.dto.LikeCommentDTO;
 import com.liang.bbs.user.facade.server.LikeCommentService;

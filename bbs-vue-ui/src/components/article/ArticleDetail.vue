@@ -29,9 +29,6 @@
               <span class="views-count">
                {{ $t("common.read") + ' ' + data.pv }}
             </span>
-              <span v-if="data.staticHtmlUrl" style="margin-left: 12px;">
-                <a :href="data.staticHtmlUrl" target="_blank" rel="noopener noreferrer">静态页（高并发读）</a>
-              </span>
             </div>
           </div>
         </div>
@@ -68,9 +65,6 @@
             previewBackground="#fff"
             codeStyle="obsidian"
             :xssOptions=false></mavon-editor>
-      </div>
-      <div class="article-content article-html-fallback" style="width: 100%" v-else-if="data.html">
-        <div class="markdown-body" v-html="data.html"></div>
       </div>
     </div>
     <CustomEmpty v-else/>

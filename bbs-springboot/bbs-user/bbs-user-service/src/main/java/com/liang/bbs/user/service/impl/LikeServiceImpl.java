@@ -1,4 +1,4 @@
-﻿package com.liang.bbs.user.service.impl;
+package com.liang.bbs.user.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;

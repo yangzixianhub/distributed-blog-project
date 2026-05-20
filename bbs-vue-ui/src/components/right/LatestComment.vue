@@ -1,7 +1,9 @@
 <template>
   <div id="latest-comment" v-if="data.length !== 0">
-    <header class="user-block-header">{{ $t("common.latestComment") }}</header>
-    <a-divider style="margin: 10px 0 0 0;"/>
+    <header class="user-block-header">
+      <span class="block-kicker">FRESH TALK</span>
+      <span class="block-title">{{ $t("common.latestComment") }}</span>
+    </header>
     <a-list item-layout="horizontal" :data-source="data" :split="false">
       <a-list-item slot="renderItem" slot-scope="item, index" @click="routerArticleDetail(item.articleId, item.id)">
         <a-list-item-meta>
@@ -21,10 +23,9 @@ export default {
   data() {
     return {
       data: [],
-      params: {currentPage: 1, pageSize: 6},
+      params: {currentPage: 1, pageSize: 6}
     };
   },
-
   methods: {
     getLatestComment(params) {
       commentService.getLatestComment(params)
@@ -35,34 +36,50 @@ export default {
             this.$message.error(err.desc);
           });
     },
-
-    // 路由到文章详情页面（某一条评论处）
     routerArticleDetail(articleId, commentId) {
       let routeData = this.$router.resolve("/detail/" + articleId + "#reply-" + commentId);
-      window.open(routeData.href, '_blank');
-    },
+      window.open(routeData.href, "_blank");
+    }
   },
-
   mounted() {
     this.getLatestComment(this.params);
-  },
-
+  }
 };
 </script>
 
 <style scoped>
 #latest-comment {
-  padding-bottom: 10px;
+  padding: 18px 0 12px;
 }
 
 #latest-comment .user-block-header {
-  padding: 15px 10px 0 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 18px 14px;
+}
+
+#latest-comment .block-kicker {
+  color: #13c2c2;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+#latest-comment .block-title {
+  color: #172033;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 #latest-comment .ant-list-item-meta {
   display: flex;
-  align-items: center;
-  padding: 0 15px;
+  align-items: flex-start;
+  padding: 0 18px;
+}
+
+#latest-comment .ant-list-item-meta-avatar .ant-avatar {
+  box-shadow: 0 10px 22px rgba(24, 48, 87, 0.1);
 }
 
 #latest-comment .ant-list-item-meta-title > a, .ant-list-item-meta-description {
@@ -71,15 +88,14 @@ export default {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
-  /* 实现长英文字母自动换行*/
   word-break: break-all;
 }
 
 #latest-comment .ant-list-item-meta-description {
   font-weight: 500;
-  font-size: 10px;
-  color: #909090;
-  line-height: 22px;
+  font-size: 12px;
+  color: #72829d;
+  line-height: 1.9;
 }
 
 #latest-comment .ant-list-item, .full-list {
@@ -87,10 +103,6 @@ export default {
 }
 
 #latest-comment .ant-list-item:hover {
-  background: #8b87870a;
-}
-
-#latest-comment .full-list:hover {
-  background: #8b87870a;
+  background: rgba(19, 194, 194, 0.05);
 }
 </style>

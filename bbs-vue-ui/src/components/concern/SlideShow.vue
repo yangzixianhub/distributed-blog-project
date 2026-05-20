@@ -1,68 +1,102 @@
 <template>
-  <!-- autoplay 自动切换的同时滚动页面有重影 -->
-  <a-carousel class="slideshow-content" arrows>
-    <div
-        slot="prevArrow"
-        slot-scope="props"
-        class="custom-slick-arrow"
-        style="left: 10px;zIndex: 1"
-    >
-      <a-icon type="left-circle"/>
-    </div>
-    <div slot="nextArrow" slot-scope="props" class="custom-slick-arrow" style="right: 10px">
-      <a-icon type="right-circle"/>
-    </div>
-    <img :src="item.image" alt="轮播图" v-for="item of carouselData"/>
-  </a-carousel>
+  <div class="slideshow-shell">
+    <a-carousel class="slideshow-content" arrows autoplay>
+      <div
+          slot="prevArrow"
+          slot-scope="props"
+          class="custom-slick-arrow"
+          style="left: 18px; z-index: 1"
+      >
+        <a-icon type="left"/>
+      </div>
+      <div slot="nextArrow" slot-scope="props" class="custom-slick-arrow" style="right: 18px">
+        <a-icon type="right"/>
+      </div>
+      <div class="slide-item" v-for="item of carouselData" :key="item.id || item.image">
+        <img :src="item.image" alt="slideshow"/>
+      </div>
+    </a-carousel>
+  </div>
 </template>
 
 <script>
-  import carouselService from "@/service/carouselService";
+import carouselService from "@/service/carouselService";
 
-  export default {
-    data() {
-      return {
-        carouselData: [],
-        finish: false,
-      }
-    },
-
-    methods: {
-      // 获取走马灯
-      getCarouselList() {
-        carouselService.getCarouselList()
-            .then(res => {
-              this.carouselData = res.data;
-              this.finish = true;
-            })
-            .catch(err => {
-              this.finish = true;
-              this.$message.error(err.desc);
-            });
-      },
-    },
-
-    mounted() {
-      this.getCarouselList();
+export default {
+  data() {
+    return {
+      carouselData: [],
+      finish: false
+    };
+  },
+  methods: {
+    getCarouselList() {
+      carouselService.getCarouselList()
+          .then(res => {
+            this.carouselData = res.data;
+            this.finish = true;
+          })
+          .catch(err => {
+            this.finish = true;
+            this.$message.error(err.desc);
+          });
     }
-
-  };
+  },
+  mounted() {
+    this.getCarouselList();
+  }
+};
 </script>
 
 <style scoped>
-  .ant-carousel >>> .custom-slick-arrow {
-    width: 50px;
-    height: 50px;
-    font-size: 50px;
-    color: #fff;
-    opacity: 0.3;
-  }
+.slideshow-shell {
+  position: relative;
+}
 
-  .ant-carousel >>> .custom-slick-arrow:before {
-    display: none;
-  }
+.slide-item {
+  height: 320px;
+  overflow: hidden;
+  border-radius: 28px;
+}
 
-  .ant-carousel >>> .custom-slick-arrow:hover {
-    opacity: 0.5;
+.slide-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+}
+
+.ant-carousel >>> .slick-slide {
+  border-radius: 28px;
+  overflow: hidden;
+}
+
+.ant-carousel >>> .custom-slick-arrow {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  font-size: 16px;
+  color: #fff;
+  border-radius: 50%;
+  background: rgba(20, 32, 52, 0.36);
+  backdrop-filter: blur(8px);
+  opacity: 1;
+}
+
+.ant-carousel >>> .custom-slick-arrow:before {
+  display: none;
+}
+
+.ant-carousel >>> .custom-slick-arrow:hover {
+  background: rgba(20, 32, 52, 0.6);
+}
+
+@media screen and (max-width: 900px) {
+  .slide-item {
+    height: 220px;
+    border-radius: 22px;
   }
+}
 </style>

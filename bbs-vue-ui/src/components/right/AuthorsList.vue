@@ -1,7 +1,9 @@
 <template>
   <div id="authors-list" v-if="data.length !== 0">
-    <header class="user-block-header">🎖️ {{ $t("common.authorList") }}</header>
-    <a-divider style="margin: 10px 0 0 0;"/>
+    <header class="user-block-header">
+      <span class="block-kicker">CREATORS</span>
+      <span class="block-title">{{ $t("common.authorList") }}</span>
+    </header>
     <a-list item-layout="horizontal" :data-source="data" :split="false">
       <a-list-item slot="renderItem" slot-scope="item, index" @click="routerUserCenter(item.id)">
         <a-list-item-meta :description="item.intro">
@@ -14,8 +16,7 @@
         </a-list-item-meta>
       </a-list-item>
     </a-list>
-    <a-divider style="margin: 0;"/>
-    <div class="full-list" @click="recommended" style="text-align: center; padding: 10px 0;">
+    <div class="full-list" @click="recommended">
       <a>
         <span>{{ $t("common.fullList") }}</span>
         <a-icon type="right"/>
@@ -32,10 +33,9 @@ export default {
     return {
       data: [],
       params: {currentPage: 1, pageSize: 3},
-      finish: false,
+      finish: false
     };
   },
-
   methods: {
     getHotAuthorsList(params) {
       userService.getHotAuthorsList(params)
@@ -48,35 +48,48 @@ export default {
             this.$message.error(err.desc);
           });
     },
-
     recommended() {
       let routeData = this.$router.resolve("/recommended");
-      window.open(routeData.href, '_blank');
+      window.open(routeData.href, "_blank");
     },
-
-    // 路由到用户中心页面
     routerUserCenter(userId) {
       let routeData = this.$router.resolve("/user/" + userId);
-      window.open(routeData.href, '_blank');
+      window.open(routeData.href, "_blank");
     },
-
-    // 路由到Book说明页面
     routerBook() {
       let routeData = this.$router.resolve("/book");
-      window.open(routeData.href, '_blank');
-    },
+      window.open(routeData.href, "_blank");
+    }
   },
-
   mounted() {
     this.getHotAuthorsList(this.params);
-  },
-
+  }
 };
 </script>
 
 <style scoped>
+#authors-list {
+  padding: 18px 0 12px;
+}
+
 #authors-list .user-block-header {
-  padding: 15px 10px 0 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 18px 14px;
+}
+
+#authors-list .block-kicker {
+  color: #1869ff;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+
+#authors-list .block-title {
+  color: #172033;
+  font-size: 18px;
+  font-weight: 800;
 }
 
 #authors-list .username {
@@ -87,7 +100,11 @@ export default {
 #authors-list .ant-list-item-meta {
   display: flex;
   align-items: center;
-  padding: 0 15px;
+  padding: 0 18px;
+}
+
+#authors-list .ant-list-item-meta-avatar .ant-avatar {
+  box-shadow: 0 10px 22px rgba(24, 48, 87, 0.12);
 }
 
 #authors-list .ant-list-item-meta-title > a, .ant-list-item-meta-description {
@@ -99,10 +116,10 @@ export default {
 }
 
 #authors-list .ant-list-item-meta-description {
-  font-weight: 100;
-  font-size: 10px;
-  color: #909090;
-  line-height: 22px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #7b8ba6;
+  line-height: 1.8;
 }
 
 #authors-list .ant-list-item, .full-list {
@@ -110,10 +127,17 @@ export default {
 }
 
 #authors-list .ant-list-item:hover {
-  background: #8b87870a;
+  background: rgba(24, 105, 255, 0.04);
+}
+
+#authors-list .full-list {
+  margin: 10px 18px 0;
+  padding: 12px 0;
+  text-align: center;
+  border-top: 1px solid rgba(117, 136, 167, 0.12);
 }
 
 #authors-list .full-list:hover {
-  background: #8b87870a;
+  color: #1869ff;
 }
 </style>
