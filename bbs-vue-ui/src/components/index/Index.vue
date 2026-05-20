@@ -13,30 +13,6 @@
               <h1 class="hero-title">{{ heroTitle }}</h1>
               <p class="hero-subtitle">{{ heroSubtitle }}</p>
             </div>
-            <div v-if="!$store.state.collapsed" class="hero-art">
-              <div class="hero-art-core">
-                <div class="hero-orbit hero-orbit-one"></div>
-                <div class="hero-orbit hero-orbit-two"></div>
-                <div class="hero-orbit hero-orbit-three"></div>
-                <div class="hero-node hero-node-one"></div>
-                <div class="hero-node hero-node-two"></div>
-                <div class="hero-node hero-node-three"></div>
-                <div class="hero-node hero-node-four"></div>
-                <div class="hero-center-card">
-                  <span class="hero-center-kicker">DS BLOG</span>
-                  <strong>Distributed</strong>
-                  <span>Blog System</span>
-                </div>
-              </div>
-              <div class="hero-art-panel hero-art-panel-top">
-                <span>Cluster</span>
-                <strong>Spring Boot</strong>
-              </div>
-              <div class="hero-art-panel hero-art-panel-bottom">
-                <span>Search</span>
-                <strong>Elastic + Redis</strong>
-              </div>
-            </div>
             <div class="hero-stats">
               <div class="hero-stat">
                 <span class="hero-stat-value">{{ listData.length }}</span>
@@ -55,13 +31,6 @@
               <div v-else>
                 <div v-if="!isSearchMode() && !$store.state.collapsed && $store.state.isCarousel" class="hero-carousel-wrap">
                   <SlideShow class="hero-carousel"/>
-                </div>
-                <div class="article-check-left-buttons"
-                     :style="$store.state.collapsedMax ? '' : 'right:70px'"
-                     v-if="$store.state.isManage">
-                  <ArticleCheck
-                      ref="child"
-                      @initArticles="initArticles"/>
                 </div>
                 <section class="feed-shell section-card">
                   <div class="feed-heading">
@@ -115,7 +84,6 @@ import FooterButtons from "@/components/utils/FooterButtons";
 import CustomEmpty from "@/components/utils/CustomEmpty";
 import LatestComment from "@/components/right/LatestComment";
 import FriendDonate from "@/components/right/FriendDonate";
-import ArticleCheck from "@/components/article/ArticleCheck";
 
 export default {
   components: {
@@ -128,8 +96,7 @@ export default {
     FilingInfo,
     CustomEmpty,
     LatestComment,
-    FriendDonate,
-    ArticleCheck
+    FriendDonate
   },
   data() {
     return {
@@ -144,25 +111,25 @@ export default {
   },
   computed: {
     heroKicker() {
-      return this.isSearchMode() ? "SEARCH MODE" : "Distributed Software";
+      return this.isSearchMode() ? "搜索结果" : "记录生活与创作";
     },
     heroTitle() {
       if (this.isSearchMode()) {
-        return this.searchContent ? `围绕 “${this.searchContent}” 的内容结果` : "按时间筛选的精选内容";
+        return this.searchContent ? `与“${this.searchContent}”相关的内容` : "按时间筛选的搜索结果";
       }
-      return "社区首页";
+      return "把技术、生活和灵感都写进日常";
     },
     heroSubtitle() {
       if (this.isSearchMode()) {
-        return "搜索结果会优先展示更相关、更活跃的讨论内容，方便快速定位文章与评论。";
+        return "把更相关、更有价值的文章与讨论整理出来，方便你快速找到真正想看的内容。";
       }
-      return "文章、作者和评论流组织版面，阅读起来更轻盈。";
+      return "这里可以有技术、随笔、读书、项目与心情。首页不必太冷，也可以像一本被认真整理过的生活手账。";
     },
     statPrimaryLabel() {
-      return this.isSearchMode() ? "当前结果数" : "当前已加载文章";
+      return this.isSearchMode() ? "当前结果数" : "已加载文章";
     },
     statSecondaryLabel() {
-      return this.isSearchMode() ? "筛选范围" : "社区在线状态";
+      return this.isSearchMode() ? "筛选范围" : "陪伴状态";
     },
     timeRangeLabel() {
       const map = {
@@ -182,9 +149,9 @@ export default {
     },
     feedTip() {
       if (this.$store.state.isManage) {
-        return "支持管理审核与置顶操作";
+        return "支持管理置顶与内容整理";
       }
-      return this.isSearchMode() ? "按相关性与时间综合排序" : "发现最新文章与热门讨论";
+      return this.isSearchMode() ? "按相关性与时间综合排序" : "看看最近有哪些值得读的内容";
     }
   },
   methods: {
@@ -194,15 +161,7 @@ export default {
         this.getSearchArticleList(this.params, true);
         return;
       }
-      if (this.$store.state.articleCheck === "enable") {
-        this.getArticleList(this.params, true);
-      }
-      if (this.$store.state.articleCheck === "pendingReview") {
-        this.getPendingReviewArticles(this.params, true);
-      }
-      if (this.$store.state.articleCheck === "disabled") {
-        this.getDisabledArticles(this.params, true);
-      }
+      this.getArticleList(this.params, true);
     },
     initArticles() {
       this.$nextTick(() => {
@@ -217,15 +176,7 @@ export default {
         this.getSearchArticleList(this.params);
         return;
       }
-      if (this.$store.state.articleCheck === "enable") {
-        this.getArticleList(this.params);
-      }
-      if (this.$store.state.articleCheck === "pendingReview") {
-        this.getPendingReviewArticles(this.params);
-      }
-      if (this.$store.state.articleCheck === "disabled") {
-        this.getDisabledArticles(this.params);
-      }
+      this.getArticleList(this.params);
     },
     getArticleList(params, isLoadMore) {
       if (!isLoadMore) {
@@ -269,48 +220,6 @@ export default {
             this.$message.error(err.desc);
           });
     },
-    getPendingReviewArticles(params, isLoadMore) {
-      if (!isLoadMore) {
-        this.params.currentPage = 1;
-      }
-      this.finish = false;
-      articleService.getPendingReviewArticles(params)
-          .then(res => {
-            if (isLoadMore) {
-              this.listData = this.listData.concat(res.data.list);
-              this.hasNext = res.data.list.length !== 0;
-            } else {
-              this.listData = res.data.list;
-            }
-            this.spinning = false;
-            this.finish = true;
-          })
-          .catch(err => {
-            this.finish = true;
-            this.$message.error(err.desc);
-          });
-    },
-    getDisabledArticles(params, isLoadMore) {
-      if (!isLoadMore) {
-        this.params.currentPage = 1;
-      }
-      this.finish = false;
-      articleService.getDisabledArticles(params)
-          .then(res => {
-            if (isLoadMore) {
-              this.listData = this.listData.concat(res.data.list);
-              this.hasNext = res.data.list.length !== 0;
-            } else {
-              this.listData = res.data.list;
-            }
-            this.spinning = false;
-            this.finish = true;
-          })
-          .catch(err => {
-            this.finish = true;
-            this.$message.error(err.desc);
-          });
-    },
     refresh() {
       this.params = {currentPage: 1, pageSize: 10};
       if (this.isSearchMode()) {
@@ -326,9 +235,6 @@ export default {
     },
     updateData(tempData) {
       this.listData = tempData;
-      if (this.$store.state.isManage) {
-        this.$refs.child.getArticleCheckCount();
-      }
     },
     articleTopCallBack() {
       this.$nextTick(() => {
@@ -338,15 +244,7 @@ export default {
         }
       });
 
-      if (this.$store.state.articleCheck === "enable") {
-        this.getArticleList(this.params);
-      }
-      if (this.$store.state.articleCheck === "pendingReview") {
-        this.getPendingReviewArticles(this.params);
-      }
-      if (this.$store.state.articleCheck === "disabled") {
-        this.getDisabledArticles(this.params);
-      }
+      this.getArticleList(this.params);
     }
   },
   mounted() {
@@ -382,20 +280,7 @@ export default {
         this.getSearchArticleList(this.params);
         return;
       }
-      if (this.$store.state.isManage) {
-        if (this.$store.state.articleCheck === "enable") {
-          this.getArticleList(this.params);
-        }
-        if (this.$store.state.articleCheck === "pendingReview") {
-          this.getPendingReviewArticles(this.params);
-        }
-        if (this.$store.state.articleCheck === "disabled") {
-          this.getDisabledArticles(this.params);
-        }
-        this.$refs.child.getArticleCheckCount();
-      } else {
-        this.getArticleList(this.params);
-      }
+      this.getArticleList(this.params);
     }
   }
 };
@@ -406,9 +291,9 @@ export default {
   position: fixed;
   z-index: 999;
   width: 100%;
-  background: rgba(255, 255, 255, 0.72);
-  border-bottom: 1px solid rgba(117, 136, 167, 0.14);
-  box-shadow: 0 10px 40px rgba(18, 33, 62, 0.06);
+  background: rgba(255, 252, 247, 0.78);
+  border-bottom: 1px solid rgba(190, 176, 156, 0.16);
+  box-shadow: 0 10px 34px rgba(91, 74, 49, 0.06);
   backdrop-filter: blur(18px);
 }
 
@@ -442,45 +327,43 @@ export default {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 22px;
   margin-bottom: 24px;
-  min-height: 220px;
-  padding: 28px 34px;
+  min-height: 188px;
+  padding: 24px 30px;
   border-radius: 32px;
-  background:
-      linear-gradient(135deg, rgba(255, 255, 255, 0.96) 0%, rgba(247, 250, 255, 0.96) 52%, rgba(235, 243, 255, 0.98) 100%);
-  box-shadow: 0 24px 64px rgba(20, 45, 86, 0.1);
+  background: linear-gradient(135deg, rgba(255, 251, 244, 0.98) 0%, rgba(249, 245, 238, 0.96) 48%, rgba(242, 247, 238, 0.98) 100%);
+  box-shadow: 0 24px 60px rgba(94, 78, 58, 0.1);
 }
 
 .hero-panel::before {
   content: "";
   position: absolute;
-  inset: auto -40px -80px auto;
-  width: 240px;
-  height: 240px;
+  inset: auto -24px -92px auto;
+  width: 250px;
+  height: 250px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(24, 105, 255, 0.24), transparent 68%);
+  background: radial-gradient(circle, rgba(242, 176, 108, 0.22), transparent 68%);
 }
 
 .hero-panel::after {
   content: "";
   position: absolute;
-  inset: -90px auto auto -50px;
-  width: 200px;
-  height: 200px;
+  inset: -68px auto auto -36px;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(19, 194, 194, 0.16), transparent 70%);
+  background: radial-gradient(circle, rgba(160, 201, 169, 0.22), transparent 72%);
 }
 
 .hero-copy,
-.hero-art,
 .hero-stats {
   position: relative;
   z-index: 1;
 }
 
 .hero-copy {
-  max-width: 760px;
+  max-width: 840px;
 }
 
 .hero-kicker,
@@ -489,31 +372,30 @@ export default {
   align-items: center;
   padding: 7px 14px;
   border-radius: 999px;
-  background: linear-gradient(135deg, rgba(24, 105, 255, 0.12), rgba(19, 194, 194, 0.08));
-  color: #245edb;
+  background: linear-gradient(135deg, rgba(245, 180, 111, 0.18), rgba(160, 201, 169, 0.14));
+  color: #8c5e35;
   font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  letter-spacing: 0.06em;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 .hero-title {
   margin: 14px 0 10px;
   font-family: "HamburgSerial-Xbold", "PingFang SC", "Segoe UI", sans-serif;
-  font-size: 54px;
+  font-size: 48px;
   font-weight: 700;
   letter-spacing: 0.01em;
-  line-height: 1.02;
-  color: #16233d;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+  line-height: 1.06;
+  color: #334232;
 }
 
 .hero-subtitle {
   margin: 0;
-  max-width: 700px;
-  color: #5f708f;
-  line-height: 1.7;
-  font-size: 17px;
+  max-width: 740px;
+  color: #6d7365;
+  line-height: 1.75;
+  font-size: 16px;
   font-weight: 500;
 }
 
@@ -521,143 +403,7 @@ export default {
   align-self: stretch;
   display: flex;
   gap: 14px;
-  min-width: 320px;
-}
-
-.hero-art {
-  position: relative;
-  width: 300px;
   min-width: 300px;
-  height: 180px;
-  margin-left: auto;
-}
-
-.hero-art-core {
-  position: absolute;
-  top: 14px;
-  left: 52px;
-  width: 176px;
-  height: 176px;
-  border-radius: 50%;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.96), rgba(233, 241, 255, 0.86) 58%, rgba(210, 225, 249, 0.18) 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.84), 0 18px 48px rgba(24, 62, 122, 0.16);
-}
-
-.hero-orbit {
-  position: absolute;
-  border: 1px solid rgba(67, 121, 210, 0.18);
-  border-radius: 50%;
-}
-
-.hero-orbit-one {
-  inset: 12px;
-}
-
-.hero-orbit-two {
-  inset: 28px;
-}
-
-.hero-orbit-three {
-  inset: 46px;
-}
-
-.hero-node {
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #13c2c2, #1869ff);
-  box-shadow: 0 8px 18px rgba(24, 105, 255, 0.26);
-}
-
-.hero-node-one {
-  top: 20px;
-  right: 24px;
-}
-
-.hero-node-two {
-  bottom: 24px;
-  right: 18px;
-}
-
-.hero-node-three {
-  bottom: 30px;
-  left: 22px;
-}
-
-.hero-node-four {
-  top: 34px;
-  left: 18px;
-}
-
-.hero-center-card {
-  position: absolute;
-  inset: 50% auto auto 50%;
-  transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  height: 96px;
-  border-radius: 28px;
-  background: linear-gradient(145deg, #17325f, #245edb);
-  color: #fff;
-  box-shadow: 0 18px 34px rgba(27, 68, 139, 0.24);
-}
-
-.hero-center-kicker {
-  font-size: 9px;
-  letter-spacing: 0.16em;
-  opacity: 0.72;
-}
-
-.hero-center-card strong {
-  margin-top: 5px;
-  font-size: 16px;
-  line-height: 1.1;
-}
-
-.hero-center-card span:last-child {
-  margin-top: 2px;
-  font-size: 11px;
-  opacity: 0.84;
-}
-
-.hero-art-panel {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 12px 14px;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.84);
-  border: 1px solid rgba(117, 136, 167, 0.14);
-  box-shadow: 0 16px 36px rgba(20, 45, 86, 0.08);
-  backdrop-filter: blur(10px);
-}
-
-.hero-art-panel span {
-  color: #7d8da8;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-.hero-art-panel strong {
-  color: #16233d;
-  font-size: 15px;
-  line-height: 1.2;
-}
-
-.hero-art-panel-top {
-  top: 0;
-  right: 0;
-}
-
-.hero-art-panel-bottom {
-  right: 10px;
-  bottom: -6px;
 }
 
 .hero-stat {
@@ -666,17 +412,17 @@ export default {
   flex-direction: column;
   justify-content: center;
   min-width: 136px;
-  padding: 20px 20px 18px;
+  padding: 18px 20px 16px;
   border-radius: 24px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(245, 249, 255, 0.95));
-  border: 1px solid rgba(117, 136, 167, 0.15);
-  box-shadow: 0 14px 34px rgba(20, 45, 86, 0.07), inset 0 1px 0 rgba(255, 255, 255, 0.78);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(249, 245, 238, 0.96));
+  border: 1px solid rgba(198, 181, 154, 0.18);
+  box-shadow: 0 14px 34px rgba(112, 95, 71, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .hero-stat-value {
   display: block;
-  color: #15213a;
-  font-size: 38px;
+  color: #364432;
+  font-size: 34px;
   font-weight: 800;
   line-height: 1.2;
 }
@@ -684,7 +430,7 @@ export default {
 .hero-stat-label {
   display: block;
   margin-top: 10px;
-  color: #7d8da8;
+  color: #8a8274;
   font-size: 14px;
   font-weight: 500;
 }
@@ -728,13 +474,13 @@ export default {
 
 .feed-title {
   margin: 10px 0 0;
-  color: #172033;
+  color: #334232;
   font-size: 24px;
   font-weight: 800;
 }
 
 .feed-tip {
-  color: #8a99b4;
+  color: #9a8e7f;
   font-size: 13px;
 }
 
@@ -764,12 +510,6 @@ export default {
     min-height: 0;
   }
 
-  .hero-art {
-    width: 100%;
-    min-width: 0;
-    margin: 8px 0 4px;
-  }
-
   .hero-stats {
     width: 100%;
   }
@@ -782,20 +522,16 @@ export default {
   }
 
   .hero-panel {
-    padding: 24px 20px;
+    padding: 22px 18px;
     margin-bottom: 18px;
   }
 
   .hero-title {
-    font-size: 38px;
+    font-size: 36px;
   }
 
   .hero-subtitle {
     font-size: 15px;
-  }
-
-  .hero-art {
-    display: none;
   }
 
   .main-column {

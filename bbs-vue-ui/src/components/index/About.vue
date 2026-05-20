@@ -4,7 +4,7 @@
       <IndexHeader class="header"/>
       <a-layout-content>
         <main class="about_content" :style="$store.state.collapsed ? 'width: 100%;' : 'width: 800px;'">
-          <div style="background: #fff; margin-bottom: 10px">
+          <div class="about-panel">
             <section class="mission">
               <div class="inner">
                 <div class="mission-content">
@@ -50,7 +50,6 @@ export default {
     position: fixed;
     width: 100%;
     z-index: 999;
-    background: #fff;
     border-bottom: 1px solid #00000021;
   }
 
@@ -65,13 +64,18 @@ export default {
   }
 
   .ant-layout-header {
-    background: #fff;
     height: auto;
     line-height: 2.3;
   }
 
+  .about-panel {
+    margin-bottom: 14px;
+    border-radius: 28px;
+    overflow: hidden;
+  }
+
   .mission {
-    padding: 30px 30px;
+    padding: 38px 36px;
     box-sizing: border-box;
 
     .title {

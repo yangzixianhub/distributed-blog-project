@@ -1,188 +1,247 @@
-<template>
+﻿<template>
   <a-layout>
     <a-layout id="article-detail-index">
-      <IndexHeader class="header"/>
+      <IndexHeader class="header" />
       <a-layout-content>
-        <!-- 解决手机端mavonEditor代码块code布局问题 -->
-        <main class="content" :style="$store.state.collapsed ? 'width: 100%;' : 'width: 100%;max-width: 1100px;'">
+        <main class="content" :class="{ collapsed: $store.state.collapsed }">
           <div class="article-left-buttons">
-            <!-- 左边浮着的那些按钮 -->
             <LeftButtons
-                @articleCommentCountFn="articleCommentCountFn"
-                ref="child"/>
+              ref="child"
+              @articleCommentCountFn="articleCommentCountFn"
+            />
           </div>
-          <a-col :span="$store.state.collapsed ? 24 : 18"
-                 :style="$store.state.collapsed ? '' : 'border-right: 20px solid #f0f2f5'">
-            <!-- 文章详情 -->
-            <ArticleDetail
-                @initLabelIds="initLabelIds"
-                style="background: #fff;"/>
-            <br/>
-            <!-- 文章评论 -->
-            <ArticleComment
-                @refresh="refresh"
-                :articleUserId="userId"
-                :articleCommentCount="articleCommentCount"
-                style="background: #fff"/>
-            <a-row>
-              <a-col :span="24" style="height: 10px;"/>
-            </a-row>
-          </a-col>
-          <a-col v-if="!$store.state.collapsed" :span="6">
-            <!-- 作者板块 -->
-            <AuthorBlock
-                v-if="finishArticleDetail"
-                :userId="userId"
-                style="background: #fff;"/>
-            <a-row>
-              <a-col :span="24" style="height: 10px;"/>
-            </a-row>
-            <!-- 相关文章 -->
-            <RelatArticle
-                v-if="finishArticleDetail"
-                :labelIds="labelIds"
-                style="background: #fff;"/>
-            <a-row>
-              <a-col :span="24" style="height: 10px;"/>
-            </a-row>
-            <!-- 作者榜 -->
-            <AuthorsList style="background: #fff;"/>
-            <a-row>
-              <a-col :span="24" style="height: 10px;"/>
-            </a-row>
-            <!-- 目录 -->
-            <Toc v-if="articleHtml"
-                 :articleHtml="articleHtml"
-                 style="background: #fff;"/>
-            <a-row>
-              <a-col :span="24" style="height: 10px;"/>
-            </a-row>
-            <!-- 备案信息 -->
-            <FilingInfo/>
-          </a-col>
+
+          <section class="detail-shell" :class="{ collapsed: $store.state.collapsed }">
+            <a-col
+              :span="$store.state.collapsed ? 24 : 18"
+              class="main-column"
+            >
+              <div class="reading-card article-card">
+                <ArticleDetail @initLabelIds="initLabelIds" />
+              </div>
+
+              <div class="reading-card comment-card">
+                <ArticleComment
+                  :articleUserId="userId"
+                  :articleCommentCount="articleCommentCount"
+                  @refresh="refresh"
+                />
+              </div>
+            </a-col>
+
+            <a-col v-if="!$store.state.collapsed" :span="6" class="side-column">
+              <div class="side-stack">
+                <div class="side-card" v-if="finishArticleDetail">
+                  <AuthorBlock :userId="userId" />
+                </div>
+
+                <div class="side-card" v-if="finishArticleDetail">
+                  <RelatArticle :labelIds="labelIds" />
+                </div>
+
+                <div class="side-card">
+                  <AuthorsList />
+                </div>
+
+                <div class="side-card" v-if="articleHtml">
+                  <Toc :articleHtml="articleHtml" />
+                </div>
+
+                <div class="side-card filing-card">
+                  <FilingInfo />
+                </div>
+              </div>
+            </a-col>
+          </section>
         </main>
       </a-layout-content>
-      <FooterButtons v-if="!$store.state.collapsed"/>
+      <FooterButtons v-if="!$store.state.collapsed" />
     </a-layout>
   </a-layout>
 </template>
 
 <script>
-  import IndexHeader from "@/components/index/head/IndexHeader";
-  import AuthorsList from "@/components/right/AuthorsList";
-  import FilingInfo from "@/components/right/FilingInfo";
-  import ArticleDetail from "@/components/article/ArticleDetail";
-  import FooterButtons from "@/components/utils/FooterButtons";
-  import LeftButtons from "@/components/article/LeftButtons";
-  import ArticleComment from "@/components/comment/ArticleComment";
-  import AuthorBlock from "@/components/right/AuthorBlock";
-  import RelatArticle from "@/components/right/RelatArticle";
-  import Toc from "@/components/right/MarkdownToc";
+import IndexHeader from "@/components/index/head/IndexHeader";
+import AuthorsList from "@/components/right/AuthorsList";
+import FilingInfo from "@/components/right/FilingInfo";
+import ArticleDetail from "@/components/article/ArticleDetail";
+import FooterButtons from "@/components/utils/FooterButtons";
+import LeftButtons from "@/components/article/LeftButtons";
+import ArticleComment from "@/components/comment/ArticleComment";
+import AuthorBlock from "@/components/right/AuthorBlock";
+import RelatArticle from "@/components/right/RelatArticle";
+import Toc from "@/components/right/MarkdownToc";
 
-  export default {
-    components: {
-      IndexHeader,
-      ArticleDetail,
-      AuthorBlock,
-      AuthorsList,
-      FilingInfo,
-      FooterButtons,
-      LeftButtons,
-      ArticleComment,
-      RelatArticle,
-      Toc
+export default {
+  components: {
+    IndexHeader,
+    ArticleDetail,
+    AuthorBlock,
+    AuthorsList,
+    FilingInfo,
+    FooterButtons,
+    LeftButtons,
+    ArticleComment,
+    RelatArticle,
+    Toc,
+  },
+
+  data() {
+    return {
+      articleHtml: "",
+      finishArticleDetail: false,
+      labelIds: [],
+      userId: 0,
+      articleCommentCount: 0,
+    };
+  },
+
+  methods: {
+    initLabelIds(labelIds, finishArticleDetail, userId, articleHtml) {
+      this.labelIds = labelIds;
+      this.finishArticleDetail = finishArticleDetail;
+      this.userId = userId;
+      this.articleHtml = articleHtml;
     },
 
-    data() {
-      return {
-        articleHtml: '',
-        finishArticleDetail: false,
-        labelIds: [],
-        // 当前文章的作者
-        userId: 0,
-        // 文章总的评论数
-        articleCommentCount: 0,
-      };
+    refresh() {
+      this.$refs.child.getArticleCountById();
     },
 
-    methods: {
-      // 初始化标签等
-      initLabelIds(labelIds, finishArticleDetail, userId, articleHtml) {
-        this.labelIds = labelIds;
-        this.finishArticleDetail = finishArticleDetail;
-        this.userId = userId;
-        this.articleHtml = articleHtml;
-      },
-
-      refresh() {
-        // 获取文章一些统计数据
-        this.$refs.child.getArticleCountById()
-      },
-
-      articleCommentCountFn(commentCount) {
-        this.articleCommentCount = commentCount;
-      }
-    }
-
-  };
+    articleCommentCountFn(commentCount) {
+      this.articleCommentCount = commentCount;
+    },
+  },
+};
 </script>
 
+<style lang="less">
+#article-detail-index {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(213, 238, 225, 0.75), transparent 22%),
+    radial-gradient(circle at top right, rgba(247, 230, 208, 0.72), transparent 28%),
+    linear-gradient(180deg, #f7f3ea 0%, #f5f1e8 45%, #f3efe6 100%);
 
-<style>
-  #article-detail-index .header {
+  .header {
     position: fixed;
     width: 100%;
     z-index: 999;
-    background: #fff;
-    border-bottom: 1px solid #00000021;
+    background: rgba(255, 251, 245, 0.94);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(137, 120, 93, 0.12);
+    box-shadow: 0 14px 40px rgba(146, 128, 103, 0.08);
   }
 
-  #article-detail-index .content {
-    margin-top: 64px;
-  }
-
-  #article-detail-index .ant-layout-header {
+  .ant-layout-header {
     display: flex;
     align-items: center;
     justify-content: center;
+    background: transparent;
+    height: auto;
+    line-height: 2.3;
   }
 
-  #article-detail-index .ant-layout-content {
+  .ant-layout-content {
     display: flex;
     justify-content: center;
   }
 
-  #article-detail-index .article-left-buttons {
-    position: relative;
-    right: 70px;
-    top: 140px;
+  .content {
+    width: 100%;
+    max-width: 1220px;
+    margin-top: 84px;
+    padding: 0 20px 48px;
   }
 
-  #article-detail-index .ant-layout-header {
-    background: #fff;
-    height: auto;
-    line-height: 2.3;
+  .content.collapsed {
+    max-width: 100%;
+    padding: 0 12px 36px;
+  }
+
+  .detail-shell {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(260px, 1fr);
+    gap: 22px;
+    align-items: start;
+  }
+
+  .detail-shell.collapsed {
+    grid-template-columns: 1fr;
+  }
+
+  .main-column,
+  .side-column {
+    width: 100%;
+  }
+
+  .reading-card,
+  .side-card {
+    background: rgba(255, 252, 247, 0.96);
+    border: 1px solid rgba(164, 145, 118, 0.14);
+    border-radius: 28px;
+    box-shadow: 0 18px 45px rgba(154, 136, 110, 0.08);
+    overflow: hidden;
+  }
+
+  .article-card,
+  .comment-card {
+    margin-bottom: 20px;
+  }
+
+  .side-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    position: sticky;
+    top: 92px;
+  }
+
+  .filing-card {
+    background: rgba(255, 250, 243, 0.88);
+  }
+
+  .article-left-buttons {
+    position: fixed;
+    left: max(16px, calc((100vw - 1220px) / 2 - 72px));
+    top: 150px;
+    z-index: 10;
   }
 
   .index-drawer-wrap .ant-drawer-content-wrapper {
     width: 250px !important;
   }
 
-  #components-layout-demo-custom-trigger .trigger {
-    font-size: 18px;
-    line-height: 64px;
-    padding: 0 24px;
-    cursor: pointer;
-    transition: color 0.3s;
+  @media (max-width: 1280px) {
+    .article-left-buttons {
+      left: 10px;
+    }
   }
 
-  #components-layout-demo-custom-trigger .trigger:hover {
-    color: #1890ff;
+  @media (max-width: 1100px) {
+    .detail-shell {
+      grid-template-columns: 1fr;
+    }
+
+    .side-stack {
+      position: static;
+    }
+
+    .article-left-buttons {
+      display: none;
+    }
   }
 
-  #components-layout-demo-custom-trigger .logo {
-    height: 64px;
-    background: rgba(255, 255, 255, 0.2);
-    margin: 0;
+  @media (max-width: 768px) {
+    .content {
+      margin-top: 74px;
+      padding: 0 10px 28px;
+    }
+
+    .reading-card,
+    .side-card {
+      border-radius: 22px;
+    }
   }
+}
 </style>

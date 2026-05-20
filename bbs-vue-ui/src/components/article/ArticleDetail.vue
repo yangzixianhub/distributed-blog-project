@@ -1,377 +1,523 @@
-<template>
-  <div id="article-detail" ref="scrollDiv"
-       :style="$store.state.collapsed ? 'padding: 10px' : 'padding: 20px;'">
-    <div v-if="finish">
-      <div class="article-title">
-        <h1>{{ data.title }}</h1>
-        <!-- 待审核 -->
-        <span class="iconfont icon-pendingReview" v-if="data.state === -1"
-              style="color: #faad14; font-size: 38px;"></span>
-        <!-- 审核拒绝 -->
-        <span class="iconfont icon-reviewRejected" v-if="data.state === 0" style="color: red; font-size: 38px;"></span>
+﻿<template>
+  <div id="article-detail" ref="scrollDiv" :class="{ collapsed: $store.state.collapsed }">
+    <div v-if="finish" class="article-detail-inner">
+      <div class="article-headline">
+        <div class="headline-copy">
+          <h1>{{ data.title }}</h1>
+        </div>
       </div>
-      <div class="article-user">
-        <div class="author-info-box">
-          <a-avatar class="avatar" :src="data.picture ? data.picture : require('@/assets/img/default_avatar.png')"
-                    :size="46" @click="routerUserCenter(data.createUser)"/>
-          <div class="author-name-meta" style="padding-left: 10px;">
-            <div class="author-name">
-              <a target="_blank" class="username" @click="routerUserCenter(data.createUser)">
-                <span class="name" style="font-size: 17px;">{{ data.createUserName }} </span>
-                <img :src="require('@/assets/img/level/' + data.articleCountDTO.level + '.svg')" alt=""
-                     @click.stop="routerBook"/>
-              </a>
-            </div>
-            <div class="meta-box" style="color: #8a919f">
-            <span class="time">
-              {{ data.createTime }}
-            </span>
-              <span class="views-count">
-               {{ $t("common.read") + ' ' + data.pv }}
-            </span>
+
+      <div
+        class="article-user-card"
+        style="display:flex;justify-content:space-between;align-items:center;gap:18px;padding:18px 20px;margin-bottom:8px;background:linear-gradient(135deg, rgba(250,246,238,0.96), rgba(244,239,228,0.88));border:1px solid rgba(166,145,112,0.12);border-radius:22px;"
+      >
+        <div class="author-info-box" style="display:flex;align-items:center;min-width:0;flex:1;">
+          <a-avatar
+            class="avatar"
+            :src="data.picture ? data.picture : require('@/assets/img/default_avatar.png')"
+            :size="56"
+            @click="routerUserCenter(data.createUser)"
+          />
+          <div class="author-identity" style="display:flex;align-items:center;gap:12px;min-width:0;">
+            <img
+              class="level-badge"
+              :src="require('@/assets/img/level/' + data.articleCountDTO.level + '.svg')"
+              alt="level"
+              @click.stop="routerBook"
+            />
+            <div class="author-main" style="min-width:0;padding-left:14px;">
+              <div class="author-name-row" style="display:flex;align-items:center;gap:8px;">
+                <a target="_blank" class="username" @click="routerUserCenter(data.createUser)">
+                  <span class="name" style="font-size:18px;font-weight:600;color:#2b392d;">{{ data.createUserName }}</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
-        <div class="follow-box">
-          <div class="edit" v-if="$store.state.userId === data.createUser">
-            <a-button class="follow-btn" v-if="!data.articleCountDTO.isFollow" @click="routerArticleEdit(data.id)"
-                      :style="{color: $store.state.themeColor, border: '1px solid' + $store.state.themeColor}">
-              {{ $t("common.edit") }}
-            </a-button>
+
+        <div class="article-actions" style="display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-left:auto;">
+          <div class="meta-box" style="display:flex;justify-content:flex-end;">
+            <span
+              class="meta-pill"
+              style="display:inline-flex;align-items:center;min-height:38px;padding:0 14px;border-radius:14px;background:linear-gradient(135deg, #f7e3b5 0%, #f1d291 100%);color:#7b6130;font-size:13px;line-height:1;font-weight:600;border:1px solid rgba(214,177,104,0.42);box-shadow:0 10px 22px rgba(215,181,117,0.2);"
+            >{{ data.createTime }}　{{ $t('common.read') }} {{ data.pv }}</span>
           </div>
-          <div class="follow" v-else>
-            <a-button class="follow-btn" v-if="!data.articleCountDTO.isFollow"
-                      @click="updateFollowState(data.createUser)"
-                      :style="{color: $store.state.themeColor, border: '1px solid' + $store.state.themeColor}">
-              {{ $t("common.follow") }}
-            </a-button>
-            <a-button class="follow-btn-close" v-if="data.articleCountDTO.isFollow"
-                      @click="updateFollowState(data.createUser)">
-              {{ $t("common.haveFollowed") }}
-            </a-button>
+
+          <div class="follow-box">
+            <div class="edit" v-if="$store.state.userId === data.createUser">
+              <a-button
+                v-if="!data.articleCountDTO.isFollow"
+                class="action-btn action-btn-outline"
+                style="min-width:88px;height:38px;border-radius:14px;color:#7b6130;background:linear-gradient(135deg, #f7e3b5 0%, #f1d291 100%);border:1px solid rgba(214,177,104,0.42);box-shadow:0 10px 22px rgba(215,181,117,0.2);font-size:14px;font-weight:600;"
+                @click="routerArticleEdit(data.id)"
+              >
+                {{ $t('common.edit') }}
+              </a-button>
+            </div>
+            <div class="follow" v-else>
+              <a-button
+                v-if="!data.articleCountDTO.isFollow"
+                class="action-btn action-btn-outline"
+                @click="updateFollowState(data.createUser)"
+              >
+                {{ $t('common.follow') }}
+              </a-button>
+              <a-button
+                v-if="data.articleCountDTO.isFollow"
+                class="action-btn action-btn-solid"
+                @click="updateFollowState(data.createUser)"
+              >
+                {{ $t('common.haveFollowed') }}
+              </a-button>
+            </div>
           </div>
         </div>
       </div>
-      <div class="article-titleMap" v-if="data.titleMap">
-        <img :src="data.titleMap" style="width: 100%;"/>
+
+      <div class="article-titleMap" v-if="data.titleMap && showTitleMap">
+        <img :src="data.titleMap" alt="cover" @error="showTitleMap = false" />
       </div>
-      <div class="article-content" style="width: 100%" v-if="data.markdown">
+
+      <div class="article-content" v-if="data.markdown">
         <mavon-editor
-            :value="data.markdown"
-            :subfield="false"
-            defaultOpen="preview"
-            :toolbarsFlag="false"
-            boxShadowStyle="0"
-            previewBackground="#fff"
-            codeStyle="obsidian"
-            :xssOptions=false></mavon-editor>
+          :value="data.markdown"
+          :subfield="false"
+          defaultOpen="preview"
+          :toolbarsFlag="false"
+          boxShadowStyle="0"
+          previewBackground="#fffaf3"
+          codeStyle="obsidian"
+          :xssOptions="false"
+        ></mavon-editor>
       </div>
     </div>
-    <CustomEmpty v-else/>
+    <CustomEmpty v-else />
   </div>
 </template>
 
 <script>
-  import articleService from "@/service/articleService";
-  import userService from "@/service/userService";
-  import CustomEmpty from "@/components/utils/CustomEmpty";
+import articleService from "@/service/articleService";
+import userService from "@/service/userService";
+import CustomEmpty from "@/components/utils/CustomEmpty";
 
-  export default {
-    components: {CustomEmpty},
+export default {
+  components: { CustomEmpty },
 
-    data() {
-      return {
-        finish: false,
-        data: {},
-      };
-    },
+  data() {
+    return {
+      finish: false,
+      data: {},
+      showTitleMap: true,
+    };
+  },
 
-    methods: {
-      // 获取文章详细信息
-      getArticleById() {
-        this.finish = false;
-        articleService.getArticleById({id: this.$route.params.id, isPv: true})
-            .then(res => {
-              this.data = res.data;
-              this.finish = true;
-              // 提取标签id
-              let labelIds = [];
-              res.data.labelDTOS.forEach(label => {
-                labelIds.push(label.id);
-              });
-              this.$emit("initLabelIds", labelIds, this.finish, res.data.createUser, this.$utils.toToc(res.data.html));
-
-              if (res.data.html) {
-                setTimeout(() => {
-                  // 设置标题目录追踪滚动高亮当前标题
-                  this.monitorScrollForTopicHighlight();
-                  // 代码块复制
-                  this.$nextTick(() => {
-                    clearInterval(this.timer);
-                    this.getCodes();
-                  });
-                }, 800);
-              }
-
-            })
-            .catch(err => {
-              this.finish = true;
-              // 没有该文章
-              if (err.code === 4) {
-                this.$router.push({
-                  name: '404',
-                  // 保留当前路径并删除第一个字符，以避免目标 URL 以 `//` 开头。
-                  params: {pathMatch: this.$route.path.substring(1).split('/')},
-                })
-              } else {
-                this.$message.error(err.desc);
-              }
-            });
-      },
-
-      // 设置标题目录追踪滚动高亮当前标题
-      monitorScrollForTopicHighlight() {
-        const toc = document.querySelector('#markdown-toc');
-        if (!toc) return;
-        const articleContent = document.querySelector('.article-content');
-        const topics = articleContent.querySelectorAll('h1,h2,h3,h4,h5,h6'); // 标题
-        const lis = toc.querySelectorAll('li'); // 目录-标题项
-        const removeActive = () => {
-          for (let i = 0; i < lis.length; i++) {
-            lis[i].classList.remove('active');
-          }
-        };
-        // 处理标题内容少，导致高度不足以进入检测区域时，无法高亮的问题
-        const tocClickEventCB = ev => {
-          if (ev.target.nodeName === 'A') {
-            const parentNode = ev.target.parentNode;
-            if (parentNode && parentNode.nodeName === 'LI') {
-              removeActive();
-              parentNode.classList.add('active');
-            }
-          }
-        };
-        toc.addEventListener('click', tocClickEventCB);
-        // 处理带锚点进入页面，底部高度不足以进入检测区域时，无法高亮的问题
-        const hash = location.hash;
-        if (hash) {
-          const activeAnchor = toc.querySelector(`a[href="${hash}"]`);
-          if (!activeAnchor) {
-            lis[0].classList.add('active');
-          } else {
-            const activeAnchorParent = activeAnchor.parentNode;
-            if (activeAnchor) {
-              removeActive();
-              activeAnchorParent.classList.add('active');
-            }
-          }
-        } else {
-          // 解决首次加载时第一个标题和文章title间距太大，未到达预定高度时，目录高亮不正确的问题
-          lis[0].classList.add('active');
-        }
-        // 监听滚动事件，检测标题是否进入/退出检测区域
-        const observer = new IntersectionObserver(
-            entries => {
-              for (const entry of entries) {
-                if (entry.intersectionRatio > 0) {
-                  const anchor = entry.target.firstElementChild;
-                  if (!anchor) return;
-                  const id = anchor.getAttribute('id');
-                  const activeAnchor = toc.querySelector(`a[href="#${id}"]`);
-                  const activeAnchorParent = activeAnchor.parentNode;
-                  if (activeAnchor) {
-                    removeActive();
-                    // 处理上划页面时标题退出检测区域，高亮上一个标题
-                    if (!entry.isIntersecting && entry.intersectionRect.top > 0) {
-                      const preTopic = activeAnchorParent.previousSibling;
-                      if (preTopic) {
-                        preTopic.classList.add('active');
-                        break;
-                      }
-                    }
-                    activeAnchorParent.classList.add('active');
-                  }
-                  // 避免标题高度太小，导致多个标题出现在检测区域，只高亮第一个
-                  break;
-                }
-              }
-            },
-            {
-              rootMargin: '0% 0% -90% 0%', // 把检测区域缩小到顶部的一点点范围(高度的10%)
-              threshold: 0.6,
-            },
-        );
-        Array.prototype.forEach.call(topics, target => {
-          observer.observe(target);
-        });
-        this.$once('hook:beforeDestroy', () => {
-          observer.disconnect();
-          toc.removeEventListener('click', tocClickEventCB);
-        });
-      },
-
-      // 更新关注状态
-      updateFollowState(toUser) {
-        userService.updateFollowState({toUser: toUser})
-            .then(() => {
-              this.getArticleById();
-            })
-            .catch(err => {
-              this.$message.error(err.desc);
-            });
-      },
-
-      // 路由到文章编辑页面
-      routerArticleEdit(articleId) {
-        this.$router.push("/edit/" + articleId);
-      },
-
-      // 路由到用户中心页面
-      routerUserCenter(userId) {
-        let routeData = this.$router.resolve("/user/" + userId);
-        window.open(routeData.href, '_blank');
-      },
-
-      // 路由到Book说明页面
-      routerBook() {
-        let routeData = this.$router.resolve("/book");
-        window.open(routeData.href, '_blank');
-      },
-
-
-      // 为什么要这么写呢？
-      // 是因为mavon-editor需要获取到katex.min.js等文件
-      // 然后又是cdn获取的，所以有些时候请求慢
-      // 导致dom先加载，然后才加载js、css这些mavon-editor所需要的文件
-      // 因此需要写setInterval去等katex.min.js等文件加载完成
-      // 这样才能获取到offsetHeight的问题。
-      // 不然你可以试试去掉这段代码
-      // 你的offsetHeight一直为0，没有代码块序号。
-      getCodes() {
-        this.codes = document.querySelectorAll("pre code");
-        if (this.codes.length > 0) {
-          for (let i = 0; i < this.codes.length; i++) {
-            if (this.codes[i].offsetHeight !== 0) {
-              return this.init();
-            } else {
-              this.timer = setInterval(() => {
-                for (let j = 0; j < this.codes.length; j++) {
-                  if (this.codes[j].offsetHeight !== 0) {
-                    clearInterval(this.timer);
-                    return this.init();
-                  }
-                }
-              }, 500);
-              return;
-            }
-          }
-        }
-      },
-
-      init() {
-        let thisTemp = this;
-        this.$nextTick(() => {
-          clearInterval(this.timer);
-          this.codes.forEach((item) => {
-            // 取出 code 的父元素 pre（后面方便使用）
-            let pre = item.parentElement;
-            let icon =
-                `<div class="code-icon">` +
-                `<i class="iconfont icon-copy copy-button"></i>` +
-                `</div>`;
-
-            pre.insertAdjacentHTML("afterbegin", icon);
-            // 获取复制元素
-            let copyButton = pre.firstElementChild.getElementsByClassName("copy-button")[0];
-            copyButton.onclick = function () {
-              thisTemp.$copyText(pre.lastElementChild.innerText).then(() => {
-                thisTemp.$message.success(
-                    'copy成功',
-                    1,
-                );
-              }).catch(() => {
-                thisTemp.$message.error(
-                    'copy失败',
-                    1,
-                );
-              });
-            };
+  methods: {
+    getArticleById() {
+      this.finish = false;
+      this.showTitleMap = true;
+      articleService
+        .getArticleById({ id: this.$route.params.id, isPv: true })
+        .then((res) => {
+          this.data = res.data;
+          this.finish = true;
+          const labelIds = [];
+          res.data.labelDTOS.forEach((label) => {
+            labelIds.push(label.id);
           });
-        });
-      },
-    },
+          this.$emit(
+            "initLabelIds",
+            labelIds,
+            this.finish,
+            res.data.createUser,
+            this.$utils.toToc(res.data.html),
+          );
 
-    mounted() {
-      this.getArticleById();
-    },
-
-    watch: {
-      data: function () {
-        this.$nextTick(() => {
-          // 锁定位置
-          let hash = location.hash;
-          if (hash) {
-            this.$nextTick(() => {
-              setTimeout(() => {
-                // querySelector是按css规范来实现的，所以它传入的字符串中第一个字符不能是数字、特殊字符，修改成用属性匹配即可解决
-                hash = "[id='" + hash.substring(1, hash.length) + "']"
-                if (!hash.includes('reply-')) {
-                  document.querySelector(hash).scrollIntoView({behavior: "smooth"});
-                } else {
-                  document.querySelector(hash).scrollIntoView({behavior: "smooth", block: "center"});
-                  /* 锁定评论位置（背景色逐渐消失） */
-                  document.querySelector(hash).setAttribute('class', 'selectedComment');
-                }
-              }, 400);
+          if (res.data.html) {
+            setTimeout(() => {
+              this.monitorScrollForTopicHighlight();
+              this.$nextTick(() => {
+                clearInterval(this.timer);
+                this.getCodes();
+              });
+            }, 800);
+          }
+        })
+        .catch((err) => {
+          this.finish = true;
+          if (err.code === 4) {
+            this.$router.push({
+              name: "404",
+              params: { pathMatch: this.$route.path.substring(1).split("/") },
             });
+          } else {
+            this.$message.error(err.desc);
           }
         });
+    },
+
+    monitorScrollForTopicHighlight() {
+      const toc = document.querySelector("#markdown-toc");
+      if (!toc) return;
+      const articleContent = document.querySelector(".article-content");
+      const topics = articleContent.querySelectorAll("h1,h2,h3,h4,h5,h6");
+      const lis = toc.querySelectorAll("li");
+      const removeActive = () => {
+        for (let i = 0; i < lis.length; i += 1) {
+          lis[i].classList.remove("active");
+        }
+      };
+
+      const tocClickEventCB = (ev) => {
+        if (ev.target.nodeName === "A") {
+          const parentNode = ev.target.parentNode;
+          if (parentNode && parentNode.nodeName === "LI") {
+            removeActive();
+            parentNode.classList.add("active");
+          }
+        }
+      };
+      toc.addEventListener("click", tocClickEventCB);
+
+      const hash = location.hash;
+      if (hash) {
+        const activeAnchor = toc.querySelector(`a[href="${hash}"]`);
+        if (!activeAnchor) {
+          lis[0].classList.add("active");
+        } else {
+          const activeAnchorParent = activeAnchor.parentNode;
+          removeActive();
+          activeAnchorParent.classList.add("active");
+        }
+      } else {
+        lis[0].classList.add("active");
+      }
+
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.intersectionRatio > 0) {
+              const anchor = entry.target.firstElementChild;
+              if (!anchor) return;
+              const id = anchor.getAttribute("id");
+              const activeAnchor = toc.querySelector(`a[href="#${id}"]`);
+              const activeAnchorParent = activeAnchor.parentNode;
+              if (activeAnchor) {
+                removeActive();
+                if (!entry.isIntersecting && entry.intersectionRect.top > 0) {
+                  const preTopic = activeAnchorParent.previousSibling;
+                  if (preTopic) {
+                    preTopic.classList.add("active");
+                    break;
+                  }
+                }
+                activeAnchorParent.classList.add("active");
+              }
+              break;
+            }
+          }
+        },
+        {
+          rootMargin: "0% 0% -90% 0%",
+          threshold: 0.6,
+        },
+      );
+
+      Array.prototype.forEach.call(topics, (target) => {
+        observer.observe(target);
+      });
+
+      this.$once("hook:beforeDestroy", () => {
+        observer.disconnect();
+        toc.removeEventListener("click", tocClickEventCB);
+      });
+    },
+
+    updateFollowState(toUser) {
+      userService
+        .updateFollowState({ toUser })
+        .then(() => {
+          this.getArticleById();
+        })
+        .catch((err) => {
+          this.$message.error(err.desc);
+        });
+    },
+
+    routerArticleEdit(articleId) {
+      this.$router.push("/edit/" + articleId);
+    },
+
+    routerUserCenter(userId) {
+      const routeData = this.$router.resolve("/user/" + userId);
+      window.open(routeData.href, "_blank");
+    },
+
+    routerBook() {
+      const routeData = this.$router.resolve("/book");
+      window.open(routeData.href, "_blank");
+    },
+
+    getCodes() {
+      this.codes = document.querySelectorAll("pre code");
+      if (this.codes.length > 0) {
+        for (let i = 0; i < this.codes.length; i += 1) {
+          if (this.codes[i].offsetHeight !== 0) {
+            return this.init();
+          }
+          this.timer = setInterval(() => {
+            for (let j = 0; j < this.codes.length; j += 1) {
+              if (this.codes[j].offsetHeight !== 0) {
+                clearInterval(this.timer);
+                return this.init();
+              }
+            }
+          }, 500);
+          return;
+        }
       }
     },
-  }
+
+    init() {
+      const thisTemp = this;
+      this.$nextTick(() => {
+        clearInterval(this.timer);
+        this.codes.forEach((item) => {
+          const pre = item.parentElement;
+          const icon =
+            '<div class="code-icon">' +
+            '<i class="iconfont icon-copy copy-button"></i>' +
+            '</div>';
+
+          pre.insertAdjacentHTML("afterbegin", icon);
+          const copyButton = pre.firstElementChild.getElementsByClassName("copy-button")[0];
+          copyButton.onclick = function () {
+            thisTemp.$copyText(pre.lastElementChild.innerText)
+              .then(() => {
+                thisTemp.$message.success("复制成功", 1);
+              })
+              .catch(() => {
+                thisTemp.$message.error("复制失败", 1);
+              });
+          };
+        });
+      });
+    },
+  },
+
+  mounted() {
+    this.getArticleById();
+  },
+
+  watch: {
+    data() {
+      this.$nextTick(() => {
+        let hash = location.hash;
+        if (hash) {
+          this.$nextTick(() => {
+            setTimeout(() => {
+              hash = "[id='" + hash.substring(1, hash.length) + "']";
+              if (!hash.includes("reply-")) {
+                document.querySelector(hash).scrollIntoView({ behavior: "smooth" });
+              } else {
+                document.querySelector(hash).scrollIntoView({ behavior: "smooth", block: "center" });
+                document.querySelector(hash).setAttribute("class", "selectedComment");
+              }
+            }, 400);
+          });
+        }
+      });
+    },
+  },
+};
 </script>
 
 <style lang="less">
-  #article-detail .article-title {
-    display: flex;
-    //align-items: center;
-    justify-content: space-between;
+#article-detail {
+  padding: 28px 30px 34px;
 
-    h1 {
-      font-size: 32px;
-      font-weight: 700;
-      line-height: 1.31;
-      color: #252933;
-    }
-
-    h2 {
-      font-weight: 700;
-    }
+  &.collapsed {
+    padding: 18px 14px 24px;
   }
 
-  #article-detail .article-user {
+  .article-detail-inner {
+    color: #3f4a3d;
+  }
+
+  .article-headline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .headline-copy {
+    min-width: 0;
+  }
+
+  .eyebrow {
+    margin: 0 0 10px;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #97a086;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: 38px;
+    line-height: 1.24;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+    color: #243228;
+  }
+
+  .article-user-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 18px;
+    padding: 18px 20px;
+    margin-bottom: 8px;
+    background: linear-gradient(135deg, rgba(250, 246, 238, 0.96), rgba(244, 239, 228, 0.88));
+    border: 1px solid rgba(166, 145, 112, 0.12);
+    border-radius: 22px;
   }
 
-  #article-detail .author-info-box {
+  .author-info-box {
     display: flex;
+    align-items: center;
+    min-width: 0;
+    flex: 1;
   }
 
-  #article-detail .avatar {
+  .author-identity {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .avatar {
+    flex-shrink: 0;
     cursor: pointer;
+    box-shadow: 0 12px 24px rgba(101, 115, 88, 0.18);
   }
 
-  /* #article-detail .article-titleMap, .article-content 这样写会窜样式 */
-  #article-detail .article-titleMap {
-    padding-top: 20px;
+  .author-main {
+    min-width: 0;
+    padding-left: 14px;
   }
 
-  #article-detail .article-content {
-    padding-top: 20px;
+  .author-name-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
 
-    /* 优化文章标题锚点跳转时被顶部导航栏遮挡 */
+  .username {
+    display: inline-flex;
+    align-items: center;
+    color: #314033;
+  }
+
+  .name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2b392d;
+  }
+
+  .level-badge {
+    height: 18px;
+    width: auto;
+    cursor: pointer;
+    flex-shrink: 0;
+  }
+
+  .article-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-left: auto;
+  }
+
+  .meta-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: flex-end;
+  }
+
+  .meta-pill {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #f7e3b5 0%, #f1d291 100%);
+    color: #7b6130;
+    font-size: 13px;
+    line-height: 1;
+    font-weight: 600;
+    border: 1px solid rgba(214, 177, 104, 0.42);
+    box-shadow: 0 10px 22px rgba(215, 181, 117, 0.2);
+  }
+
+  .action-btn {
+    min-width: 88px;
+    height: 38px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.22s ease;
+  }
+
+  .action-btn-outline {
+    color: #7b6130;
+    background: linear-gradient(135deg, #f7e3b5 0%, #f1d291 100%);
+    border: 1px solid rgba(214, 177, 104, 0.42);
+    box-shadow: 0 10px 22px rgba(215, 181, 117, 0.2);
+  }
+
+  .action-btn-outline:hover,
+  .action-btn-outline:focus {
+    color: #6a5227;
+    background: linear-gradient(135deg, #f8e8c1 0%, #f3d79b 100%);
+    border-color: rgba(214, 177, 104, 0.5);
+    box-shadow: 0 12px 24px rgba(215, 181, 117, 0.24);
+  }
+
+  .action-btn-solid {
+    color: #fff;
+    background: linear-gradient(135deg, #8aa36f 0%, #718f61 100%);
+    border: 1px solid transparent;
+    box-shadow: 0 12px 24px rgba(124, 151, 103, 0.2);
+  }
+
+  .action-btn-solid:hover,
+  .action-btn-solid:focus {
+    color: #fff;
+    background: linear-gradient(135deg, #94ac79 0%, #7b9968 100%);
+    border-color: transparent;
+  }
+
+  .article-titleMap {
+    padding-top: 18px;
+
+    img {
+      width: 100%;
+      display: block;
+      border-radius: 24px;
+      object-fit: cover;
+      box-shadow: 0 18px 45px rgba(161, 141, 114, 0.16);
+    }
+  }
+
+  .article-content {
+    width: 100%;
+    padding-top: 26px;
 
     h1 > a,
     h2 > a,
@@ -379,81 +525,137 @@
     h4 > a,
     h5 > a,
     h6 > a {
-      margin-top: -60px;
-      padding-top: 60px;
+      margin-top: -72px;
+      padding-top: 72px;
     }
   }
 
-  /* 关注按钮--start */
-  #article-detail .follow-btn {
-    width: 77px;
-    height: 27px;
-    border-radius: 2px;
-  }
-
-  #article-detail .follow-btn:hover {
-    background: #37c701;
-    border: 1px solid rgba(55, 199, 1, .6) !important;
-    color: #fff !important;
-  }
-
-  #article-detail .follow-btn-close {
-    background: #37c701;
-    border: 1px solid rgba(55, 199, 1, .6) !important;
-    color: #fff !important;
-    /*width: 77px;*/
-    height: 27px;
-    border-radius: 2px;
-  }
-
-  #article-detail .follow-btn-close:hover {
-    background: #3ee002;
-    border: 1px solid rgba(55, 199, 1, 0.7) !important;
-  }
-
-  /* 关注按钮--end */
-
-  /* 代码高亮部分设置样式--start */
-  #article-detail .markdown-body .highlight pre, .markdown-body pre {
+  .markdown-body .highlight pre,
+  .markdown-body pre {
     padding: 0 !important;
+    border-radius: 18px;
+    overflow: hidden;
   }
 
-  #article-detail .hljs {
-    padding: 10px;
+  .hljs {
+    padding: 14px;
   }
 
-  /* 代码高亮部分设置样式--end */
-
-  /* mavon-editor整体样式--start */
-  #article-detail .v-note-wrapper .v-note-panel .v-note-show .v-show-content, .v-note-wrapper .v-note-panel .v-note-show .v-show-content-html {
+  .v-note-wrapper .v-note-panel .v-note-show .v-show-content,
+  .v-note-wrapper .v-note-panel .v-note-show .v-show-content-html {
     padding: 0;
   }
 
-  #article-detail .v-note-wrapper {
+  .v-note-wrapper {
     z-index: 900;
+    background: transparent;
   }
 
-  /* 设置mavon-editor的最小高度 */
-  #article-detail .v-note-wrapper.markdown-body.shadow {
+  .v-note-wrapper.markdown-body.shadow {
     min-height: 0;
+    box-shadow: none !important;
   }
 
-  /* mavon-editor整体样式--end */
+  .v-show-content {
+    color: #495446;
+    font-size: 16px;
+    line-height: 1.95;
+  }
 
-  /* 代码块-复制按钮 */
+  .v-show-content h1,
+  .v-show-content h2,
+  .v-show-content h3,
+  .v-show-content h4,
+  .v-show-content h5,
+  .v-show-content h6 {
+    color: #29362c;
+  }
+
+  .v-show-content blockquote {
+    background: rgba(244, 237, 223, 0.68);
+    border-left: 4px solid rgba(140, 161, 115, 0.66);
+    border-radius: 0 16px 16px 0;
+    color: #5f6657;
+  }
+
+  .v-show-content table tr {
+    background-color: rgba(255, 252, 246, 0.92);
+  }
+
+  .v-show-content table tr:nth-child(2n) {
+    background-color: rgba(247, 242, 233, 0.92);
+  }
+
+  .v-show-content img {
+    border-radius: 18px;
+    box-shadow: 0 16px 36px rgba(158, 141, 115, 0.12);
+  }
+
   .code-icon {
     .copy-button {
-      padding: 2px 8px;
-      color: #ffffff;
-      border-radius: 5px;
       float: right;
+      margin: 10px 10px 0 0;
+      padding: 4px 10px;
+      color: #fff;
+      border-radius: 999px;
+      background: rgba(121, 142, 100, 0.82);
+      transition: all 0.2s ease;
     }
 
     .copy-button:hover {
       cursor: pointer;
-      background-color: black;
+      background: #556d49;
     }
   }
 
-  /* 代码块-复制按钮 */
-</style>
+  @media (max-width: 768px) {
+    padding: 22px 18px 26px;
+
+    .article-headline {
+      margin-bottom: 18px;
+    }
+
+    h1 {
+      font-size: 29px;
+    }
+
+    .article-user-card {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 16px;
+    }
+
+    .author-info-box {
+      width: 100%;
+      align-items: flex-start;
+    }
+
+    .author-main {
+      padding-left: 12px;
+    }
+
+    .author-name-row {
+      flex-wrap: wrap;
+    }
+
+    .author-identity,
+    .article-actions,
+    .meta-box {
+      width: 100%;
+      justify-content: flex-start;
+    }
+
+    .action-btn {
+      height: 36px;
+    }
+
+    .article-titleMap img {
+      border-radius: 18px;
+    }
+
+    .v-show-content {
+      font-size: 15px;
+      line-height: 1.85;
+    }
+  }
+}

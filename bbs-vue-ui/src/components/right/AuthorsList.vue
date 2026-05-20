@@ -1,8 +1,8 @@
 <template>
   <div id="authors-list" v-if="data.length !== 0">
     <header class="user-block-header">
-      <span class="block-kicker">CREATORS</span>
-      <span class="block-title">{{ $t("common.authorList") }}</span>
+      <span class="block-kicker">PEOPLE</span>
+      <span class="block-title">最近常出现的人</span>
     </header>
     <a-list item-layout="horizontal" :data-source="data" :split="false">
       <a-list-item slot="renderItem" slot-scope="item, index" @click="routerUserCenter(item.id)">
@@ -80,14 +80,14 @@ export default {
 }
 
 #authors-list .block-kicker {
-  color: #1869ff;
+  color: #9b6d42;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 #authors-list .block-title {
-  color: #172033;
+  color: #3d4735;
   font-size: 18px;
   font-weight: 800;
 }
@@ -104,7 +104,7 @@ export default {
 }
 
 #authors-list .ant-list-item-meta-avatar .ant-avatar {
-  box-shadow: 0 10px 22px rgba(24, 48, 87, 0.12);
+  box-shadow: 0 10px 22px rgba(109, 92, 65, 0.12);
 }
 
 #authors-list .ant-list-item-meta-title > a, .ant-list-item-meta-description {
@@ -118,7 +118,7 @@ export default {
 #authors-list .ant-list-item-meta-description {
   font-weight: 400;
   font-size: 12px;
-  color: #7b8ba6;
+  color: #7d7669;
   line-height: 1.8;
 }
 
@@ -127,17 +127,17 @@ export default {
 }
 
 #authors-list .ant-list-item:hover {
-  background: rgba(24, 105, 255, 0.04);
+  background: rgba(242, 176, 108, 0.08);
 }
 
 #authors-list .full-list {
   margin: 10px 18px 0;
   padding: 12px 0;
   text-align: center;
-  border-top: 1px solid rgba(117, 136, 167, 0.12);
+  border-top: 1px solid rgba(201, 186, 164, 0.12);
 }
 
 #authors-list .full-list:hover {
-  color: #1869ff;
+  color: #9b6d42;
 }
 </style>
