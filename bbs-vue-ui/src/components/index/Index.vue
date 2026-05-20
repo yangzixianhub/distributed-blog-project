@@ -289,7 +289,7 @@ export default {
 <style>
 #components-layout-basic .header {
   position: fixed;
-  z-index: 999;
+  z-index: 2100;
   width: 100%;
   background: rgba(255, 252, 247, 0.78);
   border-bottom: 1px solid rgba(190, 176, 156, 0.16);
