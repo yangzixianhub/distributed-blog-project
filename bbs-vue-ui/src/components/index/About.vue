@@ -9,8 +9,8 @@
               <div class="inner">
                 <div class="mission-content">
                   <div class="title">关于</div>
-                  <div class="sub">这里是一个用于内容发布、评论互动、标签管理和资源导航的社区系统。</div>
-                  <div class="sub">平台鼓励高质量原创内容，帮助用户沉淀知识、分享经验并进行技术交流。</div>
+                  <div class="sub">这里是一个分布式小组作业，用于内容发布、评论互动、标签管理和资源导航的社区系统。</div>
+                  <div class="sub">本项目由小组成员协作完成，旨在深刻理解分布式系统的设计与实现。</div>
                 </div>
               </div>
             </section>
