@@ -31,9 +31,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * @date 2022/4/6 14:28
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/article/")

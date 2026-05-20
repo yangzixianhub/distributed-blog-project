@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 /**
  * 对应数据表为：fs_article_label
- *
- * @date 2022/04/20 23:16
  */
 @Data
 @AllArgsConstructor

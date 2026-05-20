@@ -5,9 +5,6 @@ import lombok.Data;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * @date 2022/4/6 15:06
- */
 @Data
 public class ArticleSearchDTO implements Serializable {
     /**

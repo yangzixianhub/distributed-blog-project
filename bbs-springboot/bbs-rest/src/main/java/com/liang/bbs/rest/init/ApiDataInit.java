@@ -25,8 +25,6 @@ import java.util.Map;
 
 /**
  * 路径级别权限信息数据初始化
- *
- * @date 2021/3/8 15:13
  */
 @Slf4j
 @Component

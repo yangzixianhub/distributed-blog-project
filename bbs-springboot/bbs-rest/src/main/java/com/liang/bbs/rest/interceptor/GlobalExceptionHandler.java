@@ -21,8 +21,6 @@ import java.util.regex.Pattern;
 
 /**
  * 全局异常处理程序
- *
- * @date 2021-04-20 22:25
  */
 @Slf4j
 @ControllerAdvice

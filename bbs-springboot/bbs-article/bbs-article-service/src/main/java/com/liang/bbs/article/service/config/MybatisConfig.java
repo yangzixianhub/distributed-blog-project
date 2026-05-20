@@ -6,8 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * Mybatis配置
- *
- * @date 2021-04-21 20:32
  */
 @Configuration
 @ComponentScan(basePackages = {

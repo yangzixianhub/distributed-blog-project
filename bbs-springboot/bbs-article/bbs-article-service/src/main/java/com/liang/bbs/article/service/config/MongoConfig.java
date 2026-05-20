@@ -2,9 +2,6 @@ package com.liang.bbs.article.service.config;
 
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @date 2022/4/12 18:34
- */
 @Configuration
 public class MongoConfig {
 

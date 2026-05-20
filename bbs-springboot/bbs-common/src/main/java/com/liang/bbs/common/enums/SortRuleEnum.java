@@ -2,9 +2,6 @@ package com.liang.bbs.common.enums;
 
 import lombok.Getter;
 
-/**
- * @date 2022/6/13 18:04
- */
 @Getter
 public enum SortRuleEnum {
     /**

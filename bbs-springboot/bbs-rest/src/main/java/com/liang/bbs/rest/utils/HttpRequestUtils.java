@@ -14,8 +14,6 @@ import java.nio.charset.StandardCharsets;
 
 /**
  * HttpServletRequest相关的工具类
- *
- * @date 2021-04-25 22:10
  */
 @Slf4j
 public class HttpRequestUtils {

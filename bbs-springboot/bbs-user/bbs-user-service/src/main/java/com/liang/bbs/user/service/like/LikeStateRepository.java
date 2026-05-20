@@ -1,9 +1,9 @@
 package com.liang.bbs.user.service.like;
 
 public interface LikeStateRepository {
-    boolean loadState(Integer targetId, Long userId);
+    boolean loadState(Long targetId, Long userId);
 
-    long loadCount(Integer targetId);
+    long loadCount(Long targetId);
 
-    void upsertState(Integer targetId, Long userId, boolean state);
+    void upsertState(Long targetId, Long userId, boolean state);
 }

@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:28
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/comment/")
@@ -57,7 +54,7 @@ public class CommentController {
     @PostMapping("delete/{commentId}")
     @Operation(summary = "删除评论")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> delete(@PathVariable Integer commentId) {
+    public ResponseResult<Boolean> delete(@PathVariable Long commentId) {
         return ResponseResult.success(commentService.delete(commentId));
     }
 
