@@ -1,0 +1,301 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "F:\\Codes\\SnowFlake\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|f:\\codes\\snowflake\\tests\\distributedidservice.tests\\circuitbreakertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|solutionrelative:tests\\distributedidservice.tests\\circuitbreakertests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|f:\\codes\\snowflake\\tests\\distributedidservice.tests\\snowflakeidgeneratortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|solutionrelative:tests\\distributedidservice.tests\\snowflakeidgeneratortests.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\middleware\\apikeyauthenticationmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\middleware\\apikeyauthenticationmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\middleware\\apikeyauthenticationoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\middleware\\apikeyauthenticationoptions.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\appsettings.json||{90A6B3A7-C1A3-4009-A288-E2FF89E96FA0}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\middleware\\exceptionhandlingmiddleware.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\models\\apiresponse.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\services\\snowflakeidgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\services\\snowflakeidgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\services\\isnowflakeidgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\services\\isnowflakeidgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\services\\workeridprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\services\\workeridprovider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\services\\circuitbreaker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\services\\circuitbreaker.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\services\\circuitbreakersnowflakeidgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\services\\circuitbreakersnowflakeidgenerator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|f:\\codes\\snowflake\\tests\\distributedidservice.tests\\distributedidservice.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|",
+      "RelativeMoniker": "D:0:0:{03355C59-FA98-4011-8253-07D859D2E44D}|tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj|solutionrelative:tests\\distributedidservice.tests\\distributedidservice.tests.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}|"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|F:\\Codes\\SnowFlake\\tests\\DistributedIdService.LoadTest\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:tests\\DistributedIdService.LoadTest\\Program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\controllers\\idcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\controllers\\idcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|f:\\codes\\snowflake\\src\\distributedidservice.api\\controllers\\healthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{378FA04F-CDD1-4276-9AC8-F562B0C6A9C7}|src\\DistributedIdService.Api\\DistributedIdService.Api.csproj|solutionrelative:src\\distributedidservice.api\\controllers\\healthcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 1,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedHeight": 200,
+          "SelectedChildIndex": 16,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ExceptionHandlingMiddleware.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Middleware\\ExceptionHandlingMiddleware.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-19T06:11:48.261Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ApiKeyAuthenticationOptions.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationOptions.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationOptions.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationOptions.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationOptions.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-19T06:11:44.032Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "ApiResponse.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Models\\ApiResponse.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Models\\ApiResponse.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Models\\ApiResponse.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Models\\ApiResponse.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-19T06:11:33.434Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ApiKeyAuthenticationMiddleware.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationMiddleware.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationMiddleware.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationMiddleware.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Middleware\\ApiKeyAuthenticationMiddleware.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-19T06:11:15.9Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "CircuitBreaker.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\CircuitBreaker.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Services\\CircuitBreaker.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\CircuitBreaker.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Services\\CircuitBreaker.cs",
+              "ViewState": "AgIAANoAAAAAAAAAAAAUwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T07:49:48.905Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "DistributedIdService.Tests.csproj",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj",
+              "RelativeToolTip": "tests\\DistributedIdService.Tests\\DistributedIdService.Tests.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-17T07:45:40.752Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "WorkerIdProvider.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\WorkerIdProvider.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Services\\WorkerIdProvider.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\WorkerIdProvider.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Services\\WorkerIdProvider.cs",
+              "ViewState": "AgIAAHEAAAAAAAAAAADwv2MAAAA6AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T07:45:39.439Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "appsettings.json",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\appsettings.json",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\appsettings.json",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\appsettings.json",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\appsettings.json",
+              "ViewState": "AgIAAAMAAAAAAAAAAAAAABAAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
+              "WhenOpened": "2026-05-17T07:45:37.711Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "SnowflakeIdGenerator.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\SnowflakeIdGenerator.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Services\\SnowflakeIdGenerator.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\SnowflakeIdGenerator.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Services\\SnowflakeIdGenerator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T05:07:58.345Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "CircuitBreakerSnowflakeIdGenerator.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\CircuitBreakerSnowflakeIdGenerator.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Services\\CircuitBreakerSnowflakeIdGenerator.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\CircuitBreakerSnowflakeIdGenerator.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Services\\CircuitBreakerSnowflakeIdGenerator.cs",
+              "ViewState": "AgIAACUAAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T05:00:31.342Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ISnowflakeIdGenerator.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\ISnowflakeIdGenerator.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Services\\ISnowflakeIdGenerator.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Services\\ISnowflakeIdGenerator.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Services\\ISnowflakeIdGenerator.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T05:00:30.382Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "IdController.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Controllers\\IdController.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Controllers\\IdController.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Controllers\\IdController.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Controllers\\IdController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T04:59:51.67Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "HealthController.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Controllers\\HealthController.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Controllers\\HealthController.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Controllers\\HealthController.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Controllers\\HealthController.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAADwvwAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T04:59:49.447Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "SnowflakeIdGeneratorTests.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "RelativeToolTip": "tests\\DistributedIdService.Tests\\SnowflakeIdGeneratorTests.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAAwGgAAAAdAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-16T04:36:38.273Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "CircuitBreakerTests.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "RelativeToolTip": "tests\\DistributedIdService.Tests\\CircuitBreakerTests.cs",
+              "ViewState": "AgIAAHoAAAAAAAAAAAAswEsAAAA3AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-16T04:35:10.556Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.LoadTest\\Program.cs",
+              "RelativeDocumentMoniker": "tests\\DistributedIdService.LoadTest\\Program.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\tests\\DistributedIdService.LoadTest\\Program.cs",
+              "RelativeToolTip": "tests\\DistributedIdService.LoadTest\\Program.cs",
+              "ViewState": "AgIAAA8AAAAAAAAAAAAAAAQAAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-16T04:35:01.245Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Program.cs",
+              "RelativeDocumentMoniker": "src\\DistributedIdService.Api\\Program.cs",
+              "ToolTip": "F:\\Codes\\SnowFlake\\src\\DistributedIdService.Api\\Program.cs",
+              "RelativeToolTip": "src\\DistributedIdService.Api\\Program.cs",
+              "ViewState": "AgIAADkAAAAAAAAAAADwv0cAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-10T03:24:59.952Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
