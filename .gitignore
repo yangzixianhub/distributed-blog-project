@@ -1,0 +1,64 @@
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Java / Maven build outputs
+**/target/
+**/.flattened-pom.xml
+*.class
+
+# Frontend dependencies, outputs, and caches
+**/node_modules/
+**/dist/
+dist.zip
+coverage/
+**/.cache/
+**/.parcel-cache/
+**/.eslintcache
+**/.npm/
+**/.yarn/cache/
+**/.yarn/unplugged/
+
+# Local environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# JMeter / performance test generated files
+jmeter.log
+result*.csv
+*.jtl
+*.hprof
+temp/
+
+
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+
+# Editor files
+.idea/
+.vscode/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Project-local generated or reference files
+.github/
+第三讲 高并发设计(2).pptx.md
