@@ -30,6 +30,8 @@ spring:
 dubbo:
   application:
     name: ns-bbs-rest
+    register-mode: interface
+    qos-enable: false
   registry:
     address: zookeeper://139.9.78.65:2181
     timeout: 60000

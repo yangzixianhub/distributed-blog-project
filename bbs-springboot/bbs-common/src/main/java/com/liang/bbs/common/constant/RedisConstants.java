@@ -15,4 +15,8 @@ public interface RedisConstants {
     String RIGHTS_KEY = "rights:";
     String API_KEY = BASE_KEY + RIGHTS_KEY + "api:";
 
+    String LIKE_KEY = BASE_KEY + "like:";
+    String ARTICLE_LIKE_KEY = LIKE_KEY + "article:";
+    String COMMENT_LIKE_KEY = LIKE_KEY + "comment:";
+
 }
