@@ -43,10 +43,6 @@
                   <AuthorsList />
                 </div>
 
-                <div class="side-card" v-if="articleHtml">
-                  <Toc :articleHtml="articleHtml" />
-                </div>
-
                 <div class="side-card filing-card">
                   <FilingInfo />
                 </div>
@@ -70,7 +66,6 @@ import LeftButtons from "@/components/article/LeftButtons";
 import ArticleComment from "@/components/comment/ArticleComment";
 import AuthorBlock from "@/components/right/AuthorBlock";
 import RelatArticle from "@/components/right/RelatArticle";
-import Toc from "@/components/right/MarkdownToc";
 
 export default {
   components: {
@@ -83,7 +78,6 @@ export default {
     LeftButtons,
     ArticleComment,
     RelatArticle,
-    Toc,
   },
 
   data() {
@@ -126,7 +120,7 @@ export default {
   .header {
     position: fixed;
     width: 100%;
-    z-index: 999;
+    z-index: 2100;
     background: rgba(255, 251, 245, 0.94);
     backdrop-filter: blur(18px);
     border-bottom: 1px solid rgba(137, 120, 93, 0.12);
@@ -205,7 +199,7 @@ export default {
     position: fixed;
     left: max(16px, calc((100vw - 1220px) / 2 - 72px));
     top: 150px;
-    z-index: 10;
+    z-index: 180;
   }
 
   .index-drawer-wrap .ant-drawer-content-wrapper {

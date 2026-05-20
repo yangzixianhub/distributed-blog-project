@@ -547,7 +547,7 @@ export default {
   }
 
   .v-note-wrapper {
-    z-index: 900;
+    z-index: 1;
     background: transparent;
   }
 

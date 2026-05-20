@@ -277,9 +277,13 @@ export default {
 <style lang="less">
 .ant-layout-header {
   padding: 10px 16px;
+  position: relative;
+  z-index: 2100;
 }
 
 .main-header {
+  position: relative;
+  z-index: 2101;
   width: 100%;
   max-width: 1220px;
   padding: 0;
