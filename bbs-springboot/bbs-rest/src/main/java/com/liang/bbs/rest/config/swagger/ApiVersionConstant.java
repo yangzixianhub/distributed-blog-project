@@ -1,8 +1,5 @@
 package com.liang.bbs.rest.config.swagger;
 
-/**
- * @date 2021-04-20 22:42
- */
 public interface ApiVersionConstant {
     /**
      * 历史版本

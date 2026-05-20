@@ -33,9 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-/**
- * @date 2022/4/6 14:28
- */
+
 @Slf4j
 @RestController
 @RequestMapping("/bbs/user/")
@@ -98,7 +96,7 @@ public class UserController {
     @GetMapping("updateLikeCommentState")
     @Operation(summary = "更新评论点赞状态")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> updateLikeCommentState(@RequestParam("commentId") Integer commentId) {
+    public ResponseResult<Boolean> updateLikeCommentState(@RequestParam("commentId") Long commentId) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(likeCommentService.updateLikeCommentState(commentId, currentUser));
     }

@@ -4,9 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @date 2022/4/6 14:30
- */
 @Data
 public class FollowCountDTO implements Serializable {
 

@@ -1,5 +1,7 @@
 package com.liang.bbs.user.service.like;
 
+import com.liang.bbs.common.distributedid.SnowflakeIdScope;
+import com.liang.bbs.common.distributedid.SnowflakeIdService;
 import com.liang.bbs.user.persistence.entity.LikeCommentPo;
 import com.liang.bbs.user.persistence.entity.LikeCommentPoExample;
 import com.liang.bbs.user.persistence.mapper.LikeCommentPoMapper;
@@ -14,8 +16,11 @@ public class CommentLikeStateRepository implements LikeStateRepository {
     @Autowired
     private LikeCommentPoMapper likeCommentPoMapper;
 
+    @Autowired
+    private SnowflakeIdService snowflakeIdService;
+
     @Override
-    public boolean loadState(Integer targetId, Long userId) {
+    public boolean loadState(Long targetId, Long userId) {
         LikeCommentPoExample example = new LikeCommentPoExample();
         example.createCriteria().andCommentIdEqualTo(targetId).andLikeUserEqualTo(userId);
         List<LikeCommentPo> rows = likeCommentPoMapper.selectByExample(example);
@@ -23,14 +28,14 @@ public class CommentLikeStateRepository implements LikeStateRepository {
     }
 
     @Override
-    public long loadCount(Integer targetId) {
+    public long loadCount(Long targetId) {
         LikeCommentPoExample example = new LikeCommentPoExample();
         example.createCriteria().andCommentIdEqualTo(targetId).andStateEqualTo(true);
         return likeCommentPoMapper.countByExample(example);
     }
 
     @Override
-    public void upsertState(Integer targetId, Long userId, boolean state) {
+    public void upsertState(Long targetId, Long userId, boolean state) {
         LikeCommentPoExample example = new LikeCommentPoExample();
         example.createCriteria().andCommentIdEqualTo(targetId).andLikeUserEqualTo(userId);
         List<LikeCommentPo> rows = likeCommentPoMapper.selectByExample(example);
@@ -42,6 +47,7 @@ public class CommentLikeStateRepository implements LikeStateRepository {
             row.setState(state);
             row.setCreateTime(now);
             row.setUpdateTime(now);
+            snowflakeIdService.assignPrimaryKey(row::setId, SnowflakeIdScope.LIKE);
             likeCommentPoMapper.insertSelective(row);
             return;
         }

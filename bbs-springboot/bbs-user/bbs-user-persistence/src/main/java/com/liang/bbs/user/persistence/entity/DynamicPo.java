@@ -7,48 +7,30 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * 对应数据表为：fs_dynamic
- * 
- * @date 2022/12/07 11:26
- */
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 public class DynamicPo implements Serializable {
-    /**
-     * 用户动态编号
-     */
+    //用户动态编号
     private Integer id;
 
-    /**
-     * 类型（写文章、评论、点赞、关注等）
-     */
+    //类型（写文章、评论、点赞、关注等）
     private String type;
 
-    /**
-     * 发起人
-     */
+    //发起人
     private Long userId;
 
-    /**
-     * 操作的对象ID（文章id、用户id等）
-     */
+    //操作的对象ID（文章id、用户id等）
     private String objectId;
 
-    /**
-     * 评论id
-     */
-    private Integer commentId;
+    //评论id
+    private Long commentId;
 
-    /**
-     * 创建时间
-     */
+    //创建时间
     private LocalDateTime createTime;
 
-    /**
-     * 更新时间
-     */
+    //更新时间
     private LocalDateTime updateTime;
 
     private static final long serialVersionUID = 1L;

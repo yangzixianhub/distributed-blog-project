@@ -22,7 +22,7 @@ public class LikeCacheCoordinator {
     @Autowired
     private RedissonClient redissonClient;
 
-    public long getCount(LikeTargetType type, Integer targetId, LikeStateRepository repository) {
+    public long getCount(LikeTargetType type, Long targetId, LikeStateRepository repository) {
         try {
             Object cached = redisTemplate.opsForValue().get(type.countKey(targetId));
             if (cached instanceof Number) {
@@ -37,7 +37,7 @@ public class LikeCacheCoordinator {
         }
     }
 
-    public boolean isLiked(LikeTargetType type, Integer targetId, Long userId, LikeStateRepository repository) {
+    public boolean isLiked(LikeTargetType type, Long targetId, Long userId, LikeStateRepository repository) {
         try {
             Object cached = redisTemplate.opsForHash().get(type.stateKey(targetId), userId.toString());
             if (cached != null) {
@@ -52,7 +52,7 @@ public class LikeCacheCoordinator {
         }
     }
 
-    public boolean toggle(LikeTargetType type, Integer targetId, Long userId, LikeStateRepository repository) {
+    public boolean toggle(LikeTargetType type, Long targetId, Long userId, LikeStateRepository repository) {
         RLock lock = redissonClient.getLock("like_toggle:" + type.name() + ":" + targetId + ":" + userId);
         try {
             lock.lock();
@@ -81,7 +81,7 @@ public class LikeCacheCoordinator {
         for (Map.Entry<Object, Object> entry : dirtyEntries.entrySet()) {
             String field = String.valueOf(entry.getKey());
             String[] parts = field.split(":", 2);
-            Integer targetId = Integer.valueOf(parts[0]);
+            Long targetId = Long.valueOf(parts[0]);
             Long userId = Long.valueOf(parts[1]);
             boolean state = Boolean.parseBoolean(String.valueOf(entry.getValue()));
             try {
@@ -105,7 +105,7 @@ public class LikeCacheCoordinator {
             return;
         }
         for (Object targetIdValue : recentTargetIds) {
-            Integer targetId = Integer.valueOf(String.valueOf(targetIdValue));
+            Long targetId = Long.valueOf(String.valueOf(targetIdValue));
             if (hasPendingDirty(type, targetId)) {
                 continue;
             }
@@ -124,7 +124,7 @@ public class LikeCacheCoordinator {
         return retry == null ? 1 : retry.intValue();
     }
 
-    private boolean hasPendingDirty(LikeTargetType type, Integer targetId) {
+    private boolean hasPendingDirty(LikeTargetType type, Long targetId) {
         Set<Object> dirtyFields = redisTemplate.opsForHash().keys(type.dirtyKey());
         if (dirtyFields == null) {
             return false;
@@ -138,7 +138,7 @@ public class LikeCacheCoordinator {
         return false;
     }
 
-    private String dirtyField(Integer targetId, Long userId) {
+    private String dirtyField(Long targetId, Long userId) {
         return targetId + ":" + userId;
     }
 }

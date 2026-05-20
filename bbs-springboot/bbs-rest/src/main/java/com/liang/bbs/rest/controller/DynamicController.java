@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-/**
- * @date 2022/4/6 14:28
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/dynamic/")

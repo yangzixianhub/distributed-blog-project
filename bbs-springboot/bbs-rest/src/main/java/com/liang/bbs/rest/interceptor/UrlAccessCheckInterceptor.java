@@ -25,8 +25,6 @@ import java.util.stream.Collectors;
 
 /**
  * 后端路径级别的权限控制
- *
- * @date 2021-04-20 22:04
  */
 @Slf4j
 @Component

@@ -7,8 +7,6 @@ import java.lang.annotation.Target;
 
 /**
  * 无需登录
- *
- * @date 2022/5/11 15:20
  */
 @Target(value = {ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)

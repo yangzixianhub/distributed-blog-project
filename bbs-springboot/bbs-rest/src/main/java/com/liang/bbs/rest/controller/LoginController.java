@@ -25,9 +25,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * @date 2021/4/25 15:16
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/sso/")

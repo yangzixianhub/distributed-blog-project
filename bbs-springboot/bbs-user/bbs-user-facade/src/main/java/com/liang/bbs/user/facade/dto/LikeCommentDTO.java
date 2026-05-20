@@ -5,39 +5,24 @@ import lombok.Data;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-/**
- * @date 2022/4/6 14:30
- */
 @Data
 public class LikeCommentDTO implements Serializable {
-    /**
-     * 评论点赞编号
-     */
-    private Integer id;
+    //评论点赞编号
+    private Long id;
 
-    /**
-     * 评论id
-     */
-    private Integer commentId;
+    //评论id
+    private Long commentId;
 
-    /**
-     * 状态(0取消,1点赞)
-     */
+    //状态
     private Boolean state;
 
-    /**
-     * 评论点赞用户id
-     */
+    //评论点赞用户id
     private Long likeUser;
 
-    /**
-     * 创建时间
-     */
+    //创建时间
     private LocalDateTime createTime;
 
-    /**
-     * 更新时间
-     */
+    //更新时间
     private LocalDateTime updateTime;
 
     private static final long serialVersionUID = 1L;

@@ -8,9 +8,7 @@ import com.liang.nansheng.common.auth.UserSsoDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:33
- */
+
 public interface LikeService {
 
     /**
@@ -44,7 +42,7 @@ public interface LikeService {
      * @param id
      * @return
      */
-    LikeDTO getById(Integer id);
+    LikeDTO getById(Long id);
 
     /**
      * 通过文章id和用户id获取点赞信息

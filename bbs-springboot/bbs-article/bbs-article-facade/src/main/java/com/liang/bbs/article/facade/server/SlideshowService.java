@@ -4,9 +4,6 @@ import com.liang.bbs.article.facade.dto.SlideshowDTO;
 
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:33
- */
 public interface SlideshowService {
 
     /**

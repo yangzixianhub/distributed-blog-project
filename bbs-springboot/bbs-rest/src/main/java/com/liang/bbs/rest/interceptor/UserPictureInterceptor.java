@@ -16,8 +16,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  * 用户头像拦截器
- *
- * @date 2021-04-20 22:04
  */
 @Slf4j
 @Component

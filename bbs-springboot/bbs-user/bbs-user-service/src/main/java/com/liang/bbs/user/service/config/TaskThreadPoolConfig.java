@@ -8,9 +8,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * @date 2023/2/6 10:41
- */
 @EnableAsync
 @Configuration
 public class TaskThreadPoolConfig {
