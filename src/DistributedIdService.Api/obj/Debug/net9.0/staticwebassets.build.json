@@ -1,0 +1,12 @@
+{
+  "Version": 1,
+  "Hash": "IIkxndYOz123rVQ+h8bbnuIDPt3+IxxlreCOM4BPMXw=",
+  "Source": "DistributedIdService.Api",
+  "BasePath": "_content/DistributedIdService.Api",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": [],
+  "Endpoints": []
+}
