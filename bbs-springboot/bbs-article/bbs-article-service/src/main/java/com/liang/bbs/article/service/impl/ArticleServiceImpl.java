@@ -17,6 +17,9 @@ import com.liang.bbs.article.service.reading.ArticleCountPublicSnapshot;
 import com.liang.bbs.article.service.reading.ArticleCountRedisCache;
 import com.liang.bbs.article.service.reading.ArticleHtmlRedisCache;
 import com.liang.bbs.article.service.reading.ArticleStaticHtmlPublisher;
+import com.liang.bbs.article.service.search.ArticleSearchPageResult;
+import com.liang.bbs.article.service.search.ArticleSearchService;
+import com.liang.bbs.article.service.search.ArticleSearchSyncService;
 import com.liang.bbs.common.enums.ArticleStateEnum;
 import com.liang.bbs.user.facade.dto.FollowDTO;
 import com.liang.bbs.user.facade.dto.LikeDTO;
@@ -107,6 +110,12 @@ public class ArticleServiceImpl implements ArticleService {
     @Autowired
     private ArticleCountRedisCache articleCountRedisCache;
 
+    @Autowired
+    private ArticleSearchService articleSearchService;
+
+    @Autowired
+    private ArticleSearchSyncService articleSearchSyncService;
+
     private static final Integer contentMax = 200;
 
     /**
@@ -135,14 +144,22 @@ public class ArticleServiceImpl implements ArticleService {
      */
     @Override
     public PageInfo<ArticleDTO> getList(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
+        if (articleSearchService.supports(articleSearchDTO)) {
+            try {
+                return searchByElasticsearch(articleSearchDTO, currentUser, articleStateEnum);
+            } catch (Exception e) {
+                log.warn("Elasticsearch search failed, fallback to mysql like query, title={}", articleSearchDTO.getTitle(), e);
+            }
+        }
+
         List<Integer> articleIds = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(articleSearchDTO.getLabelIds())) {
-            //根据标签id集合获取文章标签信息
+            // 根据标签id集合获取文章标签信息
             List<ArticleLabelDTO> articleLabelDTOS = articleLabelService.getByLabelIds(articleSearchDTO.getLabelIds());
             if (CollectionUtils.isNotEmpty(articleLabelDTOS)) {
                 articleIds = articleLabelDTOS.stream().map(ArticleLabelDTO::getArticleId).collect(Collectors.toList());
             } else {
-                //该标签下没有文章
+                // 该标签下没有文章
                 return new PageInfo<>(new ArrayList<>());
             }
         }
@@ -165,6 +182,7 @@ public class ArticleServiceImpl implements ArticleService {
         if (articleSearchDTO.getCreateUser() != null) {
             criteria.andCreateUserEqualTo(articleSearchDTO.getCreateUser());
         }
+        applyCreateTimeFilter(criteria, articleSearchDTO.getTimeRange());
         example.setOrderByClause("top desc, create_time desc, `id` desc");
 
         PageHelper.startPage(articleSearchDTO.getCurrentPage(), articleSearchDTO.getPageSize());
@@ -174,10 +192,76 @@ public class ArticleServiceImpl implements ArticleService {
             return pageInfo;
         }
 
-        //构建文章信息
+        // 构建文章信息
         buildArticleInfo(pageInfo.getList(), currentUser);
 
         return pageInfo;
+    }
+
+    @Override
+    public PageInfo<ArticleDTO> searchArticles(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
+        return getList(articleSearchDTO, currentUser, articleStateEnum);
+    }
+
+    private PageInfo<ArticleDTO> searchByElasticsearch(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum) {
+        ArticleSearchPageResult searchPageResult = articleSearchService.search(articleSearchDTO, articleStateEnum);
+        PageInfo<ArticleDTO> pageInfo = new PageInfo<>();
+        pageInfo.setPageNum(searchPageResult.getCurrentPage());
+        pageInfo.setPageSize(searchPageResult.getPageSize());
+        pageInfo.setTotal(searchPageResult.getTotal());
+        pageInfo.setPages(calculatePages(searchPageResult.getTotal(), searchPageResult.getPageSize()));
+
+        if (CollectionUtils.isEmpty(searchPageResult.getArticleIds())) {
+            pageInfo.setList(new ArrayList<>());
+            pageInfo.setSize(0);
+            return pageInfo;
+        }
+
+        List<ArticleDTO> articleDTOS = getBaseByIds(searchPageResult.getArticleIds(), articleStateEnum);
+        if (CollectionUtils.isEmpty(articleDTOS)) {
+            pageInfo.setList(new ArrayList<>());
+            pageInfo.setSize(0);
+            return pageInfo;
+        }
+
+        attachSearchHighlights(articleDTOS, searchPageResult);
+        buildArticleInfo(articleDTOS, currentUser);
+        pageInfo.setList(articleDTOS);
+        pageInfo.setSize(articleDTOS.size());
+        return pageInfo;
+    }
+
+    private int calculatePages(long total, int pageSize) {
+        if (pageSize <= 0) {
+            return 0;
+        }
+        return (int) ((total + pageSize - 1) / pageSize);
+    }
+
+    private void applyCreateTimeFilter(ArticlePoExample.Criteria criteria, String timeRange) {
+        if (StringUtils.isBlank(timeRange)) {
+            return;
+        }
+        LocalDateTime now = LocalDateTime.now();
+        switch (timeRange) {
+            case "day":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusDays(1));
+                break;
+            case "week":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusWeeks(1));
+                break;
+            case "month":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusMonths(1));
+                break;
+            case "year":
+                criteria.andCreateTimeGreaterThanOrEqualTo(now.minusYears(1));
+                break;
+            case "older":
+                criteria.andCreateTimeLessThan(now.minusYears(1));
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -244,7 +328,7 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         syncStaticHtmlAndRedisCache(articleDTO.getId());
-
+        articleSearchSyncService.syncArticle(articleDTO.getId());
         return true;
     }
 
@@ -264,7 +348,7 @@ public class ArticleServiceImpl implements ArticleService {
             List<Integer> articleIds = likeDTOPageInfo.getList().stream().distinct().map(LikeDTO::getArticleId).collect(Collectors.toList());
             List<ArticleDTO> articleDTOS = getBaseByIds(articleIds, ArticleStateEnum.enable);
 
-            //构建文章信息
+            // 构建文章信息
             buildArticleInfo(articleDTOS, currentUser);
             pageInfo.setList(articleDTOS);
         }
@@ -287,12 +371,12 @@ public class ArticleServiceImpl implements ArticleService {
             return articleDTOS;
         }
 
-        //构建文章信息
+        // 构建文章信息
         buildArticleInfo(articleDTOS, currentUser);
 
         Set<Integer> idsNeedMongo = articleDTOS.stream().map(ArticleDTO::getId).collect(Collectors.toCollection(HashSet::new));
 
-        //已发布文章：非作者读详情时可命中Redis中的正文 HTML，减轻数据库压力
+        // 已发布文章：非作者读详情时可命中 Redis 中的正文 HTML，减轻数据库压力
         if (articleReadingProperties.getRedis().isHtmlCacheEnabled()) {
             Iterator<Integer> needIt = idsNeedMongo.iterator();
             while (needIt.hasNext()) {
@@ -403,6 +487,7 @@ public class ArticleServiceImpl implements ArticleService {
         // 插入文章内容（mongo）
         insertArticleContent(articlePo.getId(), articleDTO.getMarkdown(), articleDTO.getHtml(), currentUser.getUserId(), now);
 
+        articleSearchSyncService.syncArticle(articlePo.getId());
         return true;
     }
 
@@ -441,7 +526,7 @@ public class ArticleServiceImpl implements ArticleService {
         updateArticleContent(articlePo.getId(), articleDTO.getMarkdown(), articleDTO.getHtml(), currentUser.getUserId(), now);
 
         syncStaticHtmlAndRedisCache(articlePo.getId());
-
+        articleSearchSyncService.syncArticle(articlePo.getId());
         return true;
     }
 
@@ -634,7 +719,7 @@ public class ArticleServiceImpl implements ArticleService {
         ArticlePo articlePo = articlePoMapper.selectByPrimaryKey(id);
         articlePo.setUpdateTime(LocalDateTime.now());
         articlePo.setUpdateUser(currentUser.getUserId());
-        //置顶
+        // 置顶
         if (top) {
             int maxTop = Objects.isNull(this.getMaxTop()) ? 0 : this.getMaxTop();
             articlePo.setTop(maxTop + 1);
@@ -642,7 +727,7 @@ public class ArticleServiceImpl implements ArticleService {
                 throw BusinessException.build(ResponseCode.OPERATE_FAIL, "文章置顶失败");
             }
         } else {
-            //取消置顶
+            // 取消置顶
             articlePo.setTop(null);
             if (articlePoMapper.updateByPrimaryKey(articlePo) <= 0) {
                 throw BusinessException.build(ResponseCode.OPERATE_FAIL, "文章取消置顶失败");
@@ -667,7 +752,7 @@ public class ArticleServiceImpl implements ArticleService {
     @Override
     public Boolean delete(Integer id, UserSsoDTO currentUser) {
         ArticlePo articlePo = articlePoMapper.selectByPrimaryKey(id);
-        //只能删除自己的文章
+        // 只能删除自己的文章
         if (!currentUser.getUserId().equals(articlePo.getCreateUser())) {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "无法删除，只能删除自己撰写的文章！");
         }
@@ -679,8 +764,9 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         articleHtmlRedisCache.evict(id);
+        articleCountRedisCache.evict(id);
         articleStaticHtmlPublisher.unpublish(id);
-
+        articleSearchSyncService.deleteArticle(id);
         return true;
     }
 
@@ -707,6 +793,21 @@ public class ArticleServiceImpl implements ArticleService {
         return articleCheckCountDTO;
     }
 
+    @Override
+    public ArticleSearchRebuildDTO rebuildSearchIndex() {
+        long start = System.currentTimeMillis();
+        int indexedCount = articleSearchService.rebuild(getSearchableArticles());
+        ArticleSearchRebuildDTO result = new ArticleSearchRebuildDTO();
+        result.setIndexedCount(indexedCount);
+        result.setCostMillis(System.currentTimeMillis() - start);
+        return result;
+    }
+
+    @Override
+    public ArticleSearchHealthDTO getSearchHealth() {
+        return articleSearchService.health();
+    }
+
     /**
      * 获取文章id到标签信息的映射
      *
@@ -714,12 +815,12 @@ public class ArticleServiceImpl implements ArticleService {
      * @return
      */
     private Map<Integer, List<LabelDTO>> getArticleIdToLabels(List<Integer> articleIds) {
-        //文章id到标签信息的映射（key:文章id, value:标签信息）
+        // 文章id到标签信息的映射（key:文章id, value:标签信息）
         Map<Integer, List<LabelDTO>> articleToLabelMap = new HashMap<>();
 
         List<ArticleLabelDTO> articleLabelDTOS = articleLabelService.getByArticleIds(articleIds);
         if (CollectionUtils.isNotEmpty(articleLabelDTOS)) {
-            //获取所有的标签id集合
+            // 获取所有的标签id集合
             List<Integer> labelIds = articleLabelDTOS.stream().distinct().map(ArticleLabelDTO::getLabelId).collect(Collectors.toList());
             Map<Integer, List<ArticleLabelDTO>> articleIdKeyMap = articleLabelDTOS.stream().collect(Collectors.groupingBy(ArticleLabelDTO::getArticleId));
             List<LabelDTO> labelDTOS = labelService.getByIds(labelIds);
@@ -746,17 +847,17 @@ public class ArticleServiceImpl implements ArticleService {
      * @param currentUser
      */
     private void buildArticleInfo(List<ArticleDTO> articleDTOS, UserSsoDTO currentUser) {
-        //获取文章id到标签信息的映射
+        // 获取文章id到标签信息的映射
         List<Integer> articleIds = articleDTOS.stream().map(ArticleDTO::getId).collect(Collectors.toList());
         Map<Integer, List<LabelDTO>> articleToLabelMap = getArticleIdToLabels(articleIds);
 
-        //通过用户id集合获取用户信息
+        // 通过用户id集合获取用户信息
         List<Long> userIds = articleDTOS.stream().map(ArticleDTO::getCreateUser).collect(Collectors.toList());
-        //用户基础信息
+        // 用户基础信息
         Map<Long, List<UserDTO>> idUsers = userService.getByIds(userIds).stream().collect(Collectors.groupingBy(UserDTO::getId));
-        //用户等级信息
+        // 用户等级信息
         Map<Long, List<UserLevelDTO>> userIdToUserLevel = userLevelService.getByUserIds(userIds).stream().collect(Collectors.groupingBy(UserLevelDTO::getUserId));
-        //通过id获取name
+        // 通过id获取name
         articleDTOS.forEach(articleDTO -> {
             if (idUsers.containsKey(articleDTO.getCreateUser())) {
                 articleDTO.setCreateUserName(idUsers.get(articleDTO.getCreateUser()).get(0).getName());
@@ -848,4 +949,135 @@ public class ArticleServiceImpl implements ArticleService {
         return mongoTemplate.find(query, ArticleMarkdownInfo.class);
     }
 
+    private void syncArticleSearchIndex(Integer articleId) {
+        if (articleId == null || !articleSearchService.isEnabled()) {
+            return;
+        }
+
+        ArticlePo articlePo = articlePoMapper.selectByPrimaryKey(articleId);
+        if (!isSearchable(articlePo)) {
+            articleSearchService.delete(articleId);
+            return;
+        }
+
+        ArticleDTO articleDTO = ArticleMS.INSTANCE.toDTO(articlePo);
+        attachSearchContent(articleDTO);
+        articleSearchService.save(articleDTO);
+    }
+
+    private boolean isSearchable(ArticlePo articlePo) {
+        return articlePo != null
+                && !Boolean.TRUE.equals(articlePo.getIsDeleted())
+                && ArticleStateEnum.enable.getCode().equals(articlePo.getState());
+    }
+
+    private List<ArticleDTO> getSearchableArticles() {
+        ArticlePoExample example = new ArticlePoExample();
+        example.createCriteria()
+                .andIsDeletedEqualTo(false)
+                .andStateEqualTo(ArticleStateEnum.enable.getCode());
+        example.setOrderByClause("id asc");
+        List<ArticleDTO> articleDTOS = ArticleMS.INSTANCE.toDTO(articlePoMapper.selectByExample(example));
+        attachSearchContent(articleDTOS);
+        attachSearchMetadata(articleDTOS);
+        return articleDTOS;
+    }
+
+    private void attachSearchMetadata(List<ArticleDTO> articleDTOS) {
+        if (CollectionUtils.isEmpty(articleDTOS)) {
+            return;
+        }
+
+        List<Integer> articleIds = articleDTOS.stream()
+                .map(ArticleDTO::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        List<Long> userIds = articleDTOS.stream()
+                .map(ArticleDTO::getCreateUser)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
+        Map<Integer, List<LabelDTO>> articleToLabelMap = getArticleIdToLabels(articleIds);
+        Map<Long, List<UserDTO>> idUsers = userIds.isEmpty()
+                ? Collections.emptyMap()
+                : userService.getByIds(userIds).stream().collect(Collectors.groupingBy(UserDTO::getId));
+
+        articleDTOS.forEach(articleDTO -> {
+            if (articleDTO == null) {
+                return;
+            }
+            articleDTO.setLabelDTOS(articleToLabelMap.getOrDefault(articleDTO.getId(), Collections.emptyList()));
+            List<UserDTO> userDTOS = idUsers.get(articleDTO.getCreateUser());
+            if (CollectionUtils.isNotEmpty(userDTOS)) {
+                articleDTO.setCreateUserName(userDTOS.get(0).getName());
+            }
+        });
+    }
+
+    private void attachSearchContent(ArticleDTO articleDTO) {
+        if (articleDTO == null || articleDTO.getId() == null) {
+            return;
+        }
+
+        List<ArticleMarkdownInfo> articleMarkdownInfos = getMarkdownByArticleIds(Collections.singletonList(articleDTO.getId()));
+        if (CollectionUtils.isEmpty(articleMarkdownInfos)) {
+            return;
+        }
+        articleDTO.setContent(extractSearchContent(articleMarkdownInfos.get(0), articleDTO.getContent()));
+    }
+
+    private void attachSearchContent(List<ArticleDTO> articleDTOS) {
+        if (CollectionUtils.isEmpty(articleDTOS)) {
+            return;
+        }
+
+        List<Integer> articleIds = articleDTOS.stream()
+                .map(ArticleDTO::getId)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        if (CollectionUtils.isEmpty(articleIds)) {
+            return;
+        }
+
+        Map<Integer, List<ArticleMarkdownInfo>> contentMap = getMarkdownByArticleIds(articleIds).stream()
+                .collect(Collectors.groupingBy(ArticleMarkdownInfo::getArticleId));
+        articleDTOS.forEach(articleDTO -> {
+            List<ArticleMarkdownInfo> articleMarkdownInfos = contentMap.get(articleDTO.getId());
+            if (CollectionUtils.isNotEmpty(articleMarkdownInfos)) {
+                articleDTO.setContent(extractSearchContent(articleMarkdownInfos.get(0), articleDTO.getContent()));
+            }
+        });
+    }
+
+    private String extractSearchContent(ArticleMarkdownInfo articleMarkdownInfo, String fallbackContent) {
+        if (articleMarkdownInfo == null) {
+            return fallbackContent;
+        }
+        if (StringUtils.isNotBlank(articleMarkdownInfo.getArticleHtml())) {
+            String content = CommonUtils.html2Text(articleMarkdownInfo.getArticleHtml());
+            if (StringUtils.isNotBlank(content)) {
+                return content;
+            }
+        }
+        if (StringUtils.isNotBlank(articleMarkdownInfo.getArticleMarkdown())) {
+            return articleMarkdownInfo.getArticleMarkdown();
+        }
+        return fallbackContent;
+    }
+
+    private void attachSearchHighlights(List<ArticleDTO> articleDTOS, ArticleSearchPageResult searchPageResult) {
+        if (CollectionUtils.isEmpty(articleDTOS) || searchPageResult == null) {
+            return;
+        }
+
+        Map<Integer, String> highlightTitleMap = searchPageResult.getHighlightTitleMap();
+        Map<Integer, String> highlightContentMap = searchPageResult.getHighlightContentMap();
+        articleDTOS.forEach(articleDTO -> {
+            if (articleDTO == null || articleDTO.getId() == null) {
+                return;
+            }
+            articleDTO.setHighlightTitle(highlightTitleMap.get(articleDTO.getId()));
+            articleDTO.setHighlightContent(highlightContentMap.get(articleDTO.getId()));
+        });
+    }
 }

@@ -33,6 +33,8 @@ public interface ArticleService {
      */
     PageInfo<ArticleDTO> getList(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum);
 
+    PageInfo<ArticleDTO> searchArticles(ArticleSearchDTO articleSearchDTO, UserSsoDTO currentUser, ArticleStateEnum articleStateEnum);
+
     /**
      * 获取用户文章数量
      *
@@ -220,4 +222,8 @@ public interface ArticleService {
      * @return
      */
     ArticleCheckCountDTO getArticleCheckCount(String title);
+
+    ArticleSearchRebuildDTO rebuildSearchIndex();
+
+    ArticleSearchHealthDTO getSearchHealth();
 }

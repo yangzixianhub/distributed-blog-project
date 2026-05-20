@@ -55,10 +55,21 @@ public class ArticleController {
     }
 
     @NoNeedLogin
+    @GetMapping("search")
+    @Operation(summary = "全文搜索文章")
+    @ApiVersion(group = ApiVersionConstant.V_300)
+    public ResponseResult<PageInfo<ArticleDTO>> search(ArticleSearchDTO articleSearchDTO,
+                                                       @RequestParam(value = "articleStateEnum", required = false) ArticleStateEnum articleStateEnum) {
+        UserSsoDTO currentUser = UserContextUtils.currentUser();
+        ArticleStateEnum targetState = articleStateEnum == null ? ArticleStateEnum.enable : articleStateEnum;
+        return ResponseResult.success(articleService.searchArticles(articleSearchDTO, currentUser, targetState));
+    }
+
+    @NoNeedLogin
     @GetMapping("getPersonalArticles")
     @Operation(summary = "获取个人发布的文章（null=所有）")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<PageInfo<ArticleDTO>> getPersonalArticles(ArticleSearchDTO articleSearchDTO, @RequestParam(required = false) ArticleStateEnum articleStateEnum) {
+    public ResponseResult<PageInfo<ArticleDTO>> getPersonalArticles(ArticleSearchDTO articleSearchDTO, @RequestParam(value = "articleStateEnum", required = false) ArticleStateEnum articleStateEnum) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         if (currentUser != null && currentUser.getUserId().equals(articleSearchDTO.getCreateUser())) {
             articleStateEnum= null;
@@ -111,7 +122,8 @@ public class ArticleController {
     @GetMapping("getById")
     @Operation(summary = "获取文章详情")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<ArticleDTO> getById(@RequestParam Integer id, @RequestParam(required = false) Boolean isPv) {
+    public ResponseResult<ArticleDTO> getById(@RequestParam("id") Integer id,
+                                              @RequestParam(value = "isPv", required = false) Boolean isPv) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         List<ArticleDTO> articleDTOS = articleService.getByIds(Collections.singletonList(id), isPv, currentUser);
         if (CollectionUtils.isNotEmpty(articleDTOS)) {
@@ -139,7 +151,8 @@ public class ArticleController {
     @Operation(summary = "写文章")
     @ApiVersion(group = ApiVersionConstant.V_300)
     public ResponseResult<Boolean> create(@RequestParam(value = "file", required = false) MultipartFile picture,
-                                          ArticleDTO articleDTO, @RequestParam List<Integer> labelIds) throws IOException {
+                                          ArticleDTO articleDTO,
+                                          @RequestParam("labelIds") List<Integer> labelIds) throws IOException {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         // 无配图
         if (picture == null) {
@@ -158,7 +171,8 @@ public class ArticleController {
     @Operation(summary = "更新文章")
     @ApiVersion(group = ApiVersionConstant.V_300)
     public ResponseResult<Boolean> update(@RequestParam(value = "file", required = false) MultipartFile picture,
-                                          ArticleDTO articleDTO, @RequestParam List<Integer> labelIds) throws IOException {
+                                          ArticleDTO articleDTO,
+                                          @RequestParam("labelIds") List<Integer> labelIds) throws IOException {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         // 无配图
         if (picture == null) {
@@ -195,7 +209,7 @@ public class ArticleController {
     @GetMapping("getCountById")
     @Operation(summary = "获取文章一些统计数据")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<ArticleCountDTO> getCountById(@RequestParam Integer id) {
+    public ResponseResult<ArticleCountDTO> getCountById(@RequestParam("id") Integer id) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(articleService.getCountById(id, currentUser));
     }
@@ -203,7 +217,8 @@ public class ArticleController {
     @GetMapping("articleTop")
     @Operation(summary = "文章置顶/取消置顶")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> articleTop(@RequestParam Integer id, @RequestParam Boolean top) {
+    public ResponseResult<Boolean> articleTop(@RequestParam("id") Integer id,
+                                              @RequestParam("top") Boolean top) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         return ResponseResult.success(articleService.articleTop(id, top, currentUser));
     }
@@ -219,8 +234,39 @@ public class ArticleController {
     @GetMapping("getArticleCheckCount")
     @Operation(summary = "文章审核数据量")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<ArticleCheckCountDTO> getArticleCheckCount(@RequestParam(required = false) String title) {
+    public ResponseResult<ArticleCheckCountDTO> getArticleCheckCount(@RequestParam(value = "title", required = false) String title) {
         return ResponseResult.success(articleService.getArticleCheckCount(title));
     }
 
+    @PostMapping("rebuildSearchIndex")
+    @Operation(summary = "重建文章搜索索引")
+    @ApiVersion(group = ApiVersionConstant.V_300)
+    public ResponseResult<ArticleSearchRebuildDTO> rebuildSearchIndex() {
+        UserSsoDTO currentUser = UserContextUtils.currentUser();
+        ensureSuperAdmin(currentUser);
+        return ResponseResult.success(articleService.rebuildSearchIndex());
+    }
+
+    @GetMapping("searchHealth")
+    @Operation(summary = "搜索服务健康检查")
+    @ApiVersion(group = ApiVersionConstant.V_300)
+    public ResponseResult<ArticleSearchHealthDTO> searchHealth() {
+        UserSsoDTO currentUser = UserContextUtils.currentUser();
+        ensureSuperAdmin(currentUser);
+        return ResponseResult.success(articleService.getSearchHealth());
+    }
+
+    private void ensureSuperAdmin(UserSsoDTO currentUser) {
+        if (currentUser == null || CollectionUtils.isEmpty(currentUser.getRoles())) {
+            throw BusinessException.build(ResponseCode.OPERATE_FAIL, "仅超级管理员可重建搜索索引");
+        }
+
+        List<String> grades = currentUser.getRoles().stream()
+                .map(RoleSsoDTO::getGrade)
+                .distinct()
+                .collect(Collectors.toList());
+        if (!grades.contains(RoleGradeEnum.NS_SUPER_ADMIN_ROLE.name())) {
+            throw BusinessException.build(ResponseCode.OPERATE_FAIL, "仅超级管理员可重建搜索索引");
+        }
+    }
 }
