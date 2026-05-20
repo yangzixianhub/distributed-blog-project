@@ -28,16 +28,6 @@
                 @click.stop>
               <a-dropdown :placement="'bottomCenter'" :trigger="['click']">
                 <a-menu slot="overlay">
-                  <a-menu-item key="articlePass"
-                               v-if="($store.state.isManage && isAdminAudit) && (item.state === -1 || item.state !== 1)"
-                               @click="updateState(item.id, item.state, 1)">
-                    {{ ' ' + $t("common.pass") }}
-                  </a-menu-item>
-                  <a-menu-item key="articleReject"
-                               v-if="($store.state.isManage && isAdminAudit) && (item.state === -1 || item.state !== 0)"
-                               @click="updateState(item.id, item.state, 0)">
-                    <span style="color: red">{{ ' ' + $t("common.reject") }}</span>
-                  </a-menu-item>
                   <a-menu-item key="articleNotTop" v-if="$store.state.isManage && isAdminAudit && !item.top"
                                @click="articleTop(item.id)">
                     <span style="color: #1869ff">{{ ' ' + $t("common.isTop") }}</span>
@@ -85,17 +75,6 @@
               <span slot="title" style="padding-right: 2px;">{{ item.createUserName }}</span>
               <img :src="require('@/assets/img/level/' + item.level + '.svg')" alt="" @click.stop="routerBook"/>
               <small style="color: #8d9ab0; padding-left: 10px" v-text="$utils.showtime(item.createTime)"></small>
-              <div v-if="isUserCenter && ($store.state.userId === userId || $store.state.isManage)">
-                <small style="color: #faad14; padding-left: 10px" v-if="item.state === -1">{{
-                    $t("common.pendingReview")
-                  }}</small>
-                <small style="color: red; padding-left: 10px" v-if="item.state === 0">{{
-                    $t("common.auditReviewRejected")
-                  }}</small>
-                <small style="color: #3eaf7c; padding-left: 10px" v-if="item.state === 1">{{
-                    $t("common.auditApproved")
-                  }}</small>
-              </div>
             </div>
             <a-tooltip placement="left">
               <template slot="title">
@@ -161,23 +140,6 @@ export default {
               this.$message.error(err.desc);
             });
       }
-    },
-    updateState(articleId, state, toState) {
-      this.$confirm({
-        centered: true,
-        title: this.$t("common.confirmReject"),
-        onOk: () => {
-          articleService.updateState({id: articleId, state: toState})
-              .then(() => {
-                this.tempData = this.tempData.filter(article => article.id !== articleId);
-                this.$emit("updateData", this.tempData);
-                this.$message.success(this.$t("common.approvalSuccessed"));
-              })
-              .catch(err => {
-                this.$message.error(err.desc);
-              });
-        }
-      });
     },
     articleTop(articleId) {
       this.$confirm({
@@ -316,12 +278,16 @@ export default {
 }
 
 #main-article-content .label-name {
-  color: #7d8ca6;
+  color: #8f7a5e;
   font-weight: 600;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: rgba(245, 180, 111, 0.1);
 }
 
 #main-article-content .label-name:hover {
-  color: #1869ff;
+  color: #7b9a74;
+  background: rgba(160, 201, 169, 0.16);
 }
 
 #main-article-content .username {
@@ -338,15 +304,15 @@ export default {
 
 #main-article-content .ant-list-item-meta-description {
   font-weight: 800;
-  font-size: 22px;
-  color: #172033;
-  line-height: 1.4;
+  font-size: 24px;
+  color: #394534;
+  line-height: 1.45;
 }
 
 #main-article-content .article-list-title .search-highlight,
 #main-article-content .article-content .search-highlight {
-  color: #ad3c12;
-  background: linear-gradient(180deg, rgba(255, 243, 214, 0) 10%, #fff1c7 10%);
+  color: #8c5b31;
+  background: linear-gradient(180deg, rgba(255, 246, 224, 0) 10%, #f7e7c4 10%);
   font-style: normal;
   padding: 0 3px;
   border-radius: 6px;
@@ -366,22 +332,23 @@ export default {
 
 #main-article-content .article-content {
   margin-top: 10px;
-  color: #667792;
-  line-height: 1.8;
+  color: #6f7167;
+  line-height: 1.9;
+  font-size: 15px;
   -webkit-line-clamp: 2;
 }
 
 #main-article-content .collectLikeComment:hover {
-  color: #1869ff;
+  color: #8c5b31;
 }
 
 #main-article-content li.ant-list-item {
   margin-bottom: 16px;
-  padding: 24px;
-  border: 1px solid rgba(117, 136, 167, 0.14);
-  border-radius: 22px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(250, 252, 255, 0.98));
-  box-shadow: 0 16px 38px rgba(22, 42, 73, 0.06);
+  padding: 26px;
+  border: 1px solid rgba(200, 186, 165, 0.16);
+  border-radius: 26px;
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.98), rgba(250, 246, 240, 0.96));
+  box-shadow: 0 16px 38px rgba(109, 92, 65, 0.08);
   transition: transform 0.28s ease, box-shadow 0.28s ease, border-color 0.28s ease;
 
   .ant-list-item-main {
@@ -390,9 +357,9 @@ export default {
 }
 
 #main-article-content li.ant-list-item:hover {
-  transform: translateY(-4px);
-  border-color: rgba(24, 105, 255, 0.18);
-  box-shadow: 0 24px 56px rgba(18, 48, 97, 0.12);
+  transform: translateY(-3px);
+  border-color: rgba(160, 201, 169, 0.28);
+  box-shadow: 0 24px 56px rgba(109, 92, 65, 0.12);
 }
 
 #main-article-content .ant-list-item-meta-avatar {
@@ -402,15 +369,27 @@ export default {
 #main-article-content .ant-list-item-meta-avatar .ant-avatar {
   width: 48px;
   height: 48px;
-  box-shadow: 0 10px 22px rgba(24, 48, 87, 0.12);
+  box-shadow: 0 10px 22px rgba(109, 92, 65, 0.12);
 }
 
 #main-article-content .ant-list-item-extra img {
   max-height: 120px;
   max-width: 168px;
   width: auto;
-  border-radius: 18px;
-  box-shadow: 0 16px 28px rgba(18, 48, 97, 0.12);
+  border-radius: 20px;
+  box-shadow: 0 16px 28px rgba(109, 92, 65, 0.14);
+}
+
+#main-article-content .username {
+  color: #5f5a50;
+}
+
+#main-article-content .username small {
+  color: #9a8f80 !important;
+}
+
+#main-article-content .ant-list-item-action {
+  color: #8e8578;
 }
 
 @media screen and (max-width: 576px) {

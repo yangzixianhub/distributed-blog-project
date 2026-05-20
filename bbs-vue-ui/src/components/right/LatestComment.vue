@@ -1,8 +1,8 @@
 <template>
   <div id="latest-comment" v-if="data.length !== 0">
     <header class="user-block-header">
-      <span class="block-kicker">FRESH TALK</span>
-      <span class="block-title">{{ $t("common.latestComment") }}</span>
+      <span class="block-kicker">WORDS</span>
+      <span class="block-title">刚刚留下的话</span>
     </header>
     <a-list item-layout="horizontal" :data-source="data" :split="false">
       <a-list-item slot="renderItem" slot-scope="item, index" @click="routerArticleDetail(item.articleId, item.id)">
@@ -60,14 +60,14 @@ export default {
 }
 
 #latest-comment .block-kicker {
-  color: #13c2c2;
+  color: #7b9a74;
   font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.1em;
 }
 
 #latest-comment .block-title {
-  color: #172033;
+  color: #3d4735;
   font-size: 18px;
   font-weight: 800;
 }
@@ -79,7 +79,7 @@ export default {
 }
 
 #latest-comment .ant-list-item-meta-avatar .ant-avatar {
-  box-shadow: 0 10px 22px rgba(24, 48, 87, 0.1);
+  box-shadow: 0 10px 22px rgba(109, 92, 65, 0.1);
 }
 
 #latest-comment .ant-list-item-meta-title > a, .ant-list-item-meta-description {
@@ -94,7 +94,7 @@ export default {
 #latest-comment .ant-list-item-meta-description {
   font-weight: 500;
   font-size: 12px;
-  color: #72829d;
+  color: #746d61;
   line-height: 1.9;
 }
 
@@ -103,6 +103,6 @@ export default {
 }
 
 #latest-comment .ant-list-item:hover {
-  background: rgba(19, 194, 194, 0.05);
+  background: rgba(160, 201, 169, 0.08);
 }
 </style>

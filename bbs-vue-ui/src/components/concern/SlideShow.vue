@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <div class="slideshow-shell">
     <a-carousel class="slideshow-content" arrows autoplay>
       <div
@@ -12,38 +12,25 @@
       <div slot="nextArrow" slot-scope="props" class="custom-slick-arrow" style="right: 18px">
         <a-icon type="right"/>
       </div>
-      <div class="slide-item" v-for="item of carouselData" :key="item.id || item.image">
-        <img :src="item.image" alt="slideshow"/>
+      <div class="slide-item" v-for="item of carouselData" :key="item.id">
+        <img :src="item.image" :alt="item.title"/>
       </div>
     </a-carousel>
   </div>
 </template>
 
 <script>
-import carouselService from "@/service/carouselService";
-
 export default {
   data() {
     return {
-      carouselData: [],
-      finish: false
+      carouselData: [
+        {id: 1, title: "banner-1", image: require("@/assets/img/slideshow/banner-1.png")},
+        {id: 2, title: "banner-2", image: require("@/assets/img/slideshow/banner-2.png")},
+        {id: 3, title: "banner-3", image: require("@/assets/img/slideshow/banner-3.png")},
+        {id: 4, title: "banner-4", image: require("@/assets/img/slideshow/banner-4.png")},
+        {id: 5, title: "banner-5", image: require("@/assets/img/slideshow/banner-5.png")}
+      ]
     };
-  },
-  methods: {
-    getCarouselList() {
-      carouselService.getCarouselList()
-          .then(res => {
-            this.carouselData = res.data;
-            this.finish = true;
-          })
-          .catch(err => {
-            this.finish = true;
-            this.$message.error(err.desc);
-          });
-    }
-  },
-  mounted() {
-    this.getCarouselList();
   }
 };
 </script>
@@ -100,3 +87,4 @@ export default {
   }
 }
 </style>
+

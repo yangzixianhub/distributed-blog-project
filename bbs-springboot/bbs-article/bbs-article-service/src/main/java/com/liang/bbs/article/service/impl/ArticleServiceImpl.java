@@ -313,13 +313,9 @@ public class ArticleServiceImpl implements ArticleService {
         ArticlePo articlePo = new ArticlePo();
         articlePo.setId(articleDTO.getId());
         articlePo.setUpdateTime(LocalDateTime.now());
-        if (ArticleStateEnum.pendingReview.getCode().equals(articleDTO.getState())) {
-            articlePo.setState(ArticleStateEnum.pendingReview.getCode());
-        }
         if (ArticleStateEnum.disabled.getCode().equals(articleDTO.getState())) {
             articlePo.setState(ArticleStateEnum.disabled.getCode());
-        }
-        if (ArticleStateEnum.enable.getCode().equals(articleDTO.getState())) {
+        } else {
             articlePo.setState(ArticleStateEnum.enable.getCode());
         }
 
@@ -476,7 +472,7 @@ public class ArticleServiceImpl implements ArticleService {
         articleDTO.setCreateTime(now);
         articleDTO.setUpdateTime(now);
         // 通过审核的文章才会启用（即：默认待审核）
-        articleDTO.setState(ArticleStateEnum.pendingReview.getCode());
+        articleDTO.setState(ArticleStateEnum.enable.getCode());
         ArticlePo articlePo = ArticleMS.INSTANCE.toPo(articleDTO);
         if (articlePoMapper.insertSelective(articlePo) <= 0) {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "撰写文章失败");
@@ -514,7 +510,7 @@ public class ArticleServiceImpl implements ArticleService {
         LocalDateTime now = LocalDateTime.now();
         articleDTO.setUpdateTime(now);
         articleDTO.setUpdateUser(currentUser.getUserId());
-        articleDTO.setState(ArticleStateEnum.pendingReview.getCode());
+        articleDTO.setState(ArticleStateEnum.enable.getCode());
         ArticlePo articlePo = ArticleMS.INSTANCE.toPo(articleDTO);
         if (articlePoMapper.updateByPrimaryKeySelective(articlePo) <= 0) {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "更新文章失败");

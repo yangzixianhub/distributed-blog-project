@@ -89,18 +89,18 @@
               <a-menu-item key="PROFILE">
                 <i class="iconfont icon-user-picture"></i>{{ " " + $t("common.profile") }}
               </a-menu-item>
-              <a-divider style="margin: 3px 0 3px 0"/>
+              <a-divider style="margin: 3px 0"/>
               <a-menu-item key="setUp">
                 <i class="iconfont icon-setUp"></i>{{ " " + $t("common.setUp") }}
               </a-menu-item>
               <a-menu-item key="about">
                 <i class="iconfont icon-about"></i>{{ " " + $t("common.about") }}
               </a-menu-item>
-              <a-divider style="margin: 3px 0 3px 0"/>
+              <a-divider style="margin: 3px 0"/>
               <a-menu-item key="management">
                 <i class="iconfont icon-setUp"></i>{{ " " + $t("common.management") }}
               </a-menu-item>
-              <a-divider style="margin: 3px 0 3px 0"/>
+              <a-divider style="margin: 3px 0"/>
               <a-menu-item key="LOG_OUT">
                 <i class="iconfont icon-quit"></i>{{ " " + $t("common.logOut") }}
               </a-menu-item>
@@ -209,24 +209,12 @@ export default {
       this.$router.push("/");
     },
     handleClick({key}) {
-      if (key === "writeArticle") {
-        this.routerWrite();
-      }
-      if (key === "PROFILE") {
-        this.routerUserCenter(this.$store.state.userId);
-      }
-      if (key === "setUp") {
-        this.routerSetUp();
-      }
-      if (key === "about") {
-        this.routerAbout();
-      }
-      if (key === "management") {
-        this.routerManage();
-      }
-      if (key === "LOG_OUT") {
-        this.logout();
-      }
+      if (key === "writeArticle") this.routerWrite();
+      if (key === "PROFILE") this.routerUserCenter(this.$store.state.userId);
+      if (key === "setUp") this.routerSetUp();
+      if (key === "about") this.routerAbout();
+      if (key === "management") this.routerManage();
+      if (key === "LOG_OUT") this.logout();
     },
     showLoginModal() {
       this.$store.state.loginVisible = true;
@@ -250,12 +238,8 @@ export default {
     pushSearchRoute(searchValue, timeRangeValue) {
       const query = {};
       const normalizedKeyword = (searchValue || "").trim();
-      if (normalizedKeyword) {
-        query.query = normalizedKeyword;
-      }
-      if (timeRangeValue) {
-        query.timeRange = timeRangeValue;
-      }
+      if (normalizedKeyword) query.query = normalizedKeyword;
+      if (timeRangeValue) query.timeRange = timeRangeValue;
       this.$router.push({path: "/search", query});
     },
     routerUserCenter(userId) {
@@ -292,7 +276,7 @@ export default {
 
 <style lang="less">
 .ant-layout-header {
-  padding: 12px 16px;
+  padding: 10px 16px;
 }
 
 .main-header {
@@ -306,7 +290,7 @@ export default {
   .header-right-logo {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 16px;
 
     .header-item-logo {
       display: inline-flex;
@@ -314,7 +298,7 @@ export default {
       gap: 12px;
       cursor: pointer;
       height: 48px;
-      padding: 0 14px 0 0;
+      padding: 0 10px 0 0;
 
       .site-mark {
         display: inline-flex;
@@ -323,19 +307,19 @@ export default {
         width: 38px;
         height: 38px;
         border-radius: 14px;
-        background: linear-gradient(135deg, #13c2c2 0%, #1869ff 100%);
-        color: #fff;
+        background: linear-gradient(135deg, #f1b06f 0%, #8fb791 100%);
+        color: #fffdf7;
         font-family: "HamburgSerial-Xbold", "Segoe UI", sans-serif;
         font-size: 15px;
         letter-spacing: 0.08em;
-        box-shadow: 0 12px 26px rgba(24, 105, 255, 0.28);
+        box-shadow: 0 12px 24px rgba(175, 138, 92, 0.22);
       }
 
       .site-title {
         display: inline-flex;
         align-items: center;
         height: 100%;
-        color: #172033;
+        color: #384337;
         font-family: "HamburgSerial-Xbold", "Segoe UI", sans-serif;
         font-size: 24px;
         letter-spacing: 0.03em;
@@ -349,12 +333,14 @@ export default {
     justify-content: flex-end;
     gap: 8px;
 
-    .header-search, .header-item, .header-item-login {
+    .header-search,
+    .header-item,
+    .header-item-login {
       padding: 0;
     }
 
     .header-search {
-      min-width: 390px;
+      min-width: 430px;
     }
 
     .search-bar {
@@ -362,15 +348,15 @@ export default {
       align-items: center;
       width: 100%;
       gap: 10px;
-      padding: 6px;
-      border-radius: 18px;
-      background: rgba(255, 255, 255, 0.78);
-      border: 1px solid rgba(123, 142, 174, 0.16);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      padding: 7px;
+      border-radius: 22px;
+      background: rgba(255, 251, 245, 0.92);
+      border: 1px solid rgba(199, 182, 159, 0.18);
+      box-shadow: 0 8px 22px rgba(121, 100, 73, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.9);
     }
 
     .search-time-filter {
-      width: 120px;
+      width: 122px;
       flex-shrink: 0;
     }
 
@@ -379,20 +365,27 @@ export default {
       width: 100%;
     }
 
-    .search-time-filter .ant-select-selection,
-    .search-input .ant-input,
-    .search-input .ant-input-search-button {
+    .search-time-filter .ant-select-selection {
       border: 0 !important;
-      background: transparent;
+      background: rgba(247, 240, 229, 0.88);
+      border-radius: 16px;
       box-shadow: none !important;
     }
 
     .search-input .ant-input {
-      height: 36px;
+      height: 38px;
+      border: 0 !important;
+      background: transparent;
+      box-shadow: none !important;
+      color: #4f5549;
     }
 
     .search-input .ant-input-search-button {
-      color: #1869ff;
+      border: 0 !important;
+      background: linear-gradient(135deg, rgba(241, 176, 111, 0.12), rgba(160, 201, 169, 0.1));
+      border-radius: 16px;
+      color: #8b6b48;
+      box-shadow: none !important;
     }
 
     .header-item,
@@ -400,7 +393,7 @@ export default {
       display: flex;
       align-items: center;
       height: 46px;
-      color: #6b7b97;
+      color: #756e63;
     }
 
     .header-item .options,
@@ -411,23 +404,24 @@ export default {
       gap: 6px;
       min-height: 40px;
       padding: 0 14px;
-      border-radius: 14px;
-      transition: transform 0.24s ease, background 0.24s ease, color 0.24s ease;
+      border-radius: 16px;
+      transition: transform 0.24s ease, background 0.24s ease, color 0.24s ease, box-shadow 0.24s ease;
     }
 
     .header-item {
       cursor: pointer;
 
       .options:hover {
-        color: #172033;
-        background: rgba(24, 105, 255, 0.06);
+        color: #384337;
+        background: rgba(160, 201, 169, 0.12);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
         transform: translateY(-1px);
       }
     }
 
     .header-cta .options {
-      background: linear-gradient(135deg, rgba(19, 194, 194, 0.12), rgba(24, 105, 255, 0.1));
-      color: #1869ff;
+      background: linear-gradient(135deg, rgba(241, 176, 111, 0.18), rgba(160, 201, 169, 0.13));
+      color: #7f5d38;
       font-weight: 700;
     }
 
@@ -439,7 +433,7 @@ export default {
 
       .iconfont {
         font-size: 18px;
-        color: #6e7f9d;
+        color: #857a6c;
       }
     }
 
@@ -448,7 +442,7 @@ export default {
       .avatar {
         cursor: pointer;
         user-select: none;
-        box-shadow: 0 10px 24px rgba(24, 48, 87, 0.12);
+        box-shadow: 0 10px 24px rgba(97, 80, 57, 0.12);
       }
 
       .default-avatar {
@@ -456,24 +450,18 @@ export default {
       }
     }
 
-    .languages {
-      .options {
-        padding: 0;
-      }
-
-      span {
-        padding-left: 6px;
-        font-weight: 600;
-      }
+    .languages span {
+      padding-left: 6px;
+      font-weight: 600;
     }
 
     .login-button {
       height: 40px;
       padding: 0 18px;
-      border: 1px solid rgba(24, 105, 255, 0.18);
-      border-radius: 14px;
-      background: linear-gradient(135deg, rgba(24, 105, 255, 0.08), rgba(19, 194, 194, 0.08));
-      color: #1869ff;
+      border: 1px solid rgba(182, 160, 129, 0.2);
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(241, 176, 111, 0.12), rgba(160, 201, 169, 0.1));
+      color: #7f5d38;
       box-shadow: none;
     }
   }
@@ -483,26 +471,6 @@ export default {
       padding: 0 16px;
     }
   }
-
-  .ant-menu-horizontal {
-    border-bottom: 0;
-    background: transparent;
-  }
-
-  .ant-menu-horizontal > .ant-menu-item-active,
-  .ant-menu-horizontal > .ant-menu-item-open,
-  .ant-menu-horizontal > .ant-menu-item-selected,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-item:hover,
-  .ant-menu-horizontal > .ant-menu-submenu-active,
-  .ant-menu-horizontal > .ant-menu-submenu-open,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu-selected,
-  .ant-menu-horizontal:not(.ant-menu-dark) > .ant-menu-submenu {
-    border-bottom: 2px solid transparent;
-  }
-
-  .ant-menu-item, .ant-menu-submenu-title {
-    padding: 0 14px;
-  }
 }
 
 .header-theme-color-config {
@@ -510,12 +478,12 @@ export default {
     margin-top: 8px;
     padding: 14px;
     border-radius: 16px;
-    border: 1px solid rgba(117, 136, 167, 0.16);
-    box-shadow: 0 24px 60px rgba(24, 48, 87, 0.14);
+    border: 1px solid rgba(191, 177, 157, 0.16);
+    box-shadow: 0 24px 60px rgba(97, 80, 57, 0.14);
 
     p {
       margin-bottom: 10px;
-      color: #172033;
+      color: #384337;
       font-weight: 700;
     }
 
