@@ -80,13 +80,13 @@ dubbo:
   config-center:
     timeout: 60000
   provider:
-    #抛出自定义异常
+    # 配了这个就可以抛出自定义异常（否则一直是 RuntimeException）
     filter: -exception
 
 mybatis:
   mapper-locations: classpath*:mybatis/mappers/*.xml
 
-#阅读文章优化方案：阅读静态HTML和Redis正文缓存
+# 阅读文章优化：静态 HTML 与 Redis 正文/统计缓存
 article:
   reading:
     static-html:
@@ -98,3 +98,14 @@ article:
       ttl: 30m
       count-cache-enabled: true
       count-cache-ttl: 60s
+
+# Elasticsearch 全文搜索
+search:
+  elasticsearch:
+    enabled: true
+    uris: http://127.0.0.1:9200
+    username:
+    password:
+    connect-timeout: 1000
+    socket-timeout: 30000
+    article-index: bbs_article

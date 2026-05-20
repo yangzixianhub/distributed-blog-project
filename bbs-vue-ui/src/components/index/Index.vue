@@ -3,7 +3,8 @@
     <a-layout id="components-layout-basic">
       <IndexHeader class="header"
                    @refresh="refresh"
-                   :searchContent="searchContent"/>
+                   :searchContent="searchContent"
+                   :timeRange="timeRange"/>
       <a-layout-content>
         <main class="content">
           <a-col :span="$store.state.collapsed ? 24 : 18"
@@ -110,6 +111,7 @@ export default {
       finish: false,
       params: {currentPage: 1, pageSize: 12},
       searchContent: '',
+      timeRange: '',
     };
   },
 
@@ -117,6 +119,10 @@ export default {
     // 加载更多（滚动加载）
     loadMore() {
       this.params.currentPage++;
+      if (this.isSearchMode()) {
+        this.getSearchArticleList(this.params, true);
+        return;
+      }
       if (this.$store.state.articleCheck === 'enable') {
         this.getArticleList(this.params, true);
       }
@@ -139,6 +145,10 @@ export default {
       })
 
       this.hasNext = true;
+      if (this.isSearchMode()) {
+        this.getSearchArticleList(this.params);
+        return;
+      }
       if (this.$store.state.articleCheck === "enable") {
         this.getArticleList(this.params);
       }
@@ -157,6 +167,28 @@ export default {
       }
       this.finish = false;
       articleService.getArticleList(params)
+          .then(res => {
+            if (isLoadMore) {
+              this.listData = this.listData.concat(res.data.list);
+              this.hasNext = res.data.list.length !== 0;
+            } else {
+              this.listData = res.data.list;
+            }
+            this.spinning = false;
+            this.finish = true;
+          })
+          .catch(err => {
+            this.finish = true;
+            this.$message.error(err.desc);
+          });
+    },
+
+    getSearchArticleList(params, isLoadMore) {
+      if (!isLoadMore) {
+        this.params.currentPage = 1;
+      }
+      this.finish = false;
+      articleService.searchArticles(params)
           .then(res => {
             if (isLoadMore) {
               this.listData = this.listData.concat(res.data.list);
@@ -222,7 +254,17 @@ export default {
     // 刷新列表
     refresh() {
       this.params = {currentPage: 1, pageSize: 10};
+      if (this.isSearchMode()) {
+        this.params.title = this.searchContent;
+        this.params.timeRange = this.timeRange;
+        this.getSearchArticleList(this.params);
+        return;
+      }
       this.getArticleList(this.params);
+    },
+
+    isSearchMode() {
+      return !!((this.$route.query.query && this.$route.query.query.trim()) || this.$route.query.timeRange);
     },
 
     // 同步data变化
@@ -266,9 +308,16 @@ export default {
     })
 
     let query = this.$route.query.query;
+    let timeRange = this.$route.query.timeRange || "";
     this.searchContent = query;
+    this.timeRange = timeRange;
     this.params.title = query;
-    this.getArticleList(this.params);
+    this.params.timeRange = timeRange;
+    if (this.isSearchMode()) {
+      this.getSearchArticleList(this.params);
+    } else {
+      this.getArticleList(this.params);
+    }
     // 监听滚动，做滚动加载
     this.$utils.scroll.call(this, document.querySelector('#app'));
   },
@@ -278,8 +327,15 @@ export default {
     $route() {
       // 跳转到该页面后需要进行的操作
       let query = this.$route.query.query;
+      let timeRange = this.$route.query.timeRange || "";
       this.searchContent = query;
+      this.timeRange = timeRange;
       this.params.title = query;
+      this.params.timeRange = timeRange;
+      if (this.isSearchMode()) {
+        this.getSearchArticleList(this.params);
+        return;
+      }
       if (this.$store.state.isManage) {
         if (this.$store.state.articleCheck === "enable") {
           this.getArticleList(this.params);

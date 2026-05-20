@@ -40,6 +40,11 @@ public class ArticleSearchDTO implements Serializable {
      */
     private Integer pageSize;
 
+    /**
+     * 搜索时间范围，可选值：day/week/month/year/older
+     */
+    private String timeRange;
+
     private static final long serialVersionUID = 1L;
 
 }

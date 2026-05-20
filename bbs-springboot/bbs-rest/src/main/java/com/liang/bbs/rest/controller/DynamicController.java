@@ -31,7 +31,9 @@ public class DynamicController {
     @GetMapping("getList")
     @Operation(summary = "获取动态")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<PageInfo<DynamicDTO>> getList(@RequestParam Long userId, @RequestParam Integer currentPage, @RequestParam Integer pageSize) {
+    public ResponseResult<PageInfo<DynamicDTO>> getList(@RequestParam("userId") Long userId,
+                                                        @RequestParam("currentPage") Integer currentPage,
+                                                        @RequestParam("pageSize") Integer pageSize) {
         return ResponseResult.success(dynamicService.getByUserId(userId, currentPage, pageSize));
     }
 
