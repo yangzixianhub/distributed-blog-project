@@ -14,9 +14,6 @@ import org.springframework.core.annotation.Order;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-/**
- * @date 2021/4/21 14:29
- */
 @Configuration
 @Order(0)
 public class ObjectMapperConfig {

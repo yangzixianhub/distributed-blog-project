@@ -6,9 +6,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 
-/**
- * @date 2022-05-16 20:54
- */
 @Data
 @Document("bbs_article_markdown_info")
 public class ArticleMarkdownInfo {

@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liang.bbs.user.persistence.mapper.LikePoMapper">
   <resultMap id="BaseResultMap" type="com.liang.bbs.user.persistence.entity.LikePo">
-    <id column="id" jdbcType="INTEGER" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="article_id" jdbcType="INTEGER" property="articleId" />
     <result column="state" jdbcType="BIT" property="state" />
     <result column="like_user" jdbcType="BIGINT" property="likeUser" />
@@ -84,15 +84,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from fs_like
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from fs_like
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.liang.bbs.user.persistence.entity.LikePoExample">
     delete from fs_like
@@ -153,7 +153,7 @@
     update fs_like
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.articleId != null">
         article_id = #{record.articleId,jdbcType=INTEGER},
@@ -177,7 +177,7 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update fs_like
-    set id = #{record.id,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
       article_id = #{record.articleId,jdbcType=INTEGER},
       `state` = #{record.state,jdbcType=BIT},
       like_user = #{record.likeUser,jdbcType=BIGINT},
@@ -206,7 +206,7 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liang.bbs.user.persistence.entity.LikePo">
     update fs_like
@@ -215,6 +215,6 @@
       like_user = #{likeUser,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

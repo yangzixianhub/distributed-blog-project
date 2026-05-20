@@ -5,9 +5,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @date 2022/4/6 15:06
- */
 @Data
 public class CommentSearchDTO implements Serializable {
     /**

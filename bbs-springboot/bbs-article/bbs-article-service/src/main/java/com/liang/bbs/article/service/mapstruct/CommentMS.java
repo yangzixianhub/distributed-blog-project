@@ -5,9 +5,6 @@ import com.liang.bbs.article.persistence.entity.CommentPo;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
-/**
- * @date 2021-04-20 22:25
- */
 @Mapper(componentModel = "spring")
 public interface CommentMS extends CommonMS<CommentPo, CommentDTO> {
     CommentMS INSTANCE = Mappers.getMapper(CommentMS.class);

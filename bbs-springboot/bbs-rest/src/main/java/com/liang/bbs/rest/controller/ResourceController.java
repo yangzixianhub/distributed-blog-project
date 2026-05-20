@@ -25,9 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:28
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/resource/")

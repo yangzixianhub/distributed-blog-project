@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-/**
- * @date 2021-06-18 22:53
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/notify/")

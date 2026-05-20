@@ -2,8 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.liang.bbs.user.persistence.mapper.LikeCommentPoMapper">
   <resultMap id="BaseResultMap" type="com.liang.bbs.user.persistence.entity.LikeCommentPo">
-    <id column="id" jdbcType="INTEGER" property="id" />
-    <result column="comment_id" jdbcType="INTEGER" property="commentId" />
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="comment_id" jdbcType="BIGINT" property="commentId" />
     <result column="state" jdbcType="BIT" property="state" />
     <result column="like_user" jdbcType="BIGINT" property="likeUser" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -84,15 +84,15 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from fs_comment_like
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from fs_comment_like
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </delete>
   <delete id="deleteByExample" parameterType="com.liang.bbs.user.persistence.entity.LikeCommentPoExample">
     delete from fs_comment_like
@@ -103,7 +103,7 @@
   <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.liang.bbs.user.persistence.entity.LikeCommentPo" useGeneratedKeys="true">
     insert into fs_comment_like (comment_id, `state`, like_user, 
       create_time, update_time)
-    values (#{commentId,jdbcType=INTEGER}, #{state,jdbcType=BIT}, #{likeUser,jdbcType=BIGINT}, 
+    values (#{commentId,jdbcType=BIGINT}, #{state,jdbcType=BIT}, #{likeUser,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.liang.bbs.user.persistence.entity.LikeCommentPo" useGeneratedKeys="true">
@@ -127,7 +127,7 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="commentId != null">
-        #{commentId,jdbcType=INTEGER},
+        #{commentId,jdbcType=BIGINT},
       </if>
       <if test="state != null">
         #{state,jdbcType=BIT},
@@ -153,10 +153,10 @@
     update fs_comment_like
     <set>
       <if test="record.id != null">
-        id = #{record.id,jdbcType=INTEGER},
+        id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.commentId != null">
-        comment_id = #{record.commentId,jdbcType=INTEGER},
+        comment_id = #{record.commentId,jdbcType=BIGINT},
       </if>
       <if test="record.state != null">
         `state` = #{record.state,jdbcType=BIT},
@@ -177,8 +177,8 @@
   </update>
   <update id="updateByExample" parameterType="map">
     update fs_comment_like
-    set id = #{record.id,jdbcType=INTEGER},
-      comment_id = #{record.commentId,jdbcType=INTEGER},
+    set id = #{record.id,jdbcType=BIGINT},
+      comment_id = #{record.commentId,jdbcType=BIGINT},
       `state` = #{record.state,jdbcType=BIT},
       like_user = #{record.likeUser,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -191,7 +191,7 @@
     update fs_comment_like
     <set>
       <if test="commentId != null">
-        comment_id = #{commentId,jdbcType=INTEGER},
+        comment_id = #{commentId,jdbcType=BIGINT},
       </if>
       <if test="state != null">
         `state` = #{state,jdbcType=BIT},
@@ -206,15 +206,15 @@
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.liang.bbs.user.persistence.entity.LikeCommentPo">
     update fs_comment_like
-    set comment_id = #{commentId,jdbcType=INTEGER},
+    set comment_id = #{commentId,jdbcType=BIGINT},
       `state` = #{state,jdbcType=BIT},
       like_user = #{likeUser,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
-    where id = #{id,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

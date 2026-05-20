@@ -16,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:28
- */
 @Slf4j
 @RestController
 @RequestMapping("/bbs/carousel/")

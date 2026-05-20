@@ -4,9 +4,6 @@ import lombok.Data;
 
 import java.io.Serializable;
 
-/**
- * @date 2023/3/7 14:30
- */
 @Data
 public class UserOperateCountDTO implements Serializable {
 

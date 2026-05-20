@@ -6,9 +6,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:30
- */
 @Data
 public class ArticleDTO implements Serializable {
     private Integer id;

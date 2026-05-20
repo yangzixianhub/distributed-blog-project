@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 /**
  * 对应数据表为：fs_follow
- *
- * @date 2022/04/18 18:14
  */
 @Data
 @AllArgsConstructor

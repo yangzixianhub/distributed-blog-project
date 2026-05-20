@@ -4,9 +4,6 @@ import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
-/**
- * @date 2021-04-20 22:25
- */
 public interface CommonMS<P, D> {
     /**
      * po转dto

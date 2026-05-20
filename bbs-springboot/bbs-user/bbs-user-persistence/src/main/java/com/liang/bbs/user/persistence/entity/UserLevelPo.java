@@ -9,8 +9,6 @@ import java.time.LocalDateTime;
 
 /**
  * 对应数据表为：fs_user_level
- * 
- * @date 2022/05/05 17:43
  */
 @Data
 @AllArgsConstructor

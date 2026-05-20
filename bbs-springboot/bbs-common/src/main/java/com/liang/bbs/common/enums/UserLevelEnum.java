@@ -1,8 +1,5 @@
 package com.liang.bbs.common.enums;
 
-/**
- * @date 2022/6/13 18:04
- */
 public enum UserLevelEnum {
     /**
      * 等级

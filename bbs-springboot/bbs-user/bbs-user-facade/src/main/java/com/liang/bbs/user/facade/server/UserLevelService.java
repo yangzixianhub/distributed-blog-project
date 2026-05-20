@@ -8,9 +8,6 @@ import com.liang.nansheng.common.auth.UserSsoDTO;
 
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:33
- */
 public interface UserLevelService {
     /**
      * 创建用户等级信息

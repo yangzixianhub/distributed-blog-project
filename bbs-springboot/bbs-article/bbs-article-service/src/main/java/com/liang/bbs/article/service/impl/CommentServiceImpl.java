@@ -11,6 +11,8 @@ import com.liang.bbs.article.persistence.mapper.CommentPoExMapper;
 import com.liang.bbs.article.persistence.mapper.CommentPoMapper;
 import com.liang.bbs.article.service.mapstruct.CommentMS;
 import com.liang.bbs.article.service.utils.CommentTreeUtils;
+import com.liang.bbs.common.distributedid.SnowflakeIdScope;
+import com.liang.bbs.common.distributedid.SnowflakeIdService;
 import com.liang.bbs.common.enums.SortRuleEnum;
 import com.liang.bbs.user.facade.dto.UserLevelDTO;
 import com.liang.bbs.user.facade.server.LikeCommentService;
@@ -35,9 +37,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @date 2022/4/6 14:36
- */
 @Slf4j
 @Component
 @Service
@@ -59,6 +58,9 @@ public class CommentServiceImpl implements CommentService {
 
     @DubboReference
     private LikeCommentService likeCommentService;
+
+    @Autowired
+    private SnowflakeIdService snowflakeIdService;
 
     /**
      * 获取文章的评论信息
@@ -175,10 +177,12 @@ public class CommentServiceImpl implements CommentService {
         commentDTO.setCommentUser(currentUser.getUserId());
         commentDTO.setCreateTime(now);
         commentDTO.setUpdateTime(now);
-        if (commentPoMapper.insertSelective(CommentMS.INSTANCE.toPo(commentDTO)) <= 0) {
+        CommentPo commentPo = CommentMS.INSTANCE.toPo(commentDTO);
+        snowflakeIdService.assignPrimaryKey(commentPo::setId, SnowflakeIdScope.COMMENT);
+        if (commentPoMapper.insertSelective(commentPo) <= 0) {
             throw BusinessException.build(ResponseCode.OPERATE_FAIL, "添加评论失败");
         }
-
+        commentDTO.setId(commentPo.getId());
         return true;
     }
 
@@ -189,8 +193,8 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     @Override
-    public Boolean delete(Integer commentId) {
-        List<Integer> commentIds = new ArrayList<>();
+    public Boolean delete(Long commentId) {
+        List<Long> commentIds = new ArrayList<>();
         List<CommentDTO> children = new ArrayList<>();
         // 通过父级ID获取子级评论信息
         this.getAllChildrenByPreId(children, commentId);
@@ -218,7 +222,7 @@ public class CommentServiceImpl implements CommentService {
      * @return
      */
     @Override
-    public void getAllChildrenByPreId(List<CommentDTO> result, Integer preId) {
+    public void getAllChildrenByPreId(List<CommentDTO> result, Long preId) {
         CommentPoExample example = new CommentPoExample();
         example.createCriteria().andIsDeletedEqualTo(false)
                 .andStateEqualTo(true)
@@ -233,13 +237,13 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public Integer getArticleIdByCommentId(Integer commentId) {
+    public Integer getArticleIdByCommentId(Long commentId) {
         CommentPo commentPo = commentPoMapper.selectByPrimaryKey(commentId);
         return commentPo == null ? null : commentPo.getArticleId();
     }
 
     @Override
-    public CommentDTO getById(Integer commentId) {
+    public CommentDTO getById(Long commentId) {
         return CommentMS.INSTANCE.toDTO(commentPoMapper.selectByPrimaryKey(commentId));
     }
 
@@ -254,7 +258,9 @@ public class CommentServiceImpl implements CommentService {
         List<Long> userIds = commentDTOS.stream().map(CommentDTO::getCommentUser).collect(Collectors.toList());
         Map<Long, List<UserDTO>> idUsers = userService.getByIds(userIds).stream().collect(Collectors.groupingBy(UserDTO::getId));
         // 用于回复数量提取
-        Map<Integer, List<CommentDTO>> preIdMap = commentDTOS.stream().collect(Collectors.groupingBy(CommentDTO::getPreId));
+        Map<Long, List<CommentDTO>> preIdMap = commentDTOS.stream()
+                .filter(commentDTO -> commentDTO.getPreId() != null && commentDTO.getPreId() != 0L)
+                .collect(Collectors.groupingBy(CommentDTO::getPreId));
         commentDTOS.forEach(commentDTO -> {
             if (idUsers.containsKey(commentDTO.getCommentUser())) {
                 commentDTO.setCommentUserName(idUsers.get(commentDTO.getCommentUser()).get(0).getName());

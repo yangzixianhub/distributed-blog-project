@@ -1,8 +1,5 @@
 package com.liang.bbs.common.constant;
 
-/**
- * @date 2021/4/21 18:55
- */
 public interface RedisConstants {
     /**
      * 公共的

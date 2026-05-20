@@ -14,7 +14,10 @@
     <version>${revision}</version>
 
     <dependencies>
-        <!-- 本工程各模块依赖 -->
+        <dependency>
+            <groupId>com.liang</groupId>
+            <artifactId>bbs-common</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.liang</groupId>
             <artifactId>bbs-user-facade</artifactId>
@@ -50,7 +53,7 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
         </dependency>
-        <!-- dubbo需要-start -->
+
         <dependency>
             <groupId>org.apache.dubbo</groupId>
             <artifactId>dubbo-spring-boot-starter</artifactId>
@@ -60,12 +63,12 @@
             <artifactId>dubbo-dependencies-zookeeper-curator5</artifactId>
             <type>pom</type>
         </dependency>
-        <!-- dubbo需要-end -->
+
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
         </dependency>
-        <!-- redis需要-start -->
+
         <dependency>
             <groupId>org.redisson</groupId>
             <artifactId>redisson</artifactId>
@@ -78,8 +81,7 @@
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
         </dependency>
-        <!-- redis需要-end -->
-        <!-- pagehelper分页 -->
+
         <dependency>
             <groupId>com.github.pagehelper</groupId>
             <artifactId>pagehelper-spring-boot-starter</artifactId>
@@ -104,22 +106,22 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
-        <!-- thumbnailator图片压缩 -->
+        
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
         </dependency>
-        <!-- 七牛云 -->
+
         <dependency>
             <groupId>com.qiniu</groupId>
             <artifactId>qiniu-java-sdk</artifactId>
         </dependency>
-        <!-- 邮件 -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
         </dependency>
-        <!-- 短信-->
+
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>
@@ -171,7 +173,7 @@
     </build>
 
     <properties>
-        <!-- 该模块不会发布到私库 -->
+    
         <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 

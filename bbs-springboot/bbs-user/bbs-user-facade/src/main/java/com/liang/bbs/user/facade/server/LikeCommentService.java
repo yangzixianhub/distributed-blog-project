@@ -6,9 +6,6 @@ import com.liang.nansheng.common.auth.UserSsoDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * @date 2022/4/6 14:33
- */
 public interface LikeCommentService {
 
     /**
@@ -26,7 +23,7 @@ public interface LikeCommentService {
      * @param commentId
      * @return
      */
-    Long getLikeCountCommentId(Integer commentId);
+    Long getLikeCountCommentId(Long commentId);
 
     /**
      * 是否点赞
@@ -35,7 +32,7 @@ public interface LikeCommentService {
      * @param userId
      * @return
      */
-    Boolean isLike(Integer commentId, Long userId);
+    Boolean isLike(Long commentId, Long userId);
 
     /**
      * 更新点赞状态
@@ -44,7 +41,7 @@ public interface LikeCommentService {
      * @param currentUser
      * @return
      */
-    Boolean updateLikeCommentState(Integer commentId, UserSsoDTO currentUser);
+    Boolean updateLikeCommentState(Long commentId, UserSsoDTO currentUser);
 
     /**
      * 通过评论id和用户id获取点赞信息
@@ -53,6 +50,6 @@ public interface LikeCommentService {
      * @param userId
      * @return
      */
-    LikeCommentDTO getByCommentIdUserId(Integer commentId, Long userId);
+    LikeCommentDTO getByCommentIdUserId(Long commentId, Long userId);
 
 }

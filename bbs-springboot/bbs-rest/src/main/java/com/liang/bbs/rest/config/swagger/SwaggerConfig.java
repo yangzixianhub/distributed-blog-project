@@ -6,9 +6,6 @@ import io.swagger.v3.oas.models.info.Info;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-/**
- * @date 2021-04-20 22:39
- */
 @Configuration
 public class SwaggerConfig {
 
