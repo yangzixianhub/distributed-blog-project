@@ -11,6 +11,7 @@
 - **ID 解析**: 解析 ID 的详细信息（时间戳、工作机器 ID、序列号）
 - **限流**: 基于 IP 的请求速率限制
 - **异常处理**: 统一的异常处理和错误响应
+- **API Key 认证**: 基于 API Key 的调用方身份验证，支持多 Key 配置
 
 ## 项目结构
 
@@ -19,7 +20,7 @@ DistributedIdService/
 ├── src/
 │   └── DistributedIdService.Api/    # Web API 项目
 │       ├── Controllers/             # API 控制器
-│       ├── Middleware/              # 中间件（异常处理、限流、性能统计）
+│       ├── Middleware/              # 中间件（API认证、异常处理、限流、性能统计）
 │       ├── Services/                # 核心服务（雪花生成器、熔断器、worker id 提供者）
 │       ├── Models/                  # 数据模型
 │       └── Program.cs               # 应用入口
@@ -57,6 +58,11 @@ dotnet run --project src/DistributedIdService.Api
 
 ```json
 {
+  "ApiKeys": [
+    { "Key": "blog-article-service-key", "Name": "文章服务", "Enabled": true },
+    { "Key": "blog-comment-service-key", "Name": "评论服务", "Enabled": true },
+    { "Key": "blog-like-service-key", "Name": "点赞服务", "Enabled": true }
+  ],
   "WorkerId": "", // 手动指定 workerId，留空则自动生成
   "UseMachineId": true, // 使用机器标识生成 workerId
   "UseCircuitBreaker": true, // 是否启用熔断器
@@ -81,21 +87,23 @@ dotnet run --project src/DistributedIdService.Api
 | `/api/id/status` | GET | 获取生成器状态 |
 | `/metrics` | GET | 性能指标（P50/P90/P95/P99/QPS） |
 
+> **注意**: 除 `/`, `/ping`, `/health`, `/metrics` 外，其他接口需要 `X-API-Key` Header 认证
+
 ### 示例
 
 ```bash
-# 生成单个 ID
-curl http://localhost:5000/api/id
+# 生成单个 ID（需要 API Key）
+curl -H "X-API-Key: blog-article-service-key" http://localhost:5000/api/id
 
 # 批量生成 5 个 ID
-curl -X POST http://localhost:5000/api/id/batch \
+curl -X POST -H "X-API-Key: blog-comment-service-key" http://localhost:5000/api/id/batch \
   -H "Content-Type: application/json" \
   -d '{"count":5}'
 
 # 解析 ID
-curl http://localhost:5000/api/id/info/311700624614801408
+curl -H "X-API-Key: blog-like-service-key" http://localhost:5000/api/id/info/311700624614801408
 
-# 健康检查
+# 健康检查（无需认证）
 curl http://localhost:5000/health
 ```
 
@@ -197,6 +205,7 @@ import java.time.Duration;
 
 public class JavaClientExample {
     private static final String BASE_URL = "http://localhost:5000";
+    private static final String API_KEY = "blog-article-service-key"; // 配置你的 API Key
     private static final HttpClient httpClient;
 
     static {
@@ -226,6 +235,7 @@ public class JavaClientExample {
     public static String generateSingleId() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/api/id"))
+                .header("X-API-Key", API_KEY)
                 .GET()
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -237,6 +247,7 @@ public class JavaClientExample {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/api/id/batch"))
                 .header("Content-Type", "application/json")
+                .header("X-API-Key", API_KEY)
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
@@ -246,6 +257,7 @@ public class JavaClientExample {
     public static String getIdInfo(String id) throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(BASE_URL + "/api/id/info/" + id))
+                .header("X-API-Key", API_KEY)
                 .GET()
                 .build();
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());

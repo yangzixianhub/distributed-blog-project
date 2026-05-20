@@ -1,8 +1,9 @@
 using System.Diagnostics;
-using System.Net.Http.Json;
+using System.Net.Http;
 using System.Text.Json;
 
 const string baseUrl = "http://localhost:5000";
+const string apiKey = "blog-article-service-key"; // 压测专用 API Key
 const int defaultConcurrency = 50;
 const int defaultDurationSeconds = 30;
 const int warmupSeconds = 3;
@@ -29,6 +30,7 @@ var httpClient = new HttpClient
     BaseAddress = new Uri(baseUrl),
     Timeout = TimeSpan.FromSeconds(30)
 };
+httpClient.DefaultRequestHeaders.Add("X-API-Key", apiKey);
 
 // 预热
 Console.WriteLine("预热中...");

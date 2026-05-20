@@ -13,7 +13,7 @@ public class SnowflakeIdGenerator : ISnowflakeIdGenerator, IDisposable
     private const long MaxSequence = -1L ^ (-1L << SequenceBits);
 
     private readonly int _workerId;
-    private readonly long _epoch; // 自定义起始时间戳，例如：2024-01-01 00:00:00
+    private readonly long _epoch; // 自定义起始时间戳
 
     private long _sequence = 0L;
     private long _lastTimestamp = -1L;

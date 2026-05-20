@@ -71,6 +71,23 @@ builder.Services.AddSingleton<ISnowflakeIdGenerator>(sp =>
 builder.Services.AddSingleton<WorkerIdProvider>();
 builder.Services.AddSingleton<IWorkerIdProvider>(sp => sp.GetRequiredService<WorkerIdProvider>());
 
+// 注册 API Key 认证配置
+var apiKeysSection = configuration.GetSection(ApiKeyAuthenticationOptions.SectionName);
+var apiKeysOptions = new ApiKeyAuthenticationOptions();
+
+// 手动绑定配置（.NET 配置绑定对 List 类型的 bug）
+for (int i = 0; i < 10; i++)
+{
+    var key = configuration[$"{ApiKeyAuthenticationOptions.SectionName}:{i}:Key"];
+    if (string.IsNullOrEmpty(key)) break;
+    var name = configuration[$"{ApiKeyAuthenticationOptions.SectionName}:{i}:Name"] ?? "";
+    var enabled = configuration[$"{ApiKeyAuthenticationOptions.SectionName}:{i}:Enabled"] ?? "true";
+    var config = new ApiKeyConfig { Key = key, Name = name, Enabled = bool.Parse(enabled) };
+    apiKeysOptions.Keys.Add(config);
+    apiKeysOptions.KeysDictionary[key] = config;
+}
+builder.Services.AddSingleton(apiKeysOptions);
+
 // 记录配置信息
 builder.Logging.AddConsole();
 builder.Logging.SetMinimumLevel(LogLevel.Information);
@@ -82,10 +99,13 @@ var app = builder.Build();
 // 1. 异常处理中间件（最先添加）
 app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-// 2. 限流中间件
+// 2. API Key 认证中间件
+app.UseApiKeyAuthentication();
+
+// 3. 限流中间件
 app.UseMiddleware<RateLimitingMiddleware>();
 
-// 3. 性能统计中间件
+// 4. 性能统计中间件
 app.UsePerformanceMetrics();
 
 // 3. HTTPS 重定向（如果有 HTTPS 配置）

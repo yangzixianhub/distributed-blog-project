@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DistributedIdService.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+66117292c0700c04b53a04c543b76e2e30306e38")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+0b808dc2baa7fb897c1a0d0e5f38d4222e0b07ff")]
 [assembly: System.Reflection.AssemblyProductAttribute("DistributedIdService.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DistributedIdService.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
