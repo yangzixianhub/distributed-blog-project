@@ -1,5 +1,5 @@
 <template>
-  <div id="child-comment">
+  <div id="child-comment" :class="data.depth > 0 ? 'reply-comment' : 'primary-comment'">
     <a-comment :id="'reply-' + data.id">
       <a class="username" slot="author" @click="routerUserCenter(data.commentUser)">
         {{ data.commentUserName }}
@@ -9,7 +9,10 @@
       <a-avatar slot="avatar" :src="data.picture ? data.picture : require('@/assets/img/default_avatar.png')"
                 @click="routerUserCenter(data.commentUser)"/>
       <p class="comment-content" slot="content">
-        <span v-html="data.content" style="width: 100%">{{ data.content }}</span>
+        <span style="width: 100%">
+          <span v-if="data.replyToName" class="reply-prefix">回复给{{ data.replyToName }}：</span>
+          <span v-html="data.content">{{ data.content }}</span>
+        </span>
 <!--        <span class="del" v-if="data.commentUser === $store.state.userId"-->
 <!--              @click="deleteComment(data.id)">{{ $t("common.delete") }}</span>-->
       </p>
@@ -178,8 +181,11 @@ export default {
 #child-comment .comment-content {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 5px;
+  align-items: flex-start;
+  margin-bottom: 8px;
+  padding: 16px 18px;
+  border-radius: 22px;
+  line-height: 1.9;
 
   span {
     overflow: hidden;
@@ -198,16 +204,65 @@ export default {
   }
 }
 
+#child-comment .reply-prefix {
+  color: #9b7854;
+  font-weight: 600;
+}
+
+#child-comment.primary-comment .comment-content {
+  background: linear-gradient(135deg, rgba(247, 237, 214, 0.92), rgba(252, 245, 231, 0.96));
+  border: 1px solid rgba(218, 195, 151, 0.36);
+  box-shadow: 0 12px 28px rgba(186, 159, 117, 0.12);
+}
+
+#child-comment.reply-comment .comment-content {
+  background: linear-gradient(135deg, rgba(236, 221, 202, 0.9), rgba(244, 232, 217, 0.94));
+  border: 1px solid rgba(194, 165, 132, 0.34);
+  box-shadow: 0 10px 24px rgba(163, 132, 98, 0.1);
+}
+
+#child-comment.reply-comment .ant-comment-inner {
+  padding: 14px 16px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, rgba(236, 221, 202, 0.9), rgba(244, 232, 217, 0.94));
+  border: 1px solid rgba(194, 165, 132, 0.34);
+  box-shadow: 0 12px 28px rgba(163, 132, 98, 0.1);
+}
+
+#child-comment.reply-comment .comment-content {
+  padding: 10px 0 0;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+#child-comment.reply-comment .ant-comment-content-author-name {
+  .time {
+    color: #a18a72 !important;
+  }
+}
+
+#child-comment.reply-comment .operate .iconfont,
+#child-comment.reply-comment .comment-operate {
+  color: #8f7a63 !important;
+}
+
 #child-comment .comment-comment, .comment-operate {
   margin-left: 16px;
 }
 
 #child-comment .ant-comment-nested {
-  margin-left: 20px;
+  margin-left: 44px;
+}
+
+#child-comment.reply-comment .ant-comment-nested {
+  margin-left: 0;
 }
 
 #child-comment .ant-comment-inner {
   padding: 5px 0;
 }
+
 
 </style>

@@ -41,6 +41,9 @@ public class UrlAccessCheckInterceptor implements HandlerInterceptor {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         if (currentUser != null) {
             String uri = request.getRequestURI();
+            if (isDeleteEndpoint(uri)) {
+                return true;
+            }
             if (isSuperAdminSearchRebuild(uri, currentUser)) {
                 return true;
             }
@@ -82,5 +85,11 @@ public class UrlAccessCheckInterceptor implements HandlerInterceptor {
                 .distinct()
                 .collect(Collectors.toList());
         return grades.contains(RoleGradeEnum.NS_SUPER_ADMIN_ROLE.name());
+    }
+
+    private boolean isDeleteEndpoint(String uri) {
+        return uri != null
+                && (uri.startsWith("/api/bbs/article/delete/")
+                || uri.startsWith("/api/bbs/label/delete/"));
     }
 }

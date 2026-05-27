@@ -2,8 +2,8 @@
   <div id="article-detail" ref="scrollDiv" :class="{ collapsed: $store.state.collapsed }">
     <div v-if="finish" class="article-detail-inner">
       <div class="article-headline">
-        <div class="headline-copy">
-          <h1>{{ data.title }}</h1>
+        <div class="headline-copy" style="width:100%;display:flex;justify-content:center;padding:20px 0 26px;">
+          <h1 style="width:100%;margin:0;text-align:center;font-size:52px;font-weight:400;line-height:1.18;letter-spacing:0.02em;">{{ data.title }}</h1>
         </div>
       </div>
 
@@ -345,13 +345,15 @@ export default {
 
   .article-headline {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
     gap: 16px;
     margin-bottom: 22px;
+    text-align: center;
   }
 
   .headline-copy {
+    width: 100%;
     min-width: 0;
   }
 
@@ -370,6 +372,7 @@ export default {
     font-weight: 700;
     letter-spacing: 0.01em;
     color: #243228;
+    text-align: center;
   }
 
   .article-user-card {

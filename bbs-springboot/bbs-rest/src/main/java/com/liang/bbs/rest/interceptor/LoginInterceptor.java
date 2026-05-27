@@ -62,6 +62,9 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (currentUser == null) {
             // 获取当前页面地址
             String referer = request.getHeader("referer");
+            if (StringUtils.isBlank(referer)) {
+                referer = request.getRequestURL().toString();
+            }
             if (referer.contains("?")) {
                 referer = referer.substring(0, referer.indexOf("?"));
             }
