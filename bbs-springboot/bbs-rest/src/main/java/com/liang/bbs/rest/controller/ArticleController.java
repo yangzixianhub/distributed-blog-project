@@ -240,8 +240,17 @@ public class ArticleController {
     @ApiVersion(group = ApiVersionConstant.V_300)
     public ResponseResult<ArticleSearchRebuildDTO> rebuildSearchIndex() {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
-        ensureSuperAdmin(currentUser);
+        ensureSuperAdmin(currentUser, "仅超级管理员可重建搜索索引");
         return ResponseResult.success(articleService.rebuildSearchIndex());
+    }
+
+    @PostMapping("rebuildStaticHtml")
+    @Operation(summary = "重建已发布文章静态 HTML")
+    @ApiVersion(group = ApiVersionConstant.V_300)
+    public ResponseResult<ArticleStaticHtmlRebuildDTO> rebuildStaticHtml() {
+        UserSsoDTO currentUser = UserContextUtils.currentUser();
+        ensureSuperAdmin(currentUser, "仅超级管理员可重建静态 HTML");
+        return ResponseResult.success(articleService.rebuildStaticHtml());
     }
 
     @GetMapping("searchHealth")
@@ -249,13 +258,13 @@ public class ArticleController {
     @ApiVersion(group = ApiVersionConstant.V_300)
     public ResponseResult<ArticleSearchHealthDTO> searchHealth() {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
-        ensureSuperAdmin(currentUser);
+        ensureSuperAdmin(currentUser, "仅超级管理员可重建搜索索引");
         return ResponseResult.success(articleService.getSearchHealth());
     }
 
-    private void ensureSuperAdmin(UserSsoDTO currentUser) {
+    private void ensureSuperAdmin(UserSsoDTO currentUser, String message) {
         if (currentUser == null || CollectionUtils.isEmpty(currentUser.getRoles())) {
-            throw BusinessException.build(ResponseCode.OPERATE_FAIL, "仅超级管理员可重建搜索索引");
+            throw BusinessException.build(ResponseCode.OPERATE_FAIL, message);
         }
 
         List<String> grades = currentUser.getRoles().stream()
@@ -263,7 +272,7 @@ public class ArticleController {
                 .distinct()
                 .collect(Collectors.toList());
         if (!grades.contains(RoleGradeEnum.NS_SUPER_ADMIN_ROLE.name())) {
-            throw BusinessException.build(ResponseCode.OPERATE_FAIL, "仅超级管理员可重建搜索索引");
+            throw BusinessException.build(ResponseCode.OPERATE_FAIL, message);
         }
     }
 }

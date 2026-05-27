@@ -797,6 +797,16 @@ public class ArticleServiceImpl implements ArticleService {
     }
 
     @Override
+    public ArticleStaticHtmlRebuildDTO rebuildStaticHtml() {
+        long start = System.currentTimeMillis();
+        int publishedCount = articleStaticHtmlPublisher.rebuildAllEnabled();
+        ArticleStaticHtmlRebuildDTO result = new ArticleStaticHtmlRebuildDTO();
+        result.setPublishedCount(publishedCount);
+        result.setCostMillis(System.currentTimeMillis() - start);
+        return result;
+    }
+
+    @Override
     public ArticleSearchHealthDTO getSearchHealth() {
         return articleSearchService.health();
     }
