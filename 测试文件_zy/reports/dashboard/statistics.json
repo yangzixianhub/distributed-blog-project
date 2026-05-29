@@ -1,0 +1,34 @@
+{
+  "Total" : {
+    "transaction" : "Total",
+    "sampleCount" : 20000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 385.6363500000016,
+    "medianResTime" : 379.0,
+    "minResTime" : 3.0,
+    "maxResTime" : 1379.0,
+    "pct1ResTime" : 594.0,
+    "pct2ResTime" : 689.0,
+    "pct3ResTime" : 1192.0,
+    "throughput" : 1189.7679952409278,
+    "receivedKBytesPerSec" : 2608.222644631172,
+    "sentKBytesPerSec" : 236.02801067073173
+  },
+  "GET /api/bbs/article/search" : {
+    "transaction" : "GET /api/bbs/article/search",
+    "sampleCount" : 20000,
+    "errorCount" : 0,
+    "errorPct" : 0.0,
+    "meanResTime" : 385.6363500000016,
+    "medianResTime" : 379.0,
+    "minResTime" : 3.0,
+    "maxResTime" : 1379.0,
+    "pct1ResTime" : 594.0,
+    "pct2ResTime" : 689.0,
+    "pct3ResTime" : 1192.0,
+    "throughput" : 1189.7679952409278,
+    "receivedKBytesPerSec" : 2608.222644631172,
+    "sentKBytesPerSec" : 236.02801067073173
+  }
+}

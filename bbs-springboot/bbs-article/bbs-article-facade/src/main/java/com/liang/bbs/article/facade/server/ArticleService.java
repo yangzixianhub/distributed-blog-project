@@ -222,5 +222,7 @@ public interface ArticleService {
 
     ArticleSearchRebuildDTO rebuildSearchIndex();
 
+    ArticleStaticHtmlRebuildDTO rebuildStaticHtml();
+
     ArticleSearchHealthDTO getSearchHealth();
 }

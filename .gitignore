@@ -61,4 +61,5 @@ temp/
 
 # Project-local generated or reference files
 .github/
+# **/article-static-html/
 第三讲 高并发设计(2).pptx.md

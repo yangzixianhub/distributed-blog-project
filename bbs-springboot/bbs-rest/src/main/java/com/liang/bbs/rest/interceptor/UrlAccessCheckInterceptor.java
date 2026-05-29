@@ -19,16 +19,22 @@ import org.springframework.web.servlet.HandlerMapping;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-/**
- * 后端路径级别的权限控制
- */
+//后端路径级别的权限控制
 @Slf4j
 @Component
 public class UrlAccessCheckInterceptor implements HandlerInterceptor {
+    private static final Set<String> SUPER_ADMIN_URIS = new HashSet<>(Arrays.asList(
+            "/api/bbs/article/rebuildSearchIndex",
+            "/api/bbs/article/rebuildStaticHtml"
+    ));
+
     @DubboReference
     UrlAccessRightService urlAccessRightService;
 
@@ -44,11 +50,10 @@ public class UrlAccessCheckInterceptor implements HandlerInterceptor {
             if (isDeleteEndpoint(uri)) {
                 return true;
             }
-            if (isSuperAdminSearchRebuild(uri, currentUser)) {
+            if (isSuperAdminBypass(uri, currentUser)) {
                 return true;
             }
 
-            // 获取 @PathVariable 的参数和值
             Object attribute = request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             Boolean allowed = urlAccessRightService.checkUrlAccess(currentUser, uri, JSON.toJSONString(attribute));
             if (!allowed) {
@@ -74,9 +79,8 @@ public class UrlAccessCheckInterceptor implements HandlerInterceptor {
         return Objects.nonNull(AnnotationUtils.findAnnotation(clazz, NoNeedLogin.class));
     }
 
-    private boolean isSuperAdminSearchRebuild(String uri, UserSsoDTO currentUser) {
-        if (!"/api/bbs/article/rebuildSearchIndex".equals(uri)
-                || CollectionUtils.isEmpty(currentUser.getRoles())) {
+    private boolean isSuperAdminBypass(String uri, UserSsoDTO currentUser) {
+        if (!SUPER_ADMIN_URIS.contains(uri) || CollectionUtils.isEmpty(currentUser.getRoles())) {
             return false;
         }
 

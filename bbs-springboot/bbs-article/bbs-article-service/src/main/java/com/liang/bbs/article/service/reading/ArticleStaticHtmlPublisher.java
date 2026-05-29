@@ -2,6 +2,7 @@ package com.liang.bbs.article.service.reading;
 
 import com.liang.bbs.article.facade.dto.ArticleMarkdownInfo;
 import com.liang.bbs.article.persistence.entity.ArticlePo;
+import com.liang.bbs.article.persistence.entity.ArticlePoExample;
 import com.liang.bbs.article.persistence.mapper.ArticlePoMapper;
 import com.liang.bbs.article.service.config.ArticleReadingProperties;
 import com.liang.bbs.common.enums.ArticleStateEnum;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import jakarta.annotation.PostConstruct;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.HtmlUtils;
 
@@ -19,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 
 //将已发布文章写成独立HTML文件，供Nginx直接返回
 @Slf4j
@@ -29,6 +32,22 @@ public class ArticleStaticHtmlPublisher {
     private final ArticleReadingProperties articleReadingProperties;
     private final ArticlePoMapper articlePoMapper;
     private final MongoTemplate mongoTemplate;
+
+    @PostConstruct
+    void logStaticHtmlDirectory() {
+        if (articleReadingProperties.getStaticHtml().isEnabled()) {
+            log.info("文章静态 HTML 输出目录: {}", resolveDirectory());
+        }
+    }
+
+    private Path resolveDirectory() {
+        String dir = articleReadingProperties.getStaticHtml().getDirectory();
+        Path path = Paths.get(dir);
+        if (!path.isAbsolute()) {
+            path = path.toAbsolutePath().normalize();
+        }
+        return path;
+    }
 
     //对外浏览器路径，用于回填ArticleDTO.staticHtmlUrl
     public String buildPublicUrl(Integer articleId) {
@@ -44,8 +63,7 @@ public class ArticleStaticHtmlPublisher {
     }
 
     public Path resolveFilePath(Integer articleId) {
-        String dir = articleReadingProperties.getStaticHtml().getDirectory();
-        return Paths.get(dir).resolve("article-" + articleId + ".html").normalize();
+        return resolveDirectory().resolve("article-" + articleId + ".html");
     }
 
     //文章审核通过或内容更新后调用：生成/覆盖静态页
@@ -78,6 +96,23 @@ public class ArticleStaticHtmlPublisher {
         } catch (IOException e) {
             log.error("写入静态文章页失败articleId={} path={}", articleId, path, e);
         }
+    }
+
+    //为所有已发布文章重新生成静态HTML
+    public int rebuildAllEnabled() {
+        if (!articleReadingProperties.getStaticHtml().isEnabled()) {
+            return 0;
+        }
+        ArticlePoExample example = new ArticlePoExample();
+        example.createCriteria()
+                .andIsDeletedEqualTo(false)
+                .andStateEqualTo(ArticleStateEnum.enable.getCode());
+        List<ArticlePo> articles = articlePoMapper.selectByExample(example);
+        for (ArticlePo po : articles) {
+            publish(po.getId());
+        }
+        log.info("静态文章页批量重建完成，共 {} 篇", articles.size());
+        return articles.size();
     }
 
     //下架、删除或非启用状态时移除静态文件
