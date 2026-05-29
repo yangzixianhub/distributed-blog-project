@@ -83,8 +83,12 @@ public class LabelController {
     @PostMapping("delete/{id}")
     @Operation(summary = "删除标签")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> delete(@PathVariable Integer id) {
+    public ResponseResult<Boolean> delete(@PathVariable("id") Integer id) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
+        if (currentUser == null) {
+            throw BusinessException.build(ResponseCode.URL_ACCESS_REFUSED);
+        }
+
         List<String> grades = currentUser.getRoles().stream()
                 .map(RoleSsoDTO::getGrade)
                 .distinct()

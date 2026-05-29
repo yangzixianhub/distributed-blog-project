@@ -223,8 +223,11 @@ public class ArticleController {
     @PostMapping("delete/{id}")
     @Operation(summary = "文章删除")
     @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Boolean> delete(@PathVariable Integer id) {
+    public ResponseResult<Boolean> delete(@PathVariable("id") Integer id) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
+        if (currentUser == null) {
+            throw BusinessException.build(ResponseCode.URL_ACCESS_REFUSED);
+        }
         return ResponseResult.success(articleService.delete(id, currentUser));
     }
 
