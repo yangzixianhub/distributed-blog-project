@@ -58,11 +58,10 @@ public class ArticleDTO implements Serializable {
 
     private LocalDateTime updateTime;
 
-    //静态 HTML 访问路径（Nginx）；未启用静态化时为 null
+    /**
+     * 静态 HTML 访问路径（Nginx）；未启用静态化时为 null
+     */
     private String staticHtmlUrl;
-
-    //前端是否优先通过 staticHtmlUrl 加载正文
-    private Boolean staticRead;
 
     private static final long serialVersionUID = 1L;
 }

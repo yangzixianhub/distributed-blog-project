@@ -96,22 +96,6 @@ export default {
                 .catch((err) => reject(err));
         });
     },
-    // 获取文章阅读元数据（不含正文，指示是否静态读）
-    getReadMeta(params) {
-        return new Promise((resolve, reject) => {
-            axios.get("/api/bbs/article/getReadMeta", {params})
-                .then((res) => resolve(res))
-                .catch((err) => reject(err));
-        });
-    },
-    // 静态读正文后记录 PV
-    recordPv(params) {
-        return new Promise((resolve, reject) => {
-            axios.post("/api/bbs/article/recordPv", null, {params})
-                .then((res) => resolve(res))
-                .catch((err) => reject(err));
-        });
-    },
     // 获取文章一些统计数据
     getArticleCountById(params) {
         return new Promise((resolve, reject) => {

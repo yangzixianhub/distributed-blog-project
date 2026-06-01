@@ -123,56 +123,25 @@ public class ArticleController {
                                               @RequestParam(value = "isPv", required = false) Boolean isPv) {
         UserSsoDTO currentUser = UserContextUtils.currentUser();
         List<ArticleDTO> articleDTOS = articleService.getByIds(Collections.singletonList(id), isPv, currentUser);
-        if (CollectionUtils.isEmpty(articleDTOS)) {
-            return ResponseResult.build(ResponseCode.NOT_EXISTS, null);
-        }
-        ResponseResult<ArticleDTO> denied = denyIfArticleNotReadable(articleDTOS.get(0), currentUser);
-        if (denied != null) {
-            return denied;
-        }
-        return ResponseResult.success(articleDTOS.get(0));
-    }
-
-    private ResponseResult<ArticleDTO> denyIfArticleNotReadable(ArticleDTO articleDTO, UserSsoDTO currentUser) {
-        if (articleDTO == null) {
-            return ResponseResult.build(ResponseCode.NOT_EXISTS, null);
-        }
-        if (currentUser != null && !ArticleStateEnum.enable.getCode().equals(articleDTO.getState())) {
-            List<String> grades = currentUser.getRoles().stream().map(RoleSsoDTO::getGrade).distinct().collect(Collectors.toList());
-            if (!grades.contains(RoleGradeEnum.NS_SUPER_ADMIN_ROLE.name())
-                    && !articleDTO.getCreateUser().equals(currentUser.getUserId())) {
+        if (CollectionUtils.isNotEmpty(articleDTOS)) {
+            ArticleDTO articleDTO = articleDTOS.get(0);
+            // 登录-过滤非通过审核的文章（没通过审核的文章不允许别人查看-除了超管和本人）
+            if (currentUser != null && !ArticleStateEnum.enable.getCode().equals(articleDTO.getState())) {
+                // 当前用户所有的角色等级
+                List<String> grades = currentUser.getRoles().stream().map(RoleSsoDTO::getGrade).distinct().collect(Collectors.toList());
+                // 不是超级管理员角色and不是本人
+                if (!grades.contains(RoleGradeEnum.NS_SUPER_ADMIN_ROLE.name()) && !articleDTO.getCreateUser().equals(currentUser.getUserId())) {
+                    return ResponseResult.build(ResponseCode.NOT_EXISTS, null);
+                }
+            }
+            // 未登录-过滤非通过审核的文章（all）
+            if (currentUser == null && !ArticleStateEnum.enable.getCode().equals(articleDTO.getState())) {
                 return ResponseResult.build(ResponseCode.NOT_EXISTS, null);
             }
-        }
-        if (currentUser == null && !ArticleStateEnum.enable.getCode().equals(articleDTO.getState())) {
+        } else {
             return ResponseResult.build(ResponseCode.NOT_EXISTS, null);
         }
-        return null;
-    }
-
-    @NoNeedLogin
-    @GetMapping("getReadMeta")
-    @Operation(summary = "获取文章阅读元数据（不含正文，可指示静态读）")
-    @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<ArticleDTO> getReadMeta(@RequestParam("id") Integer id) {
-        UserSsoDTO currentUser = UserContextUtils.currentUser();
-        ArticleDTO articleDTO = articleService.getReadMeta(id, currentUser);
-        ResponseResult<ArticleDTO> denied = denyIfArticleNotReadable(articleDTO, currentUser);
-        if (denied != null) {
-            return denied;
-        }
-        return ResponseResult.success(articleDTO);
-    }
-
-    @NoNeedLogin
-    @PostMapping("recordPv")
-    @Operation(summary = "记录文章阅读量（静态读正文时调用）")
-    @ApiVersion(group = ApiVersionConstant.V_300)
-    public ResponseResult<Integer> recordPv(@RequestParam("id") Integer id) {
-        ArticleDTO articleDTO = new ArticleDTO();
-        articleDTO.setId(id);
-        articleService.updatePv(articleDTO);
-        return ResponseResult.success(articleDTO.getPv());
+        return ResponseResult.success(articleDTOS.get(0));
     }
 
     @PostMapping("/create")

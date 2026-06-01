@@ -51,7 +51,6 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -426,40 +425,6 @@ public class ArticleServiceImpl implements ArticleService {
         }
 
         return articleDTOS;
-    }
-
-    @Override
-    public ArticleDTO getReadMeta(Integer id, UserSsoDTO currentUser) {
-        if (id == null) {
-            return null;
-        }
-        List<ArticleDTO> articleDTOS = getBaseByIds(Collections.singletonList(id), null);
-        if (CollectionUtils.isEmpty(articleDTOS)) {
-            return null;
-        }
-        ArticleDTO articleDTO = articleDTOS.get(0);
-        buildArticleInfo(articleDTOS, currentUser);
-        articleDTO.setStaticRead(shouldStaticRead(articleDTO, currentUser));
-        if (Boolean.TRUE.equals(articleDTO.getStaticRead())) {
-            articleDTO.setStaticHtmlUrl(articleStaticHtmlPublisher.buildPublicUrl(articleDTO.getId()));
-        } else if (articleReadingProperties.getStaticHtml().isEnabled()
-                && ArticleStateEnum.enable.getCode().equals(articleDTO.getState())) {
-            articleDTO.setStaticHtmlUrl(articleStaticHtmlPublisher.buildPublicUrl(articleDTO.getId()));
-        }
-        return articleDTO;
-    }
-
-    private boolean shouldStaticRead(ArticleDTO dto, UserSsoDTO currentUser) {
-        if (!articleReadingProperties.getStaticHtml().isEnabled()) {
-            return false;
-        }
-        if (!ArticleStateEnum.enable.getCode().equals(dto.getState())) {
-            return false;
-        }
-        if (isArticleOwner(currentUser, dto)) {
-            return false;
-        }
-        return Files.exists(articleStaticHtmlPublisher.resolveFilePath(dto.getId()));
     }
 
     /**
