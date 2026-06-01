@@ -59,6 +59,33 @@ export default {
   },
 
   methods: {
+    normalizeComments(list) {
+      return (list || []).map((item) => {
+        const flatReplies = [];
+        this.flattenReplies(item.child || [], flatReplies, item.commentUserName);
+        return {
+          ...item,
+          depth: 0,
+          child: flatReplies,
+        };
+      });
+    },
+
+    flattenReplies(children, bucket, topCommentUserName, parentComment = null) {
+      (children || []).forEach((child) => {
+        const normalizedReply = {
+          ...child,
+          depth: 1,
+          replyToName: parentComment && parentComment.depth > 0 ? parentComment.commentUserName : "",
+          child: [],
+        };
+        bucket.push(normalizedReply);
+        if (child.child && child.child.length) {
+          this.flattenReplies(child.child, bucket, topCommentUserName, normalizedReply);
+        }
+      });
+    },
+
     onChange(e) {
       this.sortRule = e.target.value;
       this.refresh();
@@ -68,7 +95,7 @@ export default {
       commentService
         .getCommentByArticleId({ articleId: this.$route.params.id, sortRule: this.sortRule })
         .then((res) => {
-          this.comments = res.data;
+          this.comments = this.normalizeComments(res.data);
         })
         .catch((err) => {
           this.$message.error(err.desc);

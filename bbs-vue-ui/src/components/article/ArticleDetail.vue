@@ -345,14 +345,17 @@ export default {
 
   .article-headline {
     display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: center;
     gap: 16px;
     margin-bottom: 22px;
+    text-align: center;
   }
 
   .headline-copy {
+    width: 100%;
     min-width: 0;
+    padding: 20px 0 26px;
   }
 
   .eyebrow {
@@ -365,11 +368,12 @@ export default {
 
   h1 {
     margin: 0;
-    font-size: 38px;
-    line-height: 1.24;
-    font-weight: 700;
-    letter-spacing: 0.01em;
+    font-size: 52px;
+    line-height: 1.18;
+    font-weight: 400;
+    letter-spacing: 0.02em;
     color: #243228;
+    text-align: center;
   }
 
   .article-user-card {

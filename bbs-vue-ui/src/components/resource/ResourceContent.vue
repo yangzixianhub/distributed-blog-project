@@ -1,17 +1,19 @@
 <template>
-  <div id="resource-content" :style="$store.state.collapsed ? 'margin: 0 10px;' : ''"
-       v-if="categoryList.length !== 0 && data.length !== 0">
+  <div id="resource-content" v-if="categoryList.length !== 0 && data.length !== 0">
     <div class="tabs">
-      <div>
-        <a-radio-group :value="size" @change="handleSizeChange" v-for="(item, index) of categoryList" :key="item.id">
-          <a-radio-button value="all" style="margin-left: 10px;" v-if="index === 0">
-            全部资源
-          </a-radio-button>
-          <a-radio-button :value="item" style="margin: 10px 0 0 10px;" v-else>
-            {{ item }}
-          </a-radio-button>
-        </a-radio-group>
+      <div class="tab-group">
+        <button
+            v-for="item of categoryList"
+            :key="item"
+            type="button"
+            class="tab-chip"
+            :class="{ active: size === item }"
+            @click="handleCategoryClick(item)"
+        >
+          {{ item === 'all' ? '全部资源' : item }}
+        </button>
       </div>
+
       <a-popover v-model="resourceAddVisible" :title="$t('common.resourceAdd')" trigger="click" placement="bottomRight">
         <div slot="content" style="width: 500px;">
           <ResourceCreate
@@ -19,50 +21,61 @@
               @refresh="refresh"/>
         </div>
       </a-popover>
-      <a-button class="add-item" type="primary" style="height: 30px;" v-text="$t('common.add')"
-                @click="resourceAddCheck" v-if="$store.state.isManage"></a-button>
+
+      <a-button
+          v-if="$store.state.isManage"
+          class="add-item"
+          type="primary"
+          @click="resourceAddCheck"
+      >
+        {{ $t('common.add') }}
+      </a-button>
     </div>
-    <div>
-      <div class="tag">
-        <a-badge class="info-box" @click="routerLink(item.link)" style="cursor: pointer"
-                 :style="$store.state.collapsed ? 'width:100%;' : 'width:25%;border-right: 20px solid #f0f2f5;'"
-                 v-for="item of data" :key="item.id">
-          <div class="head-name">
-            <a-avatar class="avatar" :size="35" :src="item.logo"/>
-            <div class="title">{{ item.resourceName }}</div>
+
+    <div class="resource-grid">
+      <article class="info-box" v-for="item of data" :key="item.id" @click="routerLink(item.link)">
+        <a-popover v-model="resourceEditVisible[item.id]" :title="$t('common.resourceEdit')" trigger="click" placement="bottom">
+          <div slot="content" style="width: 500px;">
+            <ResourceCreate
+                @hideResourceVisibleFn="hideResourceVisibleFn"
+                :resourceLogoInit="item.logo"
+                :resourceId="item.id"
+                :resourceName="item.resourceName"
+                :category="item.category"
+                :desc="item.desc"
+                :link="item.link"
+                @refresh="refresh"/>
           </div>
-          <div class="meta-article">{{ item.desc }}</div>
-          <a-popover v-model="resourceEditVisible[item.id]" :title="$t('common.resourceEdit')" trigger="click"
-                     placement="bottom">
-            <div slot="content" style="width: 500px;">
-              <ResourceCreate
-                  @hideResourceVisibleFn="hideResourceVisibleFn"
-                  :resourceLogoInit="item.logo"
-                  :resourceId="item.id"
-                  :resourceName="item.resourceName"
-                  :category="item.category"
-                  :desc="item.desc"
-                  :link="item.link"
-                  @refresh="refresh"/>
+        </a-popover>
+
+        <div class="card-top">
+          <div class="head-name">
+            <a-avatar class="avatar" :size="54" :src="item.logo"/>
+            <div class="title-group">
+              <div class="title">{{ item.resourceName }}</div>
+              <span class="category-pill">{{ item.category }}</span>
             </div>
-          </a-popover>
-          <!-- 管理员操作 -->
-          <a-dropdown :trigger="['click']">
+          </div>
+
+          <a-dropdown :trigger="['click']" v-if="$store.state.isManage">
             <a-menu slot="overlay">
-              <a-menu-item key="labelEdit" @click="resourceUpdateCheck(item.id)">
-                {{ ' ' + $t("common.edit") }}
+              <a-menu-item key="resourceEdit" @click="resourceUpdateCheck(item.id)">
+                {{ ' ' + $t('common.edit') }}
               </a-menu-item>
-              <a-menu-item key="labelDel" @click="resourceDelete(item.id)">
-                <span style="color: red">{{ ' ' + $t("common.delete") }}</span>
+              <a-menu-item key="resourceDel" @click="resourceDelete(item.id)">
+                <span style="color: red">{{ ' ' + $t('common.delete') }}</span>
               </a-menu-item>
             </a-menu>
-            <div class="options" @click.stop>
-              <a-icon slot="count" type="ellipsis" style="cursor: pointer; color: #909090"
-                      v-if="$store.state.isManage"/>
-            </div>
+            <button class="card-more" type="button" @click.stop>
+              <a-icon type="ellipsis"/>
+            </button>
           </a-dropdown>
-        </a-badge>
-      </div>
+        </div>
+
+        <div class="meta-article">{{ item.desc }}</div>
+        <div class="meta-line"></div>
+        <div class="meta-link">{{ item.link }}</div>
+      </article>
     </div>
   </div>
 </template>
@@ -82,49 +95,41 @@ export default {
 
   data() {
     return {
-      size: 'all',
+      size: "all",
       categoryList: [],
       resourceAddVisible: false,
       resourceEditVisible: {},
-    }
+    };
   },
 
   methods: {
-    // 获取资源导航所有类别
     getCategorys() {
       resourceService.getCategorys()
           .then(res => {
-            this.categoryList.push('all');
-            res.data.forEach(value => {
-              this.categoryList.push(value);
-            });
+            this.categoryList = ["all", ...res.data];
           })
           .catch(err => {
             this.$message.error(err.desc);
           });
     },
 
-    // 新增资源导航验证
     resourceAddCheck() {
       if (this.isLoginFn()) {
         this.resourceAddVisible = true;
       }
     },
 
-    // 更新资源导航验证
     resourceUpdateCheck(resourceId) {
       if (this.isLoginFn()) {
         this.resourceEditVisible[resourceId] = true;
       }
     },
 
-    // 关闭气泡框
     hideResourceVisibleFn(resourceId) {
       this.resourceAddVisible = false;
-      this.$set(this.resourceEditVisible, resourceId, false)
+      this.$set(this.resourceEditVisible, resourceId, false);
     },
 
-    // 删除资源导航
     resourceDelete(resourceId) {
       if (this.isLoginFn()) {
         this.$confirm({
@@ -133,7 +138,7 @@ export default {
           content: this.$t("common.deletePrompt"),
           onOk: () => {
             resourceService.resourceDelete(resourceId)
-                .then(res => {
+                .then(() => {
                   this.refresh();
                 })
                 .catch(err => {
@@ -151,32 +156,29 @@ export default {
     isLoginFn() {
       if (this.$store.state.isLogin) {
         return true;
-      } else {
-        this.$store.state.loginVisible = true;
       }
+      this.$store.state.loginVisible = true;
     },
 
     updateResourceEditVisible() {
       const resourceEditVisibleNew = {};
       this.data.forEach(value => {
-        resourceEditVisibleNew[value.id] = false
+        resourceEditVisibleNew[value.id] = false;
       });
-
       this.resourceEditVisible = resourceEditVisibleNew;
     },
 
-    handleSizeChange(e) {
-      let value = e.target.value;
+    handleCategoryClick(value) {
       this.size = value;
-      if (value === 'all') {
-        this.$emit("refresh", null)
+      if (value === "all") {
+        this.$emit("refresh", null);
       } else {
-        this.$emit("refresh", value)
+        this.$emit("refresh", value);
       }
     },
 
     routerLink(link) {
-      window.open(link, '_blank');
+      window.open(link, "_blank");
     }
   },
 
@@ -186,74 +188,187 @@ export default {
   },
 
   watch: {
-    // data值改变时触发
     data: {
-      handler(newVal, oldVal) {
+      handler() {
         this.updateResourceEditVisible();
       }
     },
   }
-}
+};
 </script>
 
 <style lang="less" scoped>
-#resource-content .tabs {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 20px 0 30px 0;
-
-  label.ant-radio-button-wrapper:hover {
-    color: #fff;
-    background: #a2c217;
+#resource-content {
+  .tabs {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 8px 26px;
   }
 
-  .ant-radio-button-wrapper-checked:not(.ant-radio-button-wrapper-disabled) {
-    color: #fff;
-    background: #a2c217;
+  .tab-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
   }
-}
 
-#resource-content .tag {
-  display: flex;
-  flex-wrap: wrap;
-}
+  .tab-chip {
+    height: 44px;
+    padding: 0 18px;
+    border: 1px solid rgba(183, 166, 142, 0.16);
+    border-radius: 16px;
+    background: rgba(255, 252, 246, 0.86);
+    color: #7f786c;
+    cursor: pointer;
+    box-shadow: 0 10px 24px rgba(143, 120, 88, 0.06);
+    transition: all 0.2s ease;
+  }
 
-#resource-content .info-box {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: inherit;
+  .tab-chip.active {
+    color: #fffaf2;
+    border-color: transparent;
+    background: linear-gradient(135deg, #d7b06f 0%, #8fb791 100%);
+    box-shadow: 0 14px 28px rgba(149, 126, 89, 0.18);
+  }
 
-  background: #fff;
-  border-bottom: 20px solid #f0f2f5;
+  .add-item {
+    height: 46px;
+    padding: 0 22px;
+    border: none;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #d7b06f 0%, #8fb791 100%);
+    box-shadow: 0 14px 30px rgba(149, 126, 89, 0.16);
+  }
+
+  .resource-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+  }
+
+  .info-box {
+    min-height: 178px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 24px;
+    background: rgba(255, 252, 247, 0.9);
+    border: 1px solid rgba(186, 169, 143, 0.14);
+    box-shadow: 0 16px 36px rgba(126, 104, 72, 0.08);
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .info-box:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 22px 42px rgba(126, 104, 72, 0.12);
+  }
+
+  .card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
 
   .head-name {
     display: flex;
     align-items: center;
-
-    .title {
-      padding-left: 10px;
-      font-size: 18px;
-      color: #333;
-    }
+    gap: 14px;
+    min-width: 0;
   }
 
-  .edit {
-    margin-top: 5px;
+  .avatar {
+    flex-shrink: 0;
+    border-radius: 18px;
+    box-shadow: 0 12px 26px rgba(120, 102, 82, 0.12);
+  }
+
+  .title-group {
+    min-width: 0;
+  }
+
+  .title {
+    font-size: 18px;
+    line-height: 1.4;
+    color: #334232;
+    font-weight: 600;
+  }
+
+  .category-pill {
+    display: inline-flex;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(245, 238, 227, 0.95);
+    color: #9b7a4b;
+    font-size: 12px;
+  }
+
+  .card-more {
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(245, 240, 231, 0.92);
+    color: #8f8578;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.58);
   }
 
   .meta-article {
-    font-size: 13px;
-    padding: 10px 0;
-    line-height: 20px;
-    color: #909090;
+    margin-top: 18px;
+    color: #8d8478;
+    font-size: 14px;
+    line-height: 1.8;
   }
-}
 
-#resource-content .info-box:hover {
-  background: #ffffff;
-  box-shadow: inset 24px 24px 42px #ededed,
-    inset -24px -24px 42px #ffffff;
+  .meta-line {
+    width: 100%;
+    height: 1px;
+    margin: 16px 0 12px;
+    background: linear-gradient(90deg, rgba(213, 193, 164, 0.34), rgba(213, 193, 164, 0));
+  }
+
+  .meta-link {
+    color: #a39a8f;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 1100px) {
+    .resource-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 900px) {
+    .resource-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 768px) {
+    .tabs {
+      flex-direction: column;
+      align-items: stretch;
+      padding: 8px 0 18px;
+    }
+
+    .resource-grid {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .info-box {
+      min-height: 168px;
+      padding: 18px 16px;
+      border-radius: 20px;
+    }
+  }
 }
 </style>

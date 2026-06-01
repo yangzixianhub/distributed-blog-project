@@ -5,7 +5,7 @@
         <template slot="title">
           {{ $t("common.getTheWord") }}
         </template>
-        <a-col class="user_agreement" :span="8" @click="routerBook">{{ $t("common.userGuidance") }}</a-col>
+        <a-col class="user_agreement" :span="12" @click="routerBook">{{ $t("common.userGuidance") }}</a-col>
       </a-tooltip>
       <a-col class="links" :span="8">
         <a href="https://juejin.cn/" target="_blank">{{ $t("common.links") }}</a>
@@ -33,7 +33,8 @@ export default {
 </script>
 
 <style scoped>
-.div-content, a {
+.div-content,
+a {
   font-size: 12px;
   line-height: 2;
   color: #7d8ca6;
@@ -44,7 +45,11 @@ export default {
   padding: 8px 6px;
 }
 
-.user_agreement:hover, .user_guidance:hover, .links:hover, .about_us:hover, a:hover {
+.user_agreement:hover,
+.user_guidance:hover,
+.links:hover,
+.about_us:hover,
+a:hover {
   color: #1869ff;
 }
 </style>
