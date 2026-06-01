@@ -78,7 +78,8 @@
         <img :src="data.titleMap" alt="cover" @error="showTitleMap = false" />
       </div>
 
-      <div class="article-content" v-if="data.markdown">
+      <div class="article-content article-content-static" v-if="staticBodyHtml" v-html="staticBodyHtml"></div>
+      <div class="article-content" v-else-if="data.markdown">
         <mavon-editor
           :value="data.markdown"
           :subfield="false"
@@ -108,51 +109,111 @@ export default {
       finish: false,
       data: {},
       showTitleMap: true,
+      staticBodyHtml: "",
     };
   },
 
   methods: {
-    getArticleById() {
+    loadArticle() {
       this.finish = false;
       this.showTitleMap = true;
+      this.staticBodyHtml = "";
       articleService
+        .getReadMeta({ id: this.$route.params.id })
+        .then((res) => {
+          const meta = res.data;
+          if (meta.staticRead && meta.staticHtmlUrl) {
+            return fetch(meta.staticHtmlUrl)
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error("static html miss");
+                }
+                return response.text();
+              })
+              .then((html) => {
+                const bodyHtml = this.extractStaticBody(html);
+                if (!bodyHtml) {
+                  throw new Error("static html empty");
+                }
+                this.applyArticleData(meta, bodyHtml, this.extractTocHtml(html));
+                return articleService.recordPv({ id: this.$route.params.id });
+              })
+              .then((pvRes) => {
+                if (pvRes && pvRes.data != null) {
+                  this.data.pv = pvRes.data;
+                }
+              })
+              .catch(() => this.loadDynamicArticle());
+            return;
+          }
+          return this.loadDynamicArticle();
+        })
+        .catch((err) => this.handleArticleError(err));
+    },
+
+    loadDynamicArticle() {
+      this.staticBodyHtml = "";
+      return articleService
         .getArticleById({ id: this.$route.params.id, isPv: true })
         .then((res) => {
-          this.data = res.data;
-          this.finish = true;
-          const labelIds = [];
-          res.data.labelDTOS.forEach((label) => {
-            labelIds.push(label.id);
-          });
-          this.$emit(
-            "initLabelIds",
-            labelIds,
-            this.finish,
-            res.data.createUser,
-            this.$utils.toToc(res.data.html),
-          );
-
-          if (res.data.html) {
-            setTimeout(() => {
-              this.monitorScrollForTopicHighlight();
-              this.$nextTick(() => {
-                clearInterval(this.timer);
-                this.getCodes();
-              });
-            }, 800);
-          }
+          this.applyArticleData(res.data, null, res.data.html);
         })
-        .catch((err) => {
-          this.finish = true;
-          if (err.code === 4) {
-            this.$router.push({
-              name: "404",
-              params: { pathMatch: this.$route.path.substring(1).split("/") },
-            });
-          } else {
-            this.$message.error(err.desc);
-          }
+        .catch((err) => this.handleArticleError(err));
+    },
+
+    applyArticleData(article, staticBody, tocSourceHtml) {
+      this.data = article;
+      this.staticBodyHtml = staticBody || "";
+      this.finish = true;
+      const labelIds = [];
+      (article.labelDTOS || []).forEach((label) => {
+        labelIds.push(label.id);
+      });
+      this.$emit(
+        "initLabelIds",
+        labelIds,
+        this.finish,
+        article.createUser,
+        tocSourceHtml ? this.$utils.toToc(tocSourceHtml) : "",
+      );
+
+      if (staticBody || article.html) {
+        setTimeout(() => {
+          this.monitorScrollForTopicHighlight();
+          this.$nextTick(() => {
+            clearInterval(this.timer);
+            this.getCodes();
+          });
+        }, 800);
+      }
+    },
+
+    extractStaticBody(fullHtml) {
+      const doc = new DOMParser().parseFromString(fullHtml, "text/html");
+      const el = doc.querySelector(".article-html");
+      return el ? el.innerHTML : "";
+    },
+
+    extractTocHtml(fullHtml) {
+      const doc = new DOMParser().parseFromString(fullHtml, "text/html");
+      const article = doc.querySelector("article");
+      return article ? article.innerHTML : fullHtml;
+    },
+
+    handleArticleError(err) {
+      this.finish = true;
+      if (err.code === 4) {
+        this.$router.push({
+          name: "404",
+          params: { pathMatch: this.$route.path.substring(1).split("/") },
         });
+      } else {
+        this.$message.error(err.desc || "加载文章失败");
+      }
+    },
+
+    getArticleById() {
+      this.loadArticle();
     },
 
     monitorScrollForTopicHighlight() {
@@ -236,7 +297,7 @@ export default {
       userService
         .updateFollowState({ toUser })
         .then(() => {
-          this.getArticleById();
+          this.loadArticle();
         })
         .catch((err) => {
           this.$message.error(err.desc);
@@ -305,10 +366,13 @@ export default {
   },
 
   mounted() {
-    this.getArticleById();
+    this.loadArticle();
   },
 
   watch: {
+    "$route.params.id"() {
+      this.loadArticle();
+    },
     data() {
       this.$nextTick(() => {
         let hash = location.hash;
@@ -521,6 +585,28 @@ export default {
   .article-content {
     width: 100%;
     padding-top: 26px;
+
+    &.article-content-static {
+      color: #495446;
+      font-size: 16px;
+      line-height: 1.95;
+
+      h1, h2, h3, h4, h5, h6 {
+        color: #29362c;
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 18px;
+        box-shadow: 0 16px 36px rgba(158, 141, 115, 0.12);
+      }
+
+      pre {
+        border-radius: 18px;
+        overflow: hidden;
+      }
+    }
 
     h1 > a,
     h2 > a,

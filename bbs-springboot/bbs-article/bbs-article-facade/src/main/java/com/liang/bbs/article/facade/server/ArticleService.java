@@ -87,6 +87,9 @@ public interface ArticleService {
      */
     List<ArticleDTO> getByIds(List<Integer> ids, Boolean isPv, UserSsoDTO currentUser);
 
+    //阅读页元数据并指示是否可走静态HTML读正文
+    ArticleDTO getReadMeta(Integer id, UserSsoDTO currentUser);
+
     /**
      * 通过文章id集合获取文章信息(最基础的信息)
      *
